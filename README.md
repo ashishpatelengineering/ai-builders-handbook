@@ -10,7 +10,7 @@ An interactive study companion for *The AI Builder's Handbook* (LevelUp Labs), b
 
 ## Progress
 
-Currently covers Chapters 1–5 (Part 1: The Landscape, Part 2: Designing AI Products). More chapters added as they're built.
+Chapters are added incrementally. Open the file (or the live page) and check the sidebar for the current chapter list, it's always accurate since it's generated from the same source.
 
 ## Viewing it
 

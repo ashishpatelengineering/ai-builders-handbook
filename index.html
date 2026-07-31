@@ -777,7 +777,7 @@ const ch1_slides = [
 const ch1_quiz = [
 {
   type:'mc',
-  q:"Slide 1 (Why this chapter exists): why does this chapter exist as a shared vocabulary map, according to the book?",
+  q:"Why does this chapter exist as a shared vocabulary map, according to the book?",
   options:[
     "Because terms like \"agent\" and \"eval\" carry different meanings in different rooms, and the field's vocabulary changes fast",
     "Because every AI vendor uses the exact same definitions",
@@ -789,7 +789,7 @@ const ch1_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 2 (Raw Material): what does it mean that an LLM is a \"probability machine trained to predict text\"?",
+  q:"What does it mean that an LLM is a \"probability machine trained to predict text\"?",
   options:[
     "It generates text that fits patterns in its training data, rather than looking up facts in a database",
     "It calculates the statistical probability that a fact is true before stating it",
@@ -801,7 +801,7 @@ const ch1_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 2 (Raw Material): which of the following are true about Generative AI and Foundation Models?",
+  q:"Which of the following are true about Generative AI and Foundation Models?",
   options:[
     "Generative AI is the umbrella term; LLMs are the most familiar shape it takes, but image, audio, and video models fall under it too",
     "The term \"Foundation Model\" was coined by the Stanford Center for Research on Foundation Models in 2021",
@@ -813,7 +813,7 @@ const ch1_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 3 (Tokens and context window): a team notices their model gives worse answers when a key fact sits in the middle of a very long prompt, even though it fits well within the context window. What does the chapter call this?",
+  q:"A team notices their model gives worse answers when a key fact sits in the middle of a very long prompt, even though it fits well within the context window. What does the chapter call this?",
   options:[
     "The \"lost in the middle\" problem",
     "A hallucination",
@@ -825,7 +825,7 @@ const ch1_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 4 (Pretraining, fine-tuning, post-training): which of the following are true about the three stages a model passes through?",
+  q:"Which of the following are true about the three stages a model passes through?",
   options:[
     "Pretraining trains on trillions of tokens of web, book, and code data",
     "Fine-tuning uses a much smaller labeled dataset than pretraining",
@@ -837,7 +837,7 @@ const ch1_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 5 (Reasoning and multimodality): according to the chapter, what did the 2022 Google Brain paper on chain-of-thought prompting show?",
+  q:"According to the chapter, what did the 2022 Google Brain paper on chain-of-thought prompting show?",
   options:[
     "Simply prompting a model to show its reasoning can dramatically improve accuracy on math, logic, and multi-step problems",
     "Reasoning models are always cheaper than standard models",
@@ -849,7 +849,7 @@ const ch1_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 5 (Reasoning and multimodality): a team wants their AI assistant to read a photo of a handwritten form and a screenshot of a spreadsheet directly, without building a separate text-extraction pipeline first. Which capability from the chapter makes this possible?",
+  q:"A team wants their AI assistant to read a photo of a handwritten form and a screenshot of a spreadsheet directly, without building a separate text-extraction pipeline first. Which capability from the chapter makes this possible?",
   options:[
     "Multimodality",
     "Few-shot learning",
@@ -861,7 +861,7 @@ const ch1_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 6 (Talking to the Model): according to the chapter, what do people usually mean when they say \"building an AI product\" in 2026?",
+  q:"According to the chapter, what do people usually mean when they say \"building an AI product\" in 2026?",
   options:[
     "Context engineering, more than model choice",
     "Picking the single best foundation model available",
@@ -873,7 +873,7 @@ const ch1_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 7 (Tool use and agents): a billing specialist in a support system has tools like get_billing_account and get_invoice_details, and decides for itself which tool to call and when, based on what it observes. What does the chapter call a system like this?",
+  q:"A billing specialist in a support system has tools like get_billing_account and get_invoice_details, and decides for itself which tool to call and when, based on what it observes. What does the chapter call a system like this?",
   options:[
     "An agent",
     "A foundation model",
@@ -885,7 +885,7 @@ const ch1_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 8 (Workflow vs agent): per Anthropic's distinction described in the chapter, what separates a workflow from an agent?",
+  q:"Per Anthropic's distinction described in the chapter, what separates a workflow from an agent?",
   options:[
     "In a workflow the developer defines the steps and the model fills in the blanks; in an agent the model decides the steps dynamically",
     "A workflow never uses a language model at all",
@@ -897,7 +897,7 @@ const ch1_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 9 (Router, specialist, multi-agent): a team is building a customer support system. They want a component that reads an incoming ticket and decides whether it goes to permissions, review-workflow, billing, or escalation, then hands it to the right specialist. Which pattern from the chapter is this?",
+  q:"A team is building a customer support system. They want a component that reads an incoming ticket and decides whether it goes to permissions, review-workflow, billing, or escalation, then hands it to the right specialist. Which pattern from the chapter is this?",
   options:[
     "Router pattern",
     "Multi-agent system",
@@ -909,7 +909,7 @@ const ch1_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 9 (Router, specialist, multi-agent): what is the chapter's stated production consensus on when to add a second agent to a multi-agent system?",
+  q:"What is the chapter's stated production consensus on when to add a second agent to a multi-agent system?",
   options:[
     "Start with one agent, add a second only with clear evidence you need one",
     "Always start with at least three agents for redundancy",
@@ -921,7 +921,7 @@ const ch1_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 10 (Retrieval): what is semantic search, as defined by the chapter?",
+  q:"What is semantic search, as defined by the chapter?",
   options:[
     "Converting text into vectors (embeddings) that capture meaning, then finding text whose vectors sit close together, instead of matching keywords",
     "Searching only within the current conversation's context window",
@@ -933,7 +933,7 @@ const ch1_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 10 (Retrieval): according to the chapter, why should a team be cautious even when a vector database vendor promises the best retrieval quality?",
+  q:"According to the chapter, why should a team be cautious even when a vector database vendor promises the best retrieval quality?",
   options:[
     "Choice of vector database matters less than your retrieval strategy and your evals",
     "Vector databases cannot store embeddings at scale",
@@ -945,7 +945,7 @@ const ch1_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 11 (Evaluation and hallucination): which statements are true, according to the chapter?",
+  q:"Which statements are true, according to the chapter?",
   options:[
     "LLM-as-judge means using one model to score another model's output against a rubric",
     "You should never trust a judge you have not calibrated against human labels first",
@@ -957,7 +957,7 @@ const ch1_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 12 (Grounding and guardrails): what is the difference between an input guardrail and an output guardrail, according to the chapter?",
+  q:"What is the difference between an input guardrail and an output guardrail, according to the chapter?",
   options:[
     "Input guardrails filter what the user sends in, like PII redaction; output guardrails filter what the model produces, like tone or leaked data",
     "Input guardrails only work on images, output guardrails only work on text",
@@ -969,7 +969,7 @@ const ch1_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 13 (Plumbing): an engineer wants their AI assistant to connect to several external tools and data sources using one standardized, vendor-neutral protocol instead of writing custom integration code for each one. Which concept from the chapter fits this need?",
+  q:"An engineer wants their AI assistant to connect to several external tools and data sources using one standardized, vendor-neutral protocol instead of writing custom integration code for each one. Which concept from the chapter fits this need?",
   options:[
     "Model Context Protocol (MCP)",
     "Chain-of-thought prompting",
@@ -981,7 +981,7 @@ const ch1_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 13 (Plumbing): what is the Agents SDK, according to the chapter?",
+  q:"What is the Agents SDK, according to the chapter?",
   options:[
     "OpenAI's 2025 framework for agent orchestration, packaged as openai-agents, that handles the agent loop, tool calls, and handoffs",
     "A vector database built specifically for storing agent conversation history",
@@ -993,7 +993,7 @@ const ch1_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 14 (The Map, Assembled): the chapter's closing summary chains its vocabulary into one sequence. Which order matches the chapter's own description?",
+  q:"The chapter's closing summary chains its vocabulary into one sequence. Which order matches the chapter's own description?",
   options:[
     "A foundation model trained on text, talked to through prompts, extended through tools, grounded through retrieval, kept honest through evaluation, coordinated through protocols, and observed through tracing",
     "A vector database trained on tools, extended through prompts, and grounded through agents",
@@ -1177,7 +1177,7 @@ const ch2_slides = [
 const ch2_quiz = [
 {
   type:'mc',
-  q:"Slide 1 (Why this chapter exists): what has changed about enterprise AI conversation in the last eighteen months, according to the chapter?",
+  q:"What has changed about enterprise AI conversation in the last eighteen months, according to the chapter?",
   options:[
     "More systems are in production and more teams are measuring ROI seriously, compared to the earlier demo-and-pilot era",
     "Companies have stopped experimenting with AI entirely",
@@ -1189,7 +1189,7 @@ const ch2_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 2 (The Shift From Pilots to Production): which statements accurately reflect what the chapter reports from McKinsey and Menlo Ventures?",
+  q:"Which statements accurately reflect what the chapter reports from McKinsey and Menlo Ventures?",
   options:[
     "McKinsey's survey shows the majority of enterprises now use generative AI regularly",
     "That majority is a sharp climb from roughly a third of organizations two years earlier",
@@ -1201,7 +1201,7 @@ const ch2_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 2 (The Shift From Pilots to Production): what gap does the chapter say has been surfaced by the shift toward production?",
+  q:"What gap does the chapter say has been surfaced by the shift toward production?",
   options:[
     "Teams that succeeded in pilots did not always succeed in production, because production requires eval harnesses, guardrails, observability, and retraining loops",
     "There is no meaningful difference between running a pilot and running a production system",
@@ -1213,7 +1213,7 @@ const ch2_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 3 (Where the Value Is Actually Landing): which of these are named among the five categories where enterprise AI value is landing?",
+  q:"Which of these are named among the five categories where enterprise AI value is landing?",
   options:[
     "Internal knowledge and support",
     "Document processing and extraction",
@@ -1225,7 +1225,7 @@ const ch2_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 3 (Where the Value Is Actually Landing): why does the chapter say internal knowledge and support is the largest category in most enterprise AI spend surveys?",
+  q:"Why does the chapter say internal knowledge and support is the largest category in most enterprise AI spend surveys?",
   options:[
     "Because the ROI case is cleanest: fewer tickets, faster onboarding, less repetitive work for experts",
     "Because it requires the least amount of guardrails of any category",
@@ -1237,7 +1237,7 @@ const ch2_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 4 (What is missing from the list): a team notices that despite all the hype, almost no production system they can find lets an agent handle a complex multi-step task completely without a human checking in. What does the chapter say about this?",
+  q:"A team notices that despite all the hype, almost no production system they can find lets an agent handle a complex multi-step task completely without a human checking in. What does the chapter say about this?",
   options:[
     "This matches the chapter's own observation: fully autonomous agents without human oversight are still rare in production, and agentic patterns ship wrapped in workflow scaffolding",
     "The chapter says this observation is incorrect and fully autonomous agents are already the dominant production pattern",
@@ -1249,7 +1249,7 @@ const ch2_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 5 (Augment first, automate later): what is the chapter's described sequence for automating a system that stays shipped?",
+  q:"What is the chapter's described sequence for automating a system that stays shipped?",
   options:[
     "The human stays in the loop first, the system proposes and drafts, then the most trusted parts get automated one step at a time as evals prove it is safe",
     "The system is fully automated from day one, with a human added later only if something breaks",
@@ -1261,7 +1261,7 @@ const ch2_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 6 (Narrow scope and retrieval over fine-tuning): which statements match the chapter's guidance?",
+  q:"Which statements match the chapter's guidance?",
   options:[
     "Teams that picked a narrow problem shipped faster and with better quality than teams trying to build \"an AI assistant for everything\"",
     "Retrieval almost always beats fine-tuning in cost and flexibility for organization-specific knowledge",
@@ -1273,7 +1273,7 @@ const ch2_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 7 (Workflows before agents): according to the chapter, what happened to teams that tried building free-roaming agents first?",
+  q:"According to the chapter, what happened to teams that tried building free-roaming agents first?",
   options:[
     "They often came back to workflows later, since the router-and-specialist pattern is structured, debuggable, and evaluable",
     "They always succeeded on the first attempt and never revisited the design",
@@ -1285,7 +1285,7 @@ const ch2_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 7 (Evaluation as durable infrastructure): what distinguishes teams whose systems actually improve over time, according to the chapter?",
+  q:"What distinguishes teams whose systems actually improve over time, according to the chapter?",
   options:[
     "They built their eval harness as ongoing infrastructure, maintained continuously and visible to everyone, rather than a launch-time checkbox",
     "They avoided evaluation entirely to move faster",
@@ -1297,7 +1297,7 @@ const ch2_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 8 and 9 (What is failing): which three failure modes does the chapter say almost every enterprise AI post-mortem traces back to?",
+  q:"Which three failure modes does the chapter say almost every enterprise AI post-mortem traces back to?",
   options:[
     "No clear problem",
     "No evaluation discipline",
@@ -1309,7 +1309,7 @@ const ch2_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 9 (No clear problem): a team spent nine months building an AI system that started from \"we should use AI\" rather than a specific identified pain point, and the system now has no adopter. Which failure mode from the chapter does this describe, and how avoidable does the chapter say it was?",
+  q:"A team spent nine months building an AI system that started from \"we should use AI\" rather than a specific identified pain point, and the system now has no adopter. Which failure mode from the chapter does this describe, and how avoidable does the chapter say it was?",
   options:[
     "No clear problem, described as almost entirely preventable with thirty minutes of problem discovery upfront",
     "Over-scoped agentic design, described as unavoidable in any nine-month project",
@@ -1321,7 +1321,7 @@ const ch2_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 10 (Roadmap takeaways): which of these are among the chapter's five practical roadmap takeaways?",
+  q:"Which of these are among the chapter's five practical roadmap takeaways?",
   options:[
     "Start with a narrow problem that has clear users and clear success criteria",
     "Build augmentation first and automate steps only after evals prove they are safe",
@@ -1521,7 +1521,7 @@ const ch3_slides = [
 const ch3_quiz = [
 {
   type:'mc',
-  q:"Slide 1 (Why this chapter exists): according to the chapter, what does the best model for your system actually depend on?",
+  q:"According to the chapter, what does the best model for your system actually depend on?",
   options:[
     "Your task, your users, your latency budget, your cost ceiling, and the quality of your evals",
     "Only which model tops the current public leaderboard",
@@ -1533,7 +1533,7 @@ const ch3_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 2 (There Is No Best Model): which are the two reasons the chapter gives for why top-line benchmarks are a weak signal?",
+  q:"Which are the two reasons the chapter gives for why top-line benchmarks are a weak signal?",
   options:[
     "The gap between top closed models is often smaller than the gap a good vs bad prompt creates on the same model",
     "Your task is not the benchmark, a model that dominates MMLU may be average on your specific task",
@@ -1545,7 +1545,7 @@ const ch3_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 3 (The Dimensions That Actually Matter): according to the chapter, which dimension do teams focus on almost exclusively, only to later realize other dimensions matter just as much?",
+  q:"According to the chapter, which dimension do teams focus on almost exclusively, only to later realize other dimensions matter just as much?",
   options:[
     "Capability",
     "Licensing and deployment",
@@ -1557,7 +1557,7 @@ const ch3_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 3 (The Dimensions That Actually Matter): a team is running a high-volume background batch job where nobody is waiting on the response in real time, but token costs are adding up fast. Which two dimensions from the chapter should weigh most heavily in their model choice?",
+  q:"A team is running a high-volume background batch job where nobody is waiting on the response in real time, but token costs are adding up fast. Which two dimensions from the chapter should weigh most heavily in their model choice?",
   options:[
     "Cost heavily, latency lightly, since costs can swing between $200 and $20,000 a month while latency is irrelevant for a background job",
     "Latency heavily, cost lightly, since users are waiting for a response",
@@ -1569,7 +1569,7 @@ const ch3_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 3 (The Dimensions That Actually Matter): what does the chapter say about context window size in 2026?",
+  q:"What does the chapter say about context window size in 2026?",
   options:[
     "200K tokens is standard and 1M is available from multiple providers, but larger does not automatically mean better",
     "200K tokens is the maximum any provider offers in 2026",
@@ -1581,7 +1581,7 @@ const ch3_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 4 (Reasoning and Licensing): a healthcare company needs a model that can run entirely on their own servers because of strict data residency rules, and needs tight control over exactly what the model can and cannot do. Which dimension from the chapter is most directly driving this requirement?",
+  q:"A healthcare company needs a model that can run entirely on their own servers because of strict data residency rules, and needs tight control over exactly what the model can and cannot do. Which dimension from the chapter is most directly driving this requirement?",
   options:[
     "Licensing and deployment",
     "Modality",
@@ -1593,7 +1593,7 @@ const ch3_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 4 (Reasoning and Licensing): what does the chapter mean by the modality dimension of model selection?",
+  q:"What does the chapter mean by the modality dimension of model selection?",
   options:[
     "Whether the model supports text only, vision in, audio in, tool use, or structured output, matched to your actual input types",
     "How many tokens the model can process in a single request",
@@ -1605,7 +1605,7 @@ const ch3_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 5 (A Decision Framework That Works): what is the chapter's three-step rule for model selection?",
+  q:"What is the chapter's three-step rule for model selection?",
   options:[
     "Start capable, downsize where you can, escalate when you must",
     "Start cheap, upgrade everything at once, never downsize",
@@ -1617,7 +1617,7 @@ const ch3_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 6 (Each step has a concrete rule): a team's system already works end to end on a capable model. They notice their routing classifier performs identically whether they use a large frontier model or a much smaller one. What should they do, per the chapter's framework?",
+  q:"A team's system already works end to end on a capable model. They notice their routing classifier performs identically whether they use a large frontier model or a much smaller one. What should they do, per the chapter's framework?",
   options:[
     "Downsize the routing classifier to a smaller, cheaper model like Claude Haiku 4.5 or GPT-5 mini, since quality does not degrade there",
     "Immediately escalate the entire system to a reasoning model",
@@ -1629,7 +1629,7 @@ const ch3_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 7 (Reasoning models): according to the chapter, why are reasoning models very good at problems that decompose into steps but only average or worse on problems that do not?",
+  q:"According to the chapter, why are reasoning models very good at problems that decompose into steps but only average or worse on problems that do not?",
   options:[
     "They are trained specifically to reason through problems, make plans, and check their own work, not simply to think for a longer time",
     "They are identical to standard models except for a longer default response length",
@@ -1641,7 +1641,7 @@ const ch3_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 7 (Reasoning models): which tasks does the chapter recommend a reasoning model for?",
+  q:"Which tasks does the chapter recommend a reasoning model for?",
   options:[
     "Agentic planning",
     "Code debugging across a codebase",
@@ -1653,7 +1653,7 @@ const ch3_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 8 (Open vs Closed): what does the chapter say most enterprise systems in 2026 actually do?",
+  q:"What does the chapter say most enterprise systems in 2026 actually do?",
   options:[
     "Use both: a frontier closed model for the hardest parts, an open model for the high-volume simple parts",
     "Use only open models to avoid all API costs",
@@ -1665,7 +1665,7 @@ const ch3_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 8 (Open vs Closed): which reasons does the chapter give for choosing an open model?",
+  q:"Which reasons does the chapter give for choosing an open model?",
   options:[
     "Data residency requirements",
     "Predictable per-inference cost at high scale",
@@ -1677,7 +1677,7 @@ const ch3_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 9 (Your Evals Beat Any Benchmark): what does the chapter say should ultimately decide which model you use?",
+  q:"What does the chapter say should ultimately decide which model you use?",
   options:[
     "Your own evals, reflecting your product's real users and real failure modes, run against the candidate models",
     "Whichever model has the most positive marketing posts",
@@ -1861,7 +1861,7 @@ const ch4_slides = [
 const ch4_quiz = [
 {
   type:'mc',
-  q:"Slide 1 (Why this chapter exists): according to the chapter, when does the decision that causes most AI project failures actually happen?",
+  q:"According to the chapter, when does the decision that causes most AI project failures actually happen?",
   options:[
     "Months earlier, before anyone wrote a single prompt",
     "During the final testing phase, right before launch",
@@ -1873,7 +1873,7 @@ const ch4_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 2 (Why Problem-First Matters More in AI): how does the chapter say a weak problem statement fails differently in AI systems compared to traditional software?",
+  q:"How does the chapter say a weak problem statement fails differently in AI systems compared to traditional software?",
   options:[
     "In AI, outputs look plausible but drift unpredictably, and evals do not catch what was never specified, while traditional software still usually produces a working system",
     "AI systems always crash immediately, while traditional software never crashes",
@@ -1885,7 +1885,7 @@ const ch4_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 2 (Why Problem-First Matters More in AI): what does the chapter claim thirty minutes of clean problem definition upfront can save?",
+  q:"What does the chapter claim thirty minutes of clean problem definition upfront can save?",
   options:[
     "Months of unclear iteration later",
     "The entire cost of hiring an engineering team",
@@ -1897,7 +1897,7 @@ const ch4_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 3, 4, 5 (The Four Layers Framework): which of the following correctly describe the four layers, in the chapter's own order?",
+  q:"Which of the following correctly describe the four layers, in the chapter's own order?",
   options:[
     "Layer 1 is the user and their pain, defined with a named role, actual task, and measurable pain",
     "Layer 2 is the outcome, and it should be written before the system itself",
@@ -1909,7 +1909,7 @@ const ch4_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 4 (Layer 1 and Layer 2): a team writes \"Compliance analysts spend 90 minutes per filing checking disclosure completeness, and miss 3 to 5% of required items.\" Which layer of the framework does this statement belong to?",
+  q:"A team writes \"Compliance analysts spend 90 minutes per filing checking disclosure completeness, and miss 3 to 5% of required items.\" Which layer of the framework does this statement belong to?",
   options:[
     "Layer 1: The User and Their Pain",
     "Layer 2: The Outcome",
@@ -1921,7 +1921,7 @@ const ch4_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 5 (Layer 3 and Layer 4): what does the chapter say Layer 4, The System and Safety, actually covers?",
+  q:"What does the chapter say Layer 4, The System and Safety, actually covers?",
   options:[
     "Evals, guardrails, observability, human oversight, rollback, and audit trail, the production scaffolding around the system",
     "Only the choice of which foundation model to use",
@@ -1933,7 +1933,7 @@ const ch4_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 6 (Six Traps, part 1): a team starts a project by saying \"we want to use AI for customer support\" without first identifying a specific user or pain point. Which trap from the chapter does this match?",
+  q:"A team starts a project by saying \"we want to use AI for customer support\" without first identifying a specific user or pain point. Which trap from the chapter does this match?",
   options:[
     "Tech-first thinking",
     "Skipping the human baseline",
@@ -1945,7 +1945,7 @@ const ch4_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 6 and 7 (Six Traps): which of the following are named among the chapter's six design traps?",
+  q:"Which of the following are named among the chapter's six design traps?",
   options:[
     "Over-scoping",
     "Solutioning in the problem statement",
@@ -1957,7 +1957,7 @@ const ch4_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 7 (Six Traps, part 2): a team writes their problem statement as \"Build an LLM that uses RAG over our document store with a workflow agent on top.\" What does the chapter say is wrong with this?",
+  q:"A team writes their problem statement as \"Build an LLM that uses RAG over our document store with a workflow agent on top.\" What does the chapter say is wrong with this?",
   options:[
     "It describes an architecture instead of a problem, the actual pain, who it affects, and how much, is missing",
     "RAG and workflow agents should never be used together under any circumstances",
@@ -1969,7 +1969,7 @@ const ch4_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 7 (Six Traps, part 2): why does the chapter say skipping the human baseline is a problem?",
+  q:"Why does the chapter say skipping the human baseline is a problem?",
   options:[
     "Without measuring how long a task takes a human today and how often they get it wrong, you cannot tell if the AI system is actually an improvement",
     "Humans are always faster than AI systems, so a baseline is unnecessary",
@@ -1981,7 +1981,7 @@ const ch4_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 8 (A Scoping Template You Can Use): according to the chapter, what is the value of filling in the scoping template collaboratively with the user and engineering team in the room?",
+  q:"According to the chapter, what is the value of filling in the scoping template collaboratively with the user and engineering team in the room?",
   options:[
     "The act of filling it in surfaces every unresolved disagreement before any code gets written",
     "It guarantees the project will never need any changes later",
@@ -1993,7 +1993,7 @@ const ch4_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 8 (A Scoping Template You Can Use): which of these are among the six questions in the chapter's scoping template?",
+  q:"Which of these are among the six questions in the chapter's scoping template?",
   options:[
     "Who is the user?",
     "What is the single AI capability at the core?",
@@ -2005,7 +2005,7 @@ const ch4_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 9 (Designing for Iteration): what does the chapter recommend for a system's first version?",
+  q:"What does the chapter recommend for a system's first version?",
   options:[
     "The simplest thing that could work, shipped in front of a few users, watched for what breaks, then improved",
     "The full end-state architecture, built and polished before any user sees it",
@@ -2017,7 +2017,7 @@ const ch4_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 10 (Problem-First Doesn't Mean Problem-Forever): what caveat does the chapter add about how long Problem-First Design should be used?",
+  q:"What caveat does the chapter add about how long Problem-First Design should be used?",
   options:[
     "It is a discipline for the first thirty minutes of a project, used well and then set aside in favor of evaluation and iteration",
     "It should be repeated in a full meeting every single week for the life of the project",
@@ -2219,7 +2219,7 @@ const ch5_slides = [
 const ch5_quiz = [
 {
   type:'mc',
-  q:"Slide 1 (Why this chapter exists): what does the chapter say has changed between 2023 and 2026 in how people get models to do what they want?",
+  q:"What does the chapter say has changed between 2023 and 2026 in how people get models to do what they want?",
   options:[
     "It shifted from prompting, phrasing a single instruction well, to context engineering, deciding what goes into the context window, in what order, with what structure",
     "Prompting has been entirely replaced and no longer matters at all",
@@ -2231,7 +2231,7 @@ const ch5_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 2 (The Six Parts of a Working Prompt): which of the following are named among the six parts of a working prompt?",
+  q:"Which of the following are named among the six parts of a working prompt?",
   options:[
     "Role",
     "Constraints",
@@ -2243,7 +2243,7 @@ const ch5_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 2 (The Six Parts of a Working Prompt): what does the chapter say about the order of a prompt's parts?",
+  q:"What does the chapter say about the order of a prompt's parts?",
   options:[
     "Models weight the earliest and latest sections more heavily, so most teams put role and context first, and examples right before the output format reminder",
     "Order never matters, a model reads the entire prompt with equal weight everywhere",
@@ -2255,7 +2255,7 @@ const ch5_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 3 (Role and Context): a prompt opens with \"You are a billing support specialist.\" Which of the six parts of a working prompt does this line represent?",
+  q:"A prompt opens with \"You are a billing support specialist.\" Which of the six parts of a working prompt does this line represent?",
   options:[
     "Role",
     "Constraints",
@@ -2267,7 +2267,7 @@ const ch5_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 3 (Role and Context): what does the chapter say about the Task part of a prompt if you find yourself writing three separate tasks in it?",
+  q:"What does the chapter say about the Task part of a prompt if you find yourself writing three separate tasks in it?",
   options:[
     "Consider splitting it into three separate prompts",
     "Combine them into one very long sentence instead",
@@ -2279,7 +2279,7 @@ const ch5_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 4 (Constraints, Examples, Output format): according to the chapter, why are examples described as the highest-leverage tool in the prompt toolkit?",
+  q:"According to the chapter, why are examples described as the highest-leverage tool in the prompt toolkit?",
   options:[
     "For anything subjective or structured, two or three input-output pairs consistently outperform almost any other single intervention",
     "Examples are required in every single prompt regardless of the task",
@@ -2291,7 +2291,7 @@ const ch5_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 5 (Prompting for Reasoning Models): which of the three rules does the chapter say change when prompting a reasoning model instead of a standard model?",
+  q:"Which of the three rules does the chapter say change when prompting a reasoning model instead of a standard model?",
   options:[
     "Less hand-holding, since reasoning models already do step-by-step thinking on their own",
     "More context, less structure, since reasoning models often do better with the full picture",
@@ -2303,7 +2303,7 @@ const ch5_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 5 (Prompting for Reasoning Models): what is the chapter's short summary of the difference between prompting standard models and reasoning models?",
+  q:"What is the chapter's short summary of the difference between prompting standard models and reasoning models?",
   options:[
     "For standard models you are scripting the task, for reasoning models you are briefing a capable specialist",
     "There is no meaningful difference between the two approaches",
@@ -2315,7 +2315,7 @@ const ch5_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 6 (Context Engineering: The Bigger Picture): a production request includes a system prompt, seven turns of conversation history, three retrieved document chunks, tool definitions, tool results, and the current user message. What does the chapter call the discipline of assembling all of this correctly?",
+  q:"A production request includes a system prompt, seven turns of conversation history, three retrieved document chunks, tool definitions, tool results, and the current user message. What does the chapter call the discipline of assembling all of this correctly?",
   options:[
     "Context engineering",
     "Fine-tuning",
@@ -2327,7 +2327,7 @@ const ch5_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 7 (Four practical principles): which of these are named among the chapter's practical context engineering principles?",
+  q:"Which of these are named among the chapter's practical context engineering principles?",
   options:[
     "Recency matters, keep the most important context close to the end of the prompt",
     "Summarize when you compress, rather than simply truncating old turns",
@@ -2339,7 +2339,7 @@ const ch5_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 8 (Few-Shot Examples): according to the chapter, what are the three reasons examples work so well?",
+  q:"According to the chapter, what are the three reasons examples work so well?",
   options:[
     "They teach the pattern without describing it, they calibrate tone and style, and they resolve ambiguity in the task definition implicitly",
     "They make the prompt shorter, cheaper, and faster to run",
@@ -2351,7 +2351,7 @@ const ch5_quiz = [
 },
 {
   type:'scenario',
-  q:"Slide 9 (Picking good examples): a team picks three few-shot examples for a support-ticket classifier, but all three are typical, easy cases with no unusual wording. What does the chapter's guidance suggest is missing?",
+  q:"A team picks three few-shot examples for a support-ticket classifier, but all three are typical, easy cases with no unusual wording. What does the chapter's guidance suggest is missing?",
   options:[
     "One or two edge cases, since examples should not only cover the middle of the distribution",
     "Nothing is missing, easy cases are always the correct choice for examples",
@@ -2363,7 +2363,7 @@ const ch5_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 10 (Output Format): according to the chapter, when should a team choose structured JSON as the output format?",
+  q:"According to the chapter, when should a team choose structured JSON as the output format?",
   options:[
     "Whenever the next step in the pipeline is code, since a machine will consume the output directly",
     "Whenever a human will read the response directly in a chat interface",
@@ -2375,7 +2375,7 @@ const ch5_quiz = [
 },
 {
   type:'mc',
-  q:"Slide 11 and 12 (When to Stop Iterating): which of these is listed as a sign that prompt engineering has hit its ceiling?",
+  q:"Which of these is listed as a sign that prompt engineering has hit its ceiling?",
   options:[
     "Small prompt edits produce inconsistent score changes on your evals",
     "The model succeeds on every single case with no exceptions",
@@ -2387,7 +2387,7 @@ const ch5_quiz = [
 },
 {
   type:'multi',
-  q:"Slide 12 (When the ceiling hits): which fixes does the chapter recommend when prompt iteration has stopped helping?",
+  q:"Which fixes does the chapter recommend when prompt iteration has stopped helping?",
   options:[
     "Better retrieval, since the model may be missing context rather than instructions",
     "A model upgrade, if the task is at the edge of what the current model can do",
