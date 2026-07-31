@@ -1,6 +1,6 @@
 # AI Builder's Handbook — Study Companion
 
-An interactive study companion for *[The AI Builder's Handbook* (LevelUp Labs)](https://ashishpatelengineering.github.io/ai-builders-handbook/), built chapter by chapter with slides, self-grading quizzes, and a searchable glossary.
+An interactive study companion for [The AI Builder's Handbook (LevelUp Labs)](https://ashishpatelengineering.github.io/ai-builders-handbook/), built chapter by chapter with slides, self-grading quizzes, and a searchable glossary.
 
 ## What's inside
 
