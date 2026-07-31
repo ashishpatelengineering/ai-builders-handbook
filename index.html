@@ -275,6 +275,94 @@
     display:flex;
     flex-direction:column;
     justify-content:center;
+    position:relative;
+  }
+  .focus-toggle-btn{
+    position:absolute;
+    top:16px;
+    right:16px;
+    width:32px;
+    height:32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(20,28,42,0.5);
+    border:1px solid rgba(240,237,228,0.15);
+    border-radius:7px;
+    color:var(--slate);
+    cursor:pointer;
+    transition:background .15s, color .15s;
+    z-index:5;
+  }
+  .focus-toggle-btn:hover{
+    background:rgba(20,28,42,0.9);
+    color:var(--paper);
+    border-color:rgba(240,237,228,0.3);
+  }
+  .focus-toggle-btn svg{ width:16px; height:16px; }
+
+  /* ===== FOCUS MODE ===== */
+  #wrap.focus-mode .sidebar,
+  #wrap.focus-mode .sidebar-expand-btn,
+  #wrap.focus-mode header.top,
+  #wrap.focus-mode .concept-thread{
+    display:none !important;
+  }
+  #wrap.focus-mode .main-col{
+    max-width:1120px;
+    margin:0 auto;
+    padding-top:40px;
+  }
+  #wrap.focus-mode .slide{
+    min-height:65vh;
+    padding:64px 76px;
+  }
+  #wrap.focus-mode .slide .eyebrow{
+    font-size:13px;
+  }
+  #wrap.focus-mode .slide h2{
+    font-size:38px;
+    margin-bottom:24px;
+  }
+  #wrap.focus-mode .slide p,
+  #wrap.focus-mode .slide li{
+    font-size:18px;
+    line-height:1.7;
+  }
+  #wrap.focus-mode .slide .card h3{
+    font-size:15px;
+  }
+  #wrap.focus-mode .slide .card p{
+    font-size:16px;
+  }
+  #wrap.focus-mode .slide .callout,
+  #wrap.focus-mode .slide .example{
+    font-size:17px;
+    padding:22px 26px;
+  }
+  #wrap.focus-mode .nav{
+    display:none;
+  }
+  .focus-position{
+    display:none;
+    text-align:center;
+    margin-top:24px;
+    font-size:13px;
+    letter-spacing:0.08em;
+    color:var(--slate);
+    text-transform:uppercase;
+  }
+  #wrap.focus-mode .focus-position{
+    display:block;
+  }
+  @media (max-width: 1200px){
+    #wrap.focus-mode .main-col{ max-width:94vw; }
+  }
+  @media (max-width: 720px){
+    #wrap.focus-mode .slide{ padding:32px 24px; min-height:50vh; }
+    #wrap.focus-mode .slide h2{ font-size:26px; }
+    #wrap.focus-mode .slide p,
+    #wrap.focus-mode .slide li{ font-size:16px; }
   }
   .slide .eyebrow{
     font-size:11px;
@@ -514,6 +602,7 @@
         <div class="dots" id="dots"></div>
         <button id="nextBtn" onclick="go(1)">Next →</button>
       </div>
+      <div class="focus-position" id="focusPosition"></div>
     </div>
 
     <!-- ============ QUIZ ============ -->
@@ -2412,6 +2501,1365 @@ const ch5_quiz = [
 ];
 
 /* ============================================================
+   CHAPTER 6
+   ============================================================ */
+
+const ch6_slides = [
+{
+  eyebrow:"Why this chapter exists",
+  title:"Evaluation is the single highest-impact skill for anyone shipping AI products in 2026",
+  body:`
+    <p>This is a claim the book makes directly, and it is the opening
+    chapter of Part 3, the deepest part of the guide.</p>
+    <div class="callout">Evaluation beats prompting, agent design, and
+    model selection as the single highest-impact muscle a builder can
+    develop.</div>
+    <p>The next three chapters cover the core pieces of a working eval and
+    safety stack: code-based evals, LLM-as-judge, and guardrails. This
+    chapter is about why the whole category exists in the first place.</p>
+  `
+},
+{
+  eyebrow:"6.1 The 80/20 Flip",
+  title:"AI systems flip where the work happens compared to traditional software",
+  body:`
+    <div class="diagram">
+      <svg width="100%" viewBox="0 0 680 220" role="img">
+        <title>The 80/20 flip between traditional software and AI systems</title>
+        <desc>Traditional software spends 80 percent of effort before shipping and 20 percent after. AI systems spend roughly 20 percent before shipping and 80 percent after, in a continuous loop of observing, adjusting, and reshipping.</desc>
+        <g class="dgray"><rect x="30" y="30" width="280" height="150" rx="8" stroke-width="0.5"/>
+          <text class="th" x="170" y="58" text-anchor="middle">Traditional software</text>
+          <text class="t dsvg-label" x="170" y="95" text-anchor="middle">80% before shipping</text>
+          <text class="ts dsvg-sub" x="170" y="120" text-anchor="middle">Scope, design, code, test</text>
+          <text class="t dsvg-label" x="170" y="150" text-anchor="middle">20% after shipping</text>
+          <text class="ts dsvg-sub" x="170" y="172" text-anchor="middle">Stays mostly stable</text>
+        </g>
+        <g class="damber"><rect x="370" y="30" width="280" height="150" rx="8" stroke-width="0.5"/>
+          <text class="th" x="510" y="58" text-anchor="middle">AI systems</text>
+          <text class="t dsvg-label" x="510" y="95" text-anchor="middle">20% before shipping</text>
+          <text class="ts dsvg-sub" x="510" y="120" text-anchor="middle">A prompt, a model call, a UI</text>
+          <text class="t dsvg-label" x="510" y="150" text-anchor="middle">80% after shipping</text>
+          <text class="ts dsvg-sub" x="510" y="172" text-anchor="middle">Watch, learn, adjust, reship</text>
+        </g>
+      </svg>
+    </div>
+  `
+},
+{
+  eyebrow:"6.1 The 80/20 Flip",
+  title:"The work has not disappeared, it has moved to after launch",
+  body:`
+    <p>The first version of an AI system is relatively fast to build. What
+    takes time is what happens after: watching real users, spotting
+    failure patterns, adjusting evals, fixing prompts, updating retrieval,
+    and shipping again. This loop often runs for the life of the product.</p>
+    <div class="callout">Most teams do not know this going in, and the
+    ones who figure it out late spend months learning expensive lessons.
+    Treat evaluation and iteration as the core phase of the work, not as
+    cleanup after the real building.</div>
+  `
+},
+{
+  eyebrow:"6.2 What Evals Actually Buy You",
+  title:"A good eval harness does four things that nothing else can",
+  body:`
+    <p>An eval harness is a set of test cases plus a way to score how your
+    system does on them. It sounds simple, but the payoff is specific.</p>
+    <div class="grid2">
+      <div class="card"><h3>Tells you if a change helped</h3><p>Without evals, every prompt change is a vibe check. With evals, you have a number, and can reject changes that make things worse.</p></div>
+      <div class="card"><h3>Surfaces what is broken</h3><p>A good eval suite covers real edge cases. Without one, you rely on users to tell you what is wrong, a slow and lossy feedback loop.</p></div>
+    </div>
+  `
+},
+{
+  eyebrow:"6.2 What Evals Actually Buy You",
+  title:"Evals also create a shared language and turn model upgrades into experiments",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>A shared language across the team</h3><p>Engineers, PMs, and designers can all look at eval scores and agree on what is working. No one has to trust the engineer's "it's better now."</p></div>
+      <div class="card"><h3>Model upgrades become experiments</h3><p>When a new model comes out, you do not guess whether to adopt it. You run it against your eval suite and let the numbers decide.</p></div>
+    </div>
+    <div class="callout">Without evals, the team ships, hopes, and iterates without signal. Every bug report produces a three-day investigation that could have been a ten-minute eval run.</div>
+  `
+},
+{
+  eyebrow:"6.3 The Two Questions Every Eval Answers",
+  title:"Every eval answers one of two questions: correctness or quality",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Did it do the right thing?</h3><p>The correctness question. The classifier picked the right category. The summary captured the key points. The extraction pulled the correct values.</p></div>
+      <div class="card"><h3>Was the way it did it safe and usable?</h3><p>The quality question. The right tone, no sensitive data revealed, no claimed action it could not take, the right format for the next consumer.</p></div>
+    </div>
+    <div class="callout">Most production systems need both. Correctness alone misses answers that are technically right but unusable. Quality alone misses answers that sound good but are actually wrong.</div>
+  `
+},
+{
+  eyebrow:"6.4 Evals Are Infrastructure, Not a Milestone",
+  title:"The single biggest mistake teams make is treating evals as a pre-launch checkbox",
+  body:`
+    <p>Write a suite before launch, run it once, watch it pass, ship. Then
+    the evals sit untouched for months while the system quietly drifts.</p>
+    <div class="callout">Evals work best as infrastructure: always
+    running, always visible, always evolving. Every new edge case found in
+    production becomes a test case. Every model upgrade gets scored. Every
+    prompt change runs through the suite before going live.</div>
+    <p>Teams who invest in evals as infrastructure ship AI products that
+    actually improve over time. Teams who treat evals as a milestone ship
+    products that degrade quietly until someone notices.</p>
+  `
+},
+{
+  eyebrow:"6.4 Evals Are Infrastructure, Not a Milestone",
+  title:"The CC/CD framework is the operational version of evals-as-infrastructure",
+  body:`
+    <p>Continuous Calibration keeps the evals fresh as the world changes.
+    Continuous Development keeps the system improving against them.</p>
+    <div class="callout">Together, CC/CD replaces the one-time-launch model
+    of software engineering with a living-system model. This same
+    principle appeared in Chapter 4 as the operational version of
+    designing for iteration.</div>
+  `
+},
+{
+  eyebrow:"6.6 How to Read the Next Three Chapters",
+  title:"Three chapters, three tools, one complete eval harness",
+  body:`
+    <ul class="plain">
+      <li><b>Chapter 7: Code-based evals.</b> Deterministic checks that need no human labels. Schema, format, exact match, length, containment. Cheap, fast, unambiguous. Build these first.</li>
+      <li><b>Chapter 8: LLM-as-judge.</b> Using a model to score another model's output against a rubric. Powerful for subjective quality that code cannot catch. Must be calibrated against human labels before trusting it at scale.</li>
+      <li><b>Chapter 9: Guardrails.</b> The safety layer that runs before and after your model to catch bad inputs and outputs in production. Evals measure, guardrails intervene.</li>
+    </ul>
+    <div class="callout">Read them in order. They build on each other and together form a complete eval harness.</div>
+  `
+},
+{
+  eyebrow:"The Throughline",
+  title:"Evaluation is not a phase you finish, it is the discipline that keeps a system honest",
+  body:`
+    <p>AI products spend most of their real work after launch, not before.
+    Evals are what make that post-launch work possible at all: they tell
+    you if a change helped, what is broken, and whether a new model is
+    worth adopting.</p>
+    <div class="callout">Every chapter left in Part 3 exists to give you
+    the mechanics behind this one idea: evaluation, treated as
+    infrastructure, is the highest-leverage skill in building AI products.</div>
+  `
+}
+];
+
+const ch6_quiz = [
+{
+  type:'mc',
+  q:"According to the chapter, what is the single highest-impact skill for anyone shipping AI products in 2026?",
+  options:[
+    "Evaluation, which the chapter says beats prompting, agent design, and model selection",
+    "Prompt engineering",
+    "Choosing the newest available foundation model",
+    "Multi-agent system design"
+  ],
+  correct:0,
+  explain:"The chapter opens with this exact claim: evaluation is the most important skill for anyone shipping AI products in 2026, beating prompting, agent design, and model selection as the single highest-impact muscle a builder can develop."
+},
+{
+  type:'mc',
+  q:"What does the chapter call the shift in where effort goes between traditional software and AI systems?",
+  options:[
+    "The 80/20 flip, where AI systems spend roughly 80% of effort after shipping instead of before",
+    "The reasoning ceiling",
+    "Context engineering",
+    "The scoping template"
+  ],
+  correct:0,
+  explain:"The chapter names this the 80/20 flip: traditional software spends 80% of effort pre-deployment, while AI systems spend roughly 80% of effort post-deployment, watching, adjusting, and reshipping."
+},
+{
+  type:'scenario',
+  q:"A team believes that once their AI feature ships, the bulk of the real work is finished, the same way it usually is for traditional software features. What does the chapter say about this assumption?",
+  options:[
+    "It is a mistaken assumption for AI systems, since the work has not disappeared, it has moved to after launch, and this loop often runs for the life of the product",
+    "The chapter agrees, AI systems require no work after they ship",
+    "The chapter says this is true only for reasoning models",
+    "The chapter says this is true only for code-based evals"
+  ],
+  correct:0,
+  explain:"The chapter directly challenges this assumption: the first version of an AI system is relatively fast to build, but the real work, watching users, spotting failures, adjusting, and reshipping, happens after launch and often continues for the life of the product."
+},
+{
+  type:'multi',
+  q:"Which of these are named among the four things a good eval harness buys you, according to the chapter?",
+  options:[
+    "It tells you if a change made the system better",
+    "It surfaces what is broken",
+    "It creates a shared language across the team",
+    "It eliminates the need for any human oversight permanently"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter names exactly four things a good eval harness provides: it tells you if a change helped, it surfaces what is broken, it creates a shared language across the team, and it turns model upgrades into experiments. Eliminating human oversight permanently is not one of them."
+},
+{
+  type:'mc',
+  q:"How does the chapter describe the effect of not having an eval suite when a bug report comes in?",
+  options:[
+    "Every bug report produces a three-day investigation that could have been a ten-minute eval run",
+    "Bug reports become irrelevant once a system ships",
+    "Without evals, bug reports are resolved faster than with evals",
+    "The chapter says bug reports never occur in AI systems"
+  ],
+  correct:0,
+  explain:"The chapter states this exact consequence of the absence of evals: every bug report produces a three-day investigation that could have been a ten-minute eval run, describing this as a specific kind of stuck teams fall into without signal."
+},
+{
+  type:'scenario',
+  q:"A classifier correctly picks the right category for a support ticket, but the response also happens to reveal a customer's private billing details it should not have. Which of the chapter's two eval questions does each part of this problem map to?",
+  options:[
+    "Picking the right category is the correctness question, revealing private data is a failure of the quality question",
+    "Both parts are examples of the correctness question only",
+    "Both parts are examples of the quality question only",
+    "Neither part maps to either of the chapter's two eval questions"
+  ],
+  correct:0,
+  explain:"The chapter defines correctness as whether the system did the right thing, like picking the right category, and quality as whether the way it did it was safe and usable, including not revealing sensitive data. This example needs both, exactly the point the chapter makes about most production systems."
+},
+{
+  type:'mc',
+  q:"Why does the chapter say most production systems need both the correctness question and the quality question answered?",
+  options:[
+    "Correctness alone misses answers that are technically right but unusable, and quality alone misses answers that sound good but are actually wrong",
+    "Only the correctness question ever matters in production",
+    "Only the quality question ever matters in production",
+    "The two questions always produce identical results, so only one needs to be checked"
+  ],
+  correct:0,
+  explain:"The chapter states this exact reasoning: correctness alone misses the places where the system is technically right but the answer is unusable, and quality alone misses the places where the system sounds good but is actually wrong."
+},
+{
+  type:'mc',
+  q:"What does the chapter say is the single biggest mistake teams make with evals?",
+  options:[
+    "Treating evals as a pre-launch checkbox: write a suite, run it once, watch it pass, and ship, then leave it untouched for months",
+    "Running evals too frequently during development",
+    "Writing too many test cases before launch",
+    "Using code-based evals instead of LLM-as-judge"
+  ],
+  correct:0,
+  explain:"The chapter states this directly as the single biggest mistake: treating evals as a pre-launch checkbox rather than infrastructure, after which the evals sit untouched for months while the system drifts."
+},
+{
+  type:'multi',
+  q:"According to the chapter, what does it mean for evals to work as infrastructure rather than a milestone?",
+  options:[
+    "Always running, always visible, always evolving",
+    "Every new edge case found in production becomes a test case in the suite",
+    "Every model upgrade gets scored against the suite",
+    "The suite is written once before launch and never modified again"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter describes evals-as-infrastructure as always running, always visible, always evolving, with every new production edge case becoming a test case and every model upgrade and prompt change scored against the suite. Writing the suite once and never touching it again is the opposite, described as the milestone mistake."
+},
+{
+  type:'mc',
+  q:"What do Continuous Calibration and Continuous Development do in the CC/CD framework, according to the chapter?",
+  options:[
+    "Continuous Calibration keeps the evals fresh as the world changes, Continuous Development keeps the system improving against them",
+    "Continuous Calibration writes new code, Continuous Development writes new evals",
+    "Both terms refer to the exact same activity performed twice",
+    "Continuous Calibration only applies to code-based evals, never to LLM-as-judge"
+  ],
+  correct:0,
+  explain:"The chapter defines the two halves precisely: Continuous Calibration keeps the evals fresh as the world changes, and Continuous Development keeps the system improving against them, together replacing the one-time-launch model with a living-system model."
+},
+{
+  type:'multi',
+  q:"Which of the following correctly matches each of the next three chapters to its topic, as previewed in this chapter?",
+  options:[
+    "Chapter 7 covers code-based evals: deterministic checks that need no human labels",
+    "Chapter 8 covers LLM-as-judge: using a model to score another model's output against a rubric",
+    "Chapter 9 covers guardrails: the safety layer that runs before and after the model in production",
+    "Chapter 7 covers guardrails and Chapter 9 covers code-based evals"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter previews the next three chapters in this exact order: Chapter 7 is code-based evals, Chapter 8 is LLM-as-judge, and Chapter 9 is guardrails. The fourth option swaps the order incorrectly."
+},
+{
+  type:'mc',
+  q:"What distinction does the chapter draw between evals and guardrails?",
+  options:[
+    "Evals measure, guardrails intervene",
+    "Evals and guardrails are the exact same thing with two different names",
+    "Guardrails only run before the model, evals only run after",
+    "Evals are used only in Chapter 9, guardrails are used only in Chapter 7"
+  ],
+  correct:0,
+  explain:"The chapter draws this precise distinction between the two adjacent but different tools: evals measure, guardrails intervene, with guardrails running before and after the model to catch bad inputs and outputs in production."
+},
+{
+  type:'mc',
+  q:"The Throughline: what is the chapter's closing point about evaluation?",
+  options:[
+    "Evaluation is not a phase you finish, it is the discipline that keeps a system honest, and treated as infrastructure it is the highest-leverage skill in building AI products",
+    "Evaluation is only useful during the first thirty minutes of a project",
+    "Evaluation should be skipped once a system has shipped successfully",
+    "Evaluation matters less than prompting once a system is in production"
+  ],
+  correct:0,
+  explain:"The chapter's closing synthesis states plainly that evaluation is not a phase you finish, but the discipline that keeps a system honest, and that treated as infrastructure it is the highest-leverage skill in building AI products, tying directly back to the chapter's opening claim."
+}
+];
+
+/* ============================================================
+   CHAPTER 7
+   ============================================================ */
+
+const ch7_slides = [
+{
+  eyebrow:"Why this chapter exists",
+  title:"Code-based evals are the cheapest, most underused eval family",
+  body:`
+    <p>Code-based evals check whether a model's output meets a specific,
+    deterministic criterion using plain code. No labels required, no human
+    in the loop, no LLM judge. Just a function that returns true or false.</p>
+    <div class="callout">Teams skip these because they feel too simple to
+    matter. That instinct is wrong. Code-based evals catch a surprising
+    share of real production failures, run in milliseconds, and scale to
+    millions of cases for essentially zero cost. Build these first, always.</div>
+  `
+},
+{
+  eyebrow:"7.1 What Code-Based Evals Can Check",
+  title:"The pattern is simple: the model outputs, your code inspects, and returns pass or fail",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Schema validation</h3><p>Does the output match the expected JSON schema, with all required fields and correct types? The highest-leverage code-based eval for structured output.</p></div>
+      <div class="card"><h3>Format validation</h3><p>Does the output follow the expected format? Valid markdown, required prefix, category matching an allowed value.</p></div>
+      <div class="card"><h3>Exact match</h3><p>Does the output exactly match an expected value? The canonical pattern for classification: does the predicted category match the labeled one.</p></div>
+      <div class="card"><h3>Containment</h3><p>Does the output contain a specific required string? A disclaimer, a citation ID, a session marker. Fast to check.</p></div>
+    </div>
+  `
+},
+{
+  eyebrow:"7.1 What Code-Based Evals Can Check",
+  title:"Four more categories round out the code-based eval toolkit",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Length constraints</h3><p>Is the output within the expected length? Too short suggests truncation, too long suggests the model is running on. Both are signal.</p></div>
+      <div class="card"><h3>URL validity</h3><p>For any system generating links, check that URLs resolve and point to allowed domains.</p></div>
+      <div class="card"><h3>Regex pattern match</h3><p>For outputs with a known shape, dates, product IDs, invoice numbers, a regex check is a cheap correctness signal.</p></div>
+      <div class="card"><h3>Count of things</h3><p>Are there three bullet points when three were asked for? Two citations when at least one was expected?</p></div>
+    </div>
+    <div class="callout">The common thread: if there is a question you can answer by inspecting the output with code, there is a code-based eval waiting to be written.</div>
+  `
+},
+{
+  eyebrow:"7.2 When Code-Based Evals Are Enough",
+  title:"When a question has a crisp right answer, code-based evals are not just enough, they're better",
+  body:`
+    <p>Classification, extraction, format compliance, schema conformance,
+    routing, tool call validation: for these, a code-based eval beats any
+    LLM-based alternative. Faster, cheaper, more consistent, easier to debug.</p>
+    <div class="example">A classification router is a perfect case. The task is picking one of N categories. The eval checks if the predicted category matches the labeled one, giving a reliable baseline score for measuring whether prompt improvements actually help.</div>
+    <div class="callout">Before reaching for LLM-as-judge in Chapter 8, ask whether the question is really subjective. Often the answer is no, and a five-line code function does the job.</div>
+  `
+},
+{
+  eyebrow:"7.3 Building Your First Code-Based Eval",
+  title:"Three ingredients make a code-based eval: a dataset, a run function, a score function",
+  body:`
+    <ul class="plain">
+      <li><b>The dataset.</b> A set of test cases with inputs and the expected output or criterion. Start with 20 to 50 cases, cover the main patterns, include a few edge cases.</li>
+      <li><b>The run function.</b> Given a case, call your system and return the output. This exercises the actual code path.</li>
+      <li><b>The score function.</b> Given the output and expected output, return true or false. This is your eval logic.</li>
+    </ul>
+    <div class="callout">Run the suite, see the aggregate score, drill into failures, fix, rerun, track the score over time.</div>
+  `
+},
+{
+  eyebrow:"7.3 Building Your First Code-Based Eval",
+  title:"The platform matters less than the discipline",
+  body:`
+    <p>Arize, LangSmith, Promptfoo, or just a simple Python script can
+    orchestrate the runs. Any of these work, since the value comes from
+    running the suite consistently, not from which tool runs it.</p>
+  `
+},
+{
+  eyebrow:"7.4 The Failure Modes Code-Based Evals Catch Best",
+  title:"Five specific failure types get caught by code evals more reliably than any other method",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Schema drift</h3><p>The model returned a field not in the schema, or skipped a required one. A schema validator catches it instantly.</p></div>
+      <div class="card"><h3>Format regressions</h3><p>A prompt change broke the output format subtly. Containment or regex checks catch it before any real user sees the bug.</p></div>
+      <div class="card"><h3>Silent truncation</h3><p>Output cut off mid-sentence from hitting the token limit. A minimum-length check or end-marker check catches it.</p></div>
+      <div class="card"><h3>Category bleed</h3><p>A classifier started predicting an unexpected category after a prompt change. An allowed-values check catches it.</p></div>
+    </div>
+    <div class="example">Hallucinated links: a model generates a plausible-looking URL that does not resolve. A URL validator catches it. Each of these is cheap to check and expensive to miss.</div>
+  `
+},
+{
+  eyebrow:"7.5 The Limits",
+  title:"Code-based evals cannot judge tone, faithfulness, or reasoning correctness",
+  body:`
+    <p>They cannot tell you whether an answer sounds right, whether the
+    tone is appropriate, whether a summary captured the important points,
+    or whether a reasoning chain is correct. These require judgment, from
+    a human or an LLM judge.</p>
+    <div class="callout">Send everything answerable with code to a
+    code-based eval. Reserve the LLM judge from Chapter 8 for questions
+    that actually require judgment.</div>
+  `
+},
+{
+  eyebrow:"7.5 The Limits",
+  title:"A good rule of thumb: aim for 60 to 70% of total eval coverage to be code-based",
+  body:`
+    <p>Code-based evals catch the widest net of real failures at the
+    lowest cost. The remaining 30 to 40% is where LLM judges and human
+    review earn their keep, on the genuinely subjective questions.</p>
+  `
+},
+{
+  eyebrow:"7.6 What You Need in Your First Eval Suite",
+  title:"A minimum eval suite, if you are starting from zero",
+  body:`
+    <ul class="plain">
+      <li>Schema validation on all structured outputs</li>
+      <li>Allowed-value checks on all classifier-style outputs</li>
+      <li>Exact-match or containment checks on any output that must contain specific required text</li>
+      <li>Length bounds on any output with a specific target length</li>
+      <li>URL validation on any output that contains links</li>
+      <li>At least 30 test cases covering the main patterns and five edge cases</li>
+    </ul>
+    <div class="callout">This setup runs in seconds, costs almost nothing, and catches a surprising percentage of real regressions. It is the fastest possible step from "we hope it works" to "we have a signal." Build this before anything else.</div>
+  `
+},
+{
+  eyebrow:"The Throughline",
+  title:"Code-based evals are the floor every AI system should stand on",
+  body:`
+    <p>They are cheap, fast, unambiguous, and catch a specific, well-defined
+    set of failures reliably. They cannot judge subjective quality, and they
+    are not meant to.</p>
+    <div class="callout">Roughly 60 to 70% of your eval coverage should be
+    code-based. Build this layer first, always, before reaching for
+    anything more sophisticated.</div>
+    <p>Chapter 8 picks up exactly where this chapter's limits end: how to
+    use LLM-as-judge for the questions that genuinely require judgment.</p>
+  `
+}
+];
+
+const ch7_quiz = [
+{
+  type:'mc',
+  q:"What does the chapter say a code-based eval requires, compared to other eval types?",
+  options:[
+    "No labels, no human in the loop, and no LLM judge, just a function that returns true or false",
+    "A large team of human reviewers for every single test case",
+    "A separate LLM judge to score every output",
+    "A minimum of one thousand labeled examples before it can run"
+  ],
+  correct:0,
+  explain:"The chapter defines code-based evals precisely this way: no labels required, no human in the loop, no LLM judge, just a function that returns true or false."
+},
+{
+  type:'mc',
+  q:"According to the chapter, why is it a mistake for teams to skip code-based evals for feeling too simple?",
+  options:[
+    "Code-based evals catch a surprising share of real production failures, run in milliseconds, and scale to millions of cases for essentially zero cost",
+    "Code-based evals are actually more expensive than LLM-as-judge evals",
+    "Code-based evals require more setup time than any other eval type",
+    "The chapter agrees that code-based evals are not worth building"
+  ],
+  correct:0,
+  explain:"The chapter calls the instinct to skip them wrong, stating code-based evals catch a surprising share of real failures, run in milliseconds, and scale to millions of cases for essentially zero cost, recommending teams build these first, always."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the categories of code-based evals in the chapter?",
+  options:[
+    "Schema validation",
+    "Containment",
+    "URL validity",
+    "Emotional tone scoring"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter names schema validation, format validation, exact match, containment, length constraints, URL validity, regex pattern match, and count of things as its eight categories. Emotional tone scoring is explicitly the kind of judgment call the chapter says requires an LLM judge, not code."
+},
+{
+  type:'scenario',
+  q:"A router picks one of five categories for an incoming request, and each test case has a labeled correct category. Which code-based eval pattern does the chapter say fits this exactly?",
+  options:[
+    "Exact match, the canonical pattern for classification, checking if the predicted category matches the labeled one",
+    "URL validity",
+    "Length constraints",
+    "Regex pattern match"
+  ],
+  correct:0,
+  explain:"The chapter names exact match as the canonical eval pattern for classification specifically: a router picks a category, and the eval checks if that category matches the labeled one."
+},
+{
+  type:'mc',
+  q:"According to the chapter, why is a code-based eval better than an LLM-based alternative when a question has a crisp right answer?",
+  options:[
+    "It is faster, cheaper, more consistent, and easier to debug than any LLM-based alternative",
+    "LLM-based evals are always cheaper than code-based evals",
+    "Code-based evals are the only eval type capable of running more than once",
+    "The chapter says code-based evals should never be used for classification tasks"
+  ],
+  correct:0,
+  explain:"The chapter states directly that for crisp-answer questions like classification and extraction, a code-based eval is not only enough, it is better than anything else: faster, cheaper, more consistent, and easier to debug."
+},
+{
+  type:'mc',
+  q:"What question does the chapter recommend asking before reaching for LLM-as-judge?",
+  options:[
+    "Whether the question you are trying to answer is really subjective, since often the answer is no and a five-line code function does the job",
+    "Whether the team has budget left over for the month",
+    "Whether the model being evaluated is a reasoning model",
+    "Whether the eval suite already has more than 100 test cases"
+  ],
+  correct:0,
+  explain:"The chapter's guidance before reaching for LLM-as-judge is to ask whether the question is really subjective, noting that often the answer is no and a simple code function handles it instead."
+},
+{
+  type:'multi',
+  q:"Which three ingredients does the chapter say are needed to build a code-based eval?",
+  options:[
+    "A dataset of test cases",
+    "A run function that calls your system and returns the output",
+    "A score function that returns true or false",
+    "A dedicated LLM judge model"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter names exactly three ingredients: the dataset, the run function, and the score function. An LLM judge is not one of them, since code-based evals by definition do not use one."
+},
+{
+  type:'mc',
+  q:"How many test cases does the chapter recommend starting with for a new code-based eval dataset?",
+  options:[
+    "20 to 50 cases, covering the main patterns and including a few edge cases",
+    "Exactly 1,000 cases before any eval can be considered valid",
+    "A single test case is sufficient to start",
+    "The chapter says the number of cases never matters"
+  ],
+  correct:0,
+  explain:"The chapter's specific guidance is to start with 20 to 50 cases, covering the main patterns and including a few edge cases."
+},
+{
+  type:'mc',
+  q:"According to the chapter, what actually matters more than which platform (Arize, LangSmith, Promptfoo, or a plain script) you use to orchestrate eval runs?",
+  options:[
+    "The discipline of running the suite consistently matters more than the specific platform",
+    "The platform choice is the single most important decision in eval design",
+    "Only Arize is capable of running code-based evals correctly",
+    "A custom platform must always be built from scratch"
+  ],
+  correct:0,
+  explain:"The chapter states plainly that the platform matters less than the discipline, naming Arize, LangSmith, Promptfoo, and a simple Python script as roughly interchangeable options for orchestrating the runs."
+},
+{
+  type:'scenario',
+  q:"A team's model output was cut off mid-sentence because it hit the token limit, and nobody noticed until a user complained. Which code-based eval category, from the chapter's failure-modes list, would have caught this?",
+  options:[
+    "Silent truncation, caught by a minimum-length check or an end-of-response marker check",
+    "Schema drift",
+    "Category bleed",
+    "Hallucinated links"
+  ],
+  correct:0,
+  explain:"The chapter names this exact scenario as silent truncation: model output cut off mid-sentence from hitting the token limit, caught by a minimum-length check or an end-of-response marker check."
+},
+{
+  type:'mc',
+  q:"What does the chapter say code-based evals cannot tell you?",
+  options:[
+    "Whether the answer sounds right, whether the tone is appropriate, or whether a reasoning chain is correct",
+    "Whether a JSON schema was followed correctly",
+    "Whether a required string is present in the output",
+    "Whether a URL resolves successfully"
+  ],
+  correct:0,
+  explain:"The chapter states code-based evals cannot judge whether an answer sounds right, whether the tone is appropriate, whether a summary captured the important points, or whether a reasoning chain is correct. These require judgment from a human or an LLM judge."
+},
+{
+  type:'mc',
+  q:"What eval coverage split does the chapter recommend between code-based evals and LLM judges or human review?",
+  options:[
+    "Aim for 60 to 70% of total eval coverage to be code-based, with the remaining 30 to 40% for LLM judges and human review",
+    "Aim for 100% code-based coverage and never use an LLM judge",
+    "Aim for 100% LLM-judge coverage and avoid code-based evals entirely",
+    "The chapter says the split should always be exactly 50/50"
+  ],
+  correct:0,
+  explain:"The chapter's stated rule of thumb is to aim for 60 to 70% of total eval coverage to be code-based, since it catches the widest net of real failures at the lowest cost, with the remaining 30 to 40% reserved for LLM judges and human review."
+},
+{
+  type:'multi',
+  q:"Which of these are included in the chapter's recommended minimum eval suite for a team starting from zero?",
+  options:[
+    "Schema validation on all structured outputs",
+    "Allowed-value checks on all classifier-style outputs",
+    "At least 30 test cases covering the main patterns and five edge cases",
+    "A fully staffed team of human reviewers before writing any code"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter's minimum eval suite includes schema validation, allowed-value checks, exact-match or containment checks, length bounds, URL validation, and at least 30 test cases. A fully staffed human review team is not part of the minimum starting suite, code-based evals are meant to require no human in the loop."
+},
+{
+  type:'mc',
+  q:"The Throughline: what does the chapter say code-based evals are, in relation to the rest of an eval suite?",
+  options:[
+    "The floor every AI system should stand on: cheap, fast, unambiguous, and built first, before anything more sophisticated",
+    "An optional layer that most teams should skip entirely",
+    "A complete replacement for LLM-as-judge in every situation",
+    "Something only needed after a system has already shipped and failed"
+  ],
+  correct:0,
+  explain:"The chapter's closing synthesis describes code-based evals as the floor every AI system should stand on, cheap, fast, and unambiguous, recommending this layer be built first, always, before reaching for anything more sophisticated like LLM-as-judge."
+}
+];
+
+/* ============================================================
+   CHAPTER 8
+   ============================================================ */
+
+const ch8_slides = [
+{
+  eyebrow:"Why this chapter exists",
+  title:"Some of the most important questions about AI output cannot be answered by code",
+  body:`
+    <p>Is the tone warm or robotic? Is the summary faithful to the source?
+    Did the response feel helpful? These are judgment calls.</p>
+    <div class="grid2">
+      <div class="card"><h3>Human reviewers</h3><p>Accurate, but does not scale.</p></div>
+      <div class="card"><h3>Code-based heuristics</h3><p>Fast, but often wrong for subjective questions.</p></div>
+    </div>
+    <div class="callout"><b>LLM-as-judge:</b> a language model that scores your system's output against a rubric. Used well, it gives judgment at scale. Used poorly, it gives confident noise. This chapter is about using it well.</div>
+  `
+},
+{
+  eyebrow:"8.1 When LLM-as-Judge Makes Sense",
+  title:"LLM judges are the right tool only when three conditions line up",
+  body:`
+    <ul class="plain">
+      <li><b>The question requires judgment.</b> Tone, faithfulness, helpfulness, completeness, empathy, style adherence. Things a human can evaluate in ten seconds but a regex cannot.</li>
+      <li><b>The scale is too big for humans.</b> Hundreds or thousands of cases to score, more than humans could sustain at the cadence you need.</li>
+      <li><b>You can write a clear rubric.</b> If you cannot articulate the standard in a paragraph, the judge will not apply it consistently either.</li>
+    </ul>
+    <div class="callout">If any of the three is missing, reach for something else: human review for small datasets, a code-based eval for crisp answers, or fix your rubric before reaching for a judge at all.</div>
+  `
+},
+{
+  eyebrow:"8.2 A Brand Voice Judge: A Worked Example",
+  title:"One example anchors every LLM judge you will ever build",
+  body:`
+    <p>A common shape: a judge scores whether a support specialist's draft
+    matches a brand voice (calm, professional, concise, empathetic),
+    returning Good, Acceptable, or Poor plus one sentence of reasoning.</p>
+    <div class="callout">Five components appear in every judge, this one
+    included: a clear task definition, an explicit rubric with labels and
+    criteria, a calibration set of labeled human examples, a judge prompt,
+    and a scoring mechanism that returns a label.</div>
+    <p>The pattern is stable across every judge you build. The difference
+    between a good judge and a bad one is all in the details.</p>
+  `
+},
+{
+  eyebrow:"8.3 Writing a Judge Prompt That Works",
+  title:"A judge prompt has to do three things at once",
+  body:`
+    <p>Tell the model what to evaluate, give it the rubric, and constrain
+    its output to something you can parse. Here is a version the book
+    has seen work well, evaluating brand voice:</p>
+    <div class="example">
+      You are evaluating AI support responses for brand voice.<br><br>
+      Return exactly two lines:<br>
+      LABEL: &lt;Good|Acceptable|Poor&gt;<br>
+      REASONING: &lt;one sentence&gt;<br><br>
+      GOOD: Calm, professional, concise, and empathetic. Does not claim unsupported write actions.<br>
+      ACCEPTABLE: Mostly professional but generic, awkward, slightly flat, or missing warmth.<br>
+      POOR: Blaming, abrupt, defensive, off-brand, or claims an action the system did not take.
+    </div>
+  `
+},
+{
+  eyebrow:"8.3 Writing a Judge Prompt That Works",
+  title:"Four principles are embedded in that one prompt",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Use a label taxonomy</h3><p>Models do better with labels (Good, Acceptable, Poor) than fine-grained scores (1 through 10). Numeric scores sound precise but drift between runs.</p></div>
+      <div class="card"><h3>Definitions for every label</h3><p>What exactly is Acceptable versus Poor? If a human cannot tell, the model will not either.</p></div>
+      <div class="card"><h3>Structured output</h3><p>A format you can parse. The LABEL and REASONING pair is cheap to extract and easy to analyze.</p></div>
+      <div class="card"><h3>Keep reasoning short</h3><p>One sentence. Long chains of reasoning produce inconsistent labels across runs.</p></div>
+    </div>
+  `
+},
+{
+  eyebrow:"8.4 Calibration: The Step Nobody Skips Twice",
+  title:"An LLM judge you have not calibrated is a judge you cannot trust",
+  body:`
+    <p>Calibration checks how well the judge agrees with human labelers,
+    before you deploy it at scale. The workflow has five steps.</p>
+    <ul class="plain">
+      <li>Pick 30 to 50 cases covering the range of quality, some obviously good, some obviously bad, some borderline.</li>
+      <li>Have two humans label each case with your rubric.</li>
+      <li>Where humans disagree, discuss and resolve. If you cannot resolve it, your rubric is underspecified.</li>
+      <li>Run your judge prompt on the same cases.</li>
+      <li>Measure agreement between judge and human consensus.</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"8.4 Calibration: The Step Nobody Skips Twice",
+  title:"Three agreement thresholds tell you exactly what to do next",
+  body:`
+    <div class="diagram">
+      <svg width="100%" viewBox="0 0 680 210" role="img">
+        <title>Judge calibration agreement thresholds</title>
+        <desc>At 90 percent or higher agreement, trust the judge and deploy. Between 70 and 90 percent, iterate on the prompt and retry. Below 70 percent, the rubric or task is not ready for a judge.</desc>
+        <g class="dteal"><rect x="20" y="30" width="200" height="130" rx="8" stroke-width="0.5"/>
+          <text class="th" x="120" y="60" text-anchor="middle">90%+ agreement</text>
+          <text class="ts dsvg-sub" x="120" y="90" text-anchor="middle">Trust the judge</text>
+          <text class="ts dsvg-sub" x="120" y="108" text-anchor="middle">and deploy</text>
+        </g>
+        <g class="damber"><rect x="240" y="30" width="200" height="130" rx="8" stroke-width="0.5"/>
+          <text class="th" x="340" y="60" text-anchor="middle">70 to 90%</text>
+          <text class="ts dsvg-sub" x="340" y="90" text-anchor="middle">Iterate on the</text>
+          <text class="ts dsvg-sub" x="340" y="108" text-anchor="middle">prompt, retry</text>
+        </g>
+        <g class="dgray"><rect x="460" y="30" width="200" height="130" rx="8" stroke-width="0.5"/>
+          <text class="th" x="560" y="60" text-anchor="middle">Below 70%</text>
+          <text class="ts dsvg-sub" x="560" y="90" text-anchor="middle">Not ready, sharpen</text>
+          <text class="ts dsvg-sub" x="560" y="108" text-anchor="middle">the rubric first</text>
+        </g>
+      </svg>
+    </div>
+    <div class="callout">The 50-case calibration set also becomes your regression test for the judge itself. This is the step teams skip when rushed, and the cost of skipping it is weeks of measuring the wrong thing.</div>
+  `
+},
+{
+  eyebrow:"8.5 The Ways LLM Judges Fail",
+  title:"Even calibrated judges fail in specific, well-known ways",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Position bias</h3><p>When comparing two outputs side by side, judges systematically prefer the first one. Randomize the order.</p></div>
+      <div class="card"><h3>Length bias</h3><p>Judges often prefer longer responses because they look more complete, even when the shorter one is better. Control for this in your rubric.</p></div>
+      <div class="card"><h3>Over-lenient scoring</h3><p>Frontier models trained on helpfulness can err toward calling outputs Good when a human would say Acceptable. Calibration surfaces this.</p></div>
+      <div class="card"><h3>Sensitivity to phrasing</h3><p>A small word change in the rubric can shift scores significantly. Once calibrated, treat the prompt as a stable, versioned asset.</p></div>
+    </div>
+  `
+},
+{
+  eyebrow:"8.5 The Ways LLM Judges Fail",
+  title:"Model drift means recalibration is not a one-time event",
+  body:`
+    <p>When your judge model gets upgraded, say Claude 4.6 to 4.7, scores
+    can shift even when your rubric is unchanged. Recalibrate after every
+    judge model change.</p>
+    <div class="callout">None of these failure modes disqualify LLM
+    judges. They argue for treating the judge as a measurement instrument
+    that needs regular checks, not a set-and-forget tool.</div>
+  `
+},
+{
+  eyebrow:"8.6 Judges as Part of a Full Eval Suite",
+  title:"A healthy eval suite splits across three pillars in a specific ratio",
+  body:`
+    <ul class="plain">
+      <li><b>60 to 70% code-based evals.</b> Cheap, fast, deterministic. Run on every change.</li>
+      <li><b>20 to 30% LLM judge evals.</b> Handle subjective quality. Calibrated quarterly.</li>
+      <li><b>5 to 10% human review.</b> Spot-check a sample weekly, surface unexpected failures, feed new edge cases back into the other two buckets.</li>
+    </ul>
+    <div class="callout">Humans do not scale. Code does not judge. LLM judges fill the gap in between. Together, the three pillars cover the full space of what you care about.</div>
+  `
+},
+{
+  eyebrow:"8.7 When to Recalibrate",
+  title:"Five triggers mean it is time to recalibrate the judge",
+  body:`
+    <ul class="plain">
+      <li>You change the judge prompt</li>
+      <li>You change the judge model</li>
+      <li>You change the rubric</li>
+      <li>Your system's outputs start looking qualitatively different (new style, new use case, new failure mode)</li>
+      <li>A quarter has passed since the last calibration</li>
+    </ul>
+    <div class="callout">The cost is low, about thirty minutes of human labeling, a judge run, and an agreement calculation. The benefit is high: confidence that your eval numbers are still measuring what you think they are.</div>
+  `
+},
+{
+  eyebrow:"The Throughline",
+  title:"An LLM judge is a measurement instrument, and instruments need calibration",
+  body:`
+    <p>Judgment questions need judgment, at a scale humans cannot sustain.
+    LLM-as-judge fills that gap, but only when the question genuinely
+    needs judgment, the scale justifies it, and a clear rubric exists.</p>
+    <div class="callout">Calibrate before trusting it, recalibrate whenever
+    the prompt, model, rubric, or system output shifts, and treat it as
+    one of three pillars alongside code-based evals and human review.</div>
+    <p>Chapter 9 moves to the production safety layer that runs in real
+    time, on every request: guardrails.</p>
+  `
+}
+];
+
+const ch8_quiz = [
+{
+  type:'mc',
+  q:"According to the chapter, what is LLM-as-judge?",
+  options:[
+    "A language model that scores your system's output against a rubric",
+    "A human reviewer hired specifically to check AI output",
+    "A code-based function that returns true or false",
+    "A separate foundation model used only for generating responses, never for scoring"
+  ],
+  correct:0,
+  explain:"The chapter defines LLM-as-judge precisely as a language model that scores your system's output against a rubric, positioned as the second pillar of a serious eval suite alongside code-based evals."
+},
+{
+  type:'multi',
+  q:"Which three conditions does the chapter say need to line up for LLM-as-judge to be the right tool?",
+  options:[
+    "The question requires judgment",
+    "The scale is too big for humans",
+    "You can write a clear rubric",
+    "The task has a single deterministic correct answer"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter names exactly three conditions: the question requires judgment, the scale is too big for humans, and you can write a clear rubric. A task with a single deterministic correct answer is explicitly a case for a code-based eval instead."
+},
+{
+  type:'scenario',
+  q:"A team cannot articulate their quality standard in a paragraph, but tries to write an LLM judge prompt anyway. What does the chapter say is really happening here?",
+  options:[
+    "The problem is the rubric, not the tool, since if the standard cannot be written down clearly the judge cannot apply it consistently either",
+    "This is a normal and expected way to start building a judge",
+    "The chapter recommends using a code-based eval to fix an unclear rubric",
+    "The chapter says LLM judges perform better without a written rubric"
+  ],
+  correct:0,
+  explain:"The chapter states directly that if you cannot articulate the standard in a paragraph, the LLM judge will not be able to apply it consistently, and frames unwritable rubrics as a rubric problem, not a tool problem."
+},
+{
+  type:'multi',
+  q:"Which five components does the chapter say appear in every LLM judge, using the brand voice example?",
+  options:[
+    "A clear task definition",
+    "An explicit rubric with labels and criteria",
+    "A calibration set of labeled human examples",
+    "A dedicated code-based eval running in parallel at all times"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter lists five components present in every judge: a task definition, an explicit rubric, a calibration set, a judge prompt, and a scoring mechanism. A parallel code-based eval is not one of the five listed components."
+},
+{
+  type:'mc',
+  q:"In the worked judge prompt example, why does the chapter recommend a label taxonomy (Good, Acceptable, Poor) over fine-grained numeric scores (1 through 10)?",
+  options:[
+    "Models do better with labels, since numeric scores sound precise but drift between runs, while labels are blunter and more stable",
+    "Numeric scores are always more accurate than labels",
+    "Labels are required by every API provider for judge prompts",
+    "The chapter says numeric scores should always be preferred over labels"
+  ],
+  correct:0,
+  explain:"The chapter states this exact reasoning: models do better with labels than fine-grained scores, because numeric scores sound precise but drift between runs, while labels are blunter and much more stable."
+},
+{
+  type:'mc',
+  q:"Why does the chapter recommend keeping the judge's reasoning to one sentence?",
+  options:[
+    "Long chains of reasoning produce inconsistent labels across runs",
+    "One sentence is the maximum length any LLM API can return",
+    "Longer reasoning always improves label accuracy",
+    "The chapter says reasoning should never be included in judge output"
+  ],
+  correct:0,
+  explain:"The chapter states that keeping reasoning short matters because long chains of reasoning produce inconsistent labels across runs, part of why the worked example constrains output to exactly one sentence of reasoning."
+},
+{
+  type:'mc',
+  q:"Why does the chapter say a judge prompt needs definitions for every label, like what counts as Acceptable versus Poor?",
+  options:[
+    "If a human cannot tell the difference between labels from the definitions, the model will not be able to either",
+    "Label definitions are only needed for numeric scoring systems, never for label taxonomies",
+    "The chapter says definitions are optional and rarely improve judge consistency",
+    "Definitions are only needed when using more than three labels"
+  ],
+  correct:0,
+  explain:"The chapter states this principle directly: what exactly is Acceptable versus Poor. If a human cannot tell, the model will not either, making clear definitions for every label essential to a working judge prompt."
+},
+{
+  type:'mc',
+  q:"Why does the chapter recommend structured output, like the LABEL and REASONING format, for a judge prompt?",
+  options:[
+    "A parseable format like the LABEL and REASONING pair is cheap to extract and easy to analyze",
+    "Structured output is required by law for any AI evaluation system",
+    "Structured output makes the judge model run faster regardless of format",
+    "The chapter recommends free-form paragraphs instead of any structured format"
+  ],
+  correct:0,
+  explain:"The chapter names structured output as one of the four embedded principles in the worked prompt: a format you can parse, where the LABEL and REASONING pair is cheap to extract and easy to analyze at scale."
+},
+{
+  type:'mc',
+  q:"How many cases does the chapter recommend picking for the first step of the calibration workflow?",
+  options:[
+    "30 to 50 cases, covering a range of quality from obviously good to obviously bad to borderline",
+    "Exactly 5 cases, since calibration works best on a very small sample",
+    "At least 10,000 cases before any calibration can begin",
+    "The chapter says the exact number of cases never matters for calibration"
+  ],
+  correct:0,
+  explain:"The chapter's calibration workflow starts with picking 30 to 50 cases that cover the range of quality, some obviously good, some obviously bad, and some borderline, before any human labeling begins."
+},
+{
+  type:'scenario',
+  q:"A team runs their judge prompt against 50 calibration cases and finds 95% agreement with human consensus labels. According to the chapter's thresholds, what should they do?",
+  options:[
+    "Trust the judge and deploy, since 90% or higher agreement clears the bar",
+    "Discard the judge entirely and start over from scratch",
+    "Iterate on the prompt and retry, since 95% is not high enough",
+    "Wait a full quarter before making any decision"
+  ],
+  correct:0,
+  explain:"The chapter's thresholds are explicit: 90%+ agreement means trust the judge and deploy. At 95%, this team clears that bar comfortably."
+},
+{
+  type:'mc',
+  q:"What does the chapter say to do if a judge's agreement with human consensus falls below 70%?",
+  options:[
+    "The rubric or the task is not ready for a judge, go back and sharpen the definition",
+    "Deploy the judge anyway, since some disagreement is always expected",
+    "Switch immediately to a code-based eval with no further changes",
+    "Ignore the calibration result and proceed as planned"
+  ],
+  correct:0,
+  explain:"The chapter's guidance below 70% agreement is explicit: the rubric or the task is not ready for a judge, and the team should go back and sharpen the definition rather than deploying."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the chapter's five ways LLM judges fail?",
+  options:[
+    "Position bias, preferring the first output when comparing two side by side",
+    "Length bias, preferring longer responses even when a shorter one is better",
+    "Model drift, where scores can shift after a judge model upgrade even with an unchanged rubric",
+    "Currency bias, where judges only work correctly in one specific language"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter names five failure modes: position bias, length bias, over-lenient scoring, sensitivity to phrasing, and model drift. Currency bias about language is not one of the named failure modes."
+},
+{
+  type:'scenario',
+  q:"A team upgrades their judge model from one version to a newer one, keeping the rubric completely unchanged. According to the chapter, what should they expect and do?",
+  options:[
+    "Scores can shift even though the rubric did not change, so they should recalibrate after every judge model change",
+    "Scores will always stay identical as long as the rubric has not changed",
+    "Recalibration is unnecessary since only prompt changes require it",
+    "The chapter says model upgrades never affect judge behavior"
+  ],
+  correct:0,
+  explain:"This is exactly the chapter's model drift failure mode: when the judge model is upgraded, scores can shift even when the rubric is unchanged, and the chapter's explicit guidance is to recalibrate after every judge model change."
+},
+{
+  type:'mc',
+  q:"According to the chapter, what is the recommended split for a healthy eval suite across its three pillars?",
+  options:[
+    "60 to 70% code-based evals, 20 to 30% LLM judge evals, 5 to 10% human review",
+    "100% LLM judge evals with no code-based evals or human review at all",
+    "An even 33/33/33 split across all three pillars in every case",
+    "50% code-based evals and 50% human review, with no role for LLM judges"
+  ],
+  correct:0,
+  explain:"The chapter's recommended mix is precise: 60 to 70% code-based evals, 20 to 30% LLM judge evals calibrated quarterly, and 5 to 10% human review spot-checking weekly."
+},
+{
+  type:'multi',
+  q:"Which of these does the chapter list as a trigger for recalibrating an LLM judge?",
+  options:[
+    "You change the judge prompt",
+    "You change the judge model",
+    "A quarter has passed since the last calibration",
+    "The team hires a new engineer unrelated to the eval suite"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter lists five recalibration triggers: changing the judge prompt, changing the judge model, changing the rubric, the system's outputs looking qualitatively different, and a quarter passing since the last calibration. Hiring an unrelated engineer is not one of them."
+},
+{
+  type:'mc',
+  q:"The Throughline: how does the chapter describe an LLM judge, in terms of how it should be treated operationally?",
+  options:[
+    "As a measurement instrument that needs regular calibration checks, not a set-and-forget tool",
+    "As a permanent, one-time setup that never needs revisiting",
+    "As a replacement for all code-based evals",
+    "As something that should only be built after a system has already failed in production"
+  ],
+  correct:0,
+  explain:"The chapter's closing framing, echoed from section 8.5, is that none of the judge failure modes disqualify LLM judges, but they argue for treating the judge as a measurement instrument that needs regular checks, not a set-and-forget tool."
+}
+];
+
+/* ============================================================
+   CHAPTER 9
+   ============================================================ */
+
+const ch9_slides = [
+{
+  eyebrow:"Why this chapter exists",
+  title:"Evals measure. Guardrails intervene.",
+  body:`
+    <p>Evals tell you how your system performs across a dataset, after the
+    fact. Guardrails run in real time, on every request, and stop bad
+    things from happening. They are the production safety layer.</p>
+    <div class="callout">This chapter covers what guardrails are, how they
+    split across input and output, when to use which, and how to think
+    about the tradeoff between strictness and user experience.</div>
+  `
+},
+{
+  eyebrow:"9.1 What Guardrails Are",
+  title:"Three things distinguish a guardrail from an eval",
+  body:`
+    <ul class="plain">
+      <li>They run on every request, in real time, in production.</li>
+      <li>They can take action on the request: block it, modify it, route it.</li>
+      <li>They live inside the running system, as part of the request path itself.</li>
+    </ul>
+    <div class="callout">A guardrail is a check that runs automatically as part of your system's request flow, and that can modify, block, or route the request based on its result. Guardrails split naturally into two families: input guardrails and output guardrails.</div>
+  `
+},
+{
+  eyebrow:"9.2 Input Guardrails",
+  title:"Input guardrails stop bad things from reaching the model at all",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>PII detection and redaction</h3><p>Scan for social security numbers, credit cards, and sensitive identifiers before they hit the model. Mask or redact before the prompt leaves your system.</p></div>
+      <div class="card"><h3>Prompt injection detection</h3><p>Catch attempts to override system instructions. Dedicated classifiers like Meta's Prompt Guard or services like Lakera Guard detect these reliably.</p></div>
+      <div class="card"><h3>Jailbreak detection</h3><p>More sophisticated manipulation through role-play, encoded instructions, or multi-step social engineering. Requires a specialized classifier.</p></div>
+      <div class="card"><h3>Sensitive data blocking</h3><p>Prevent credentials, API keys, or proprietary documents from entering the model's context when they should not be there.</p></div>
+    </div>
+  `
+},
+{
+  eyebrow:"9.2 Input Guardrails",
+  title:"Two more input categories round out the picture",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Scope filtering</h3><p>Reject requests that are out of scope for your system before they consume model time. A small classifier trained on in-scope versus out-of-scope examples handles this well.</p></div>
+      <div class="card"><h3>Input sanitization</h3><p>Strip HTML, scripts, and unusual unicode before the text reaches the model. Standard sanitization libraries do most of the work.</p></div>
+    </div>
+    <div class="callout">Each input guardrail trades a small amount of latency for a specific reduction in risk. In most enterprise systems, you want three to five of these active, tuned for your risk profile.</div>
+  `
+},
+{
+  eyebrow:"9.3 Output Guardrails",
+  title:"Output guardrails catch bad outputs before they become user-facing problems",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Groundedness check</h3><p>Does the response claim things supported by the source documents, or did the model invent them? A dedicated LLM call or a service like Galileo or Azure Groundedness Detection can check this.</p></div>
+      <div class="card"><h3>PII leakage detection</h3><p>Did the response include sensitive data from the context that should not reach this user?</p></div>
+      <div class="card"><h3>Action boundary enforcement</h3><p>Did the response claim an action the system did not actually take, like "I have applied a credit," when it was only supposed to draft a reply?</p></div>
+      <div class="card"><h3>Tone and brand voice filtering</h3><p>Does the output match your organization's voice? For regulated industries, this often includes disclaimer checks.</p></div>
+    </div>
+  `
+},
+{
+  eyebrow:"9.3 Output Guardrails",
+  title:"Three more output categories, plus a way to fail gracefully",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Domain boundary check</h3><p>Did the response drift outside the scope of your system? A small classifier returns a safe fallback message when the response is out of scope.</p></div>
+      <div class="card"><h3>Citation validation</h3><p>If the response cites sources, verify that the sources exist and support the claim.</p></div>
+    </div>
+    <div class="example">Tool call validation: if the model called a tool, verify the tool name is allowed and the arguments match the tool's schema before executing.</div>
+    <div class="callout"><b>Refusal mechanisms.</b> When another guardrail triggers, you need a graceful decline that redirects the user helpfully rather than returning an error.</div>
+  `
+},
+{
+  eyebrow:"9.4 Guardrails vs Evals",
+  title:"Guardrails do not replace evals. The two tools do different jobs",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Evals</h3><p>Measure whether the system is getting better or worse over time, on a representative dataset. Run offline. The basis for experimenting with prompt and model changes, feeding into release decisions.</p></div>
+      <div class="card"><h3>Guardrails</h3><p>Run in real time on every request. Catch the specific bad outputs you do not want to reach users. They do not tell you whether the system is getting better.</p></div>
+    </div>
+    <div class="callout">A mature eval suite and a mature guardrail layer work together. Evals show aggregate quality and catch regressions before ship. Guardrails catch the edge cases in production that slipped through.</div>
+  `
+},
+{
+  eyebrow:"9.4 Guardrails vs Evals",
+  title:"If you had to pick one to build first, build evals first",
+  body:`
+    <p>Evals tell you how often guardrails will need to fire, which tells
+    you which guardrails are actually worth building.</p>
+  `
+},
+{
+  eyebrow:"9.5 The Strictness Tradeoff",
+  title:"Every guardrail trades false positives against false negatives",
+  body:`
+    <p>Too loose and real problems slip through. Too strict and legitimate
+    requests get blocked, frustrating users. The right setting depends on
+    the cost of each type of error.</p>
+    <div class="grid2">
+      <div class="card"><h3>High-risk domains</h3><p>Financial advice, legal guidance, medical information. Err on the side of strict. A blocked legitimate question costs less than a harmful response getting through.</p></div>
+      <div class="card"><h3>Lower-risk domains</h3><p>Internal knowledge assistance, internal drafting tools. Err on the side of lenient. Over-blocking creates a bad user experience with little upside.</p></div>
+    </div>
+    <div class="callout">Tune the threshold with real data. Run the guardrail on a month of real traffic, check the false positive and false negative rates, adjust until the ratio matches your risk profile.</div>
+  `
+},
+{
+  eyebrow:"9.6 Production Patterns That Work",
+  title:"Three patterns show up in most well-run production systems",
+  body:`
+    <ul class="plain">
+      <li><b>Layer guardrails in sequence.</b> Input sanitization, then injection detection, then scope filtering, then the model. Cheap fast checks run first so expensive ones only run on inputs that pass the easy gates.</li>
+      <li><b>Log every guardrail decision.</b> Every block, redact, or modify gets logged with the input, decision, and reason. This is your visibility into what guardrails catch, and how you spot drift when a 1% catch rate creeps to 5%.</li>
+      <li><b>Build a fallback path.</b> When a guardrail blocks a request, the user needs a graceful response: a templated message, a redirect to a human, an alternative path.</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"9.7 The Right-Sized Guardrail Stack",
+  title:"A recommended stack to reach parity with before launch",
+  body:`
+    <ul class="plain">
+      <li>Input sanitization (always on, cheap)</li>
+      <li>PII redaction on input, for systems where users might share sensitive info</li>
+      <li>Prompt injection detection, for systems exposed to external users</li>
+      <li>Scope filtering, for systems with a focused purpose</li>
+      <li>Groundedness check on output, for retrieval-based systems</li>
+      <li>Action boundary enforcement, for systems with tools that can take actions</li>
+      <li>Tone check on output, for customer-facing systems</li>
+      <li>Domain boundary check on output, plus logging and a graceful fallback</li>
+    </ul>
+    <div class="callout">You do not need all of these day one. You do need to know which ones apply to you, and the order in which you will add them as the system matures.</div>
+  `
+},
+{
+  eyebrow:"The Throughline",
+  title:"Guardrails are the layer that catches what evals can only measure after the fact",
+  body:`
+    <p>Evals show you the aggregate picture, offline, on a dataset.
+    Guardrails act in the moment, on every real request, and are the last
+    line of defense before a bad output reaches a user.</p>
+    <div class="callout">Build evals first, since they tell you which
+    guardrails are worth building. Then layer guardrails in sequence, log
+    every decision, and always give the user a graceful way out when one
+    fires.</div>
+    <p>This closes Part 3, the eval and safety core of the guide. Part 4
+    turns to building agentic systems themselves, starting with what an
+    agent actually is.</p>
+  `
+}
+];
+
+const ch9_quiz = [
+{
+  type:'mc',
+  q:"What is the chapter's core distinction between evals and guardrails?",
+  options:[
+    "Evals measure, guardrails intervene",
+    "Evals and guardrails are two names for the exact same tool",
+    "Guardrails only run offline, evals only run in production",
+    "Evals can block a request, guardrails cannot"
+  ],
+  correct:0,
+  explain:"The chapter opens with this exact distinction: evals measure, guardrails intervene. Evals tell you how your system performs after the fact, while guardrails run in real time and stop bad things from happening."
+},
+{
+  type:'multi',
+  q:"Which three things does the chapter say distinguish a guardrail from an eval?",
+  options:[
+    "They run on every request, in real time, in production",
+    "They can take action on the request: block it, modify it, route it",
+    "They live inside the running system as part of the request path",
+    "They only run once per quarter, during a scheduled review"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter names exactly three distinguishing features: running on every request in real time in production, taking action on the request, and living inside the running system as part of the request path. Running once per quarter is the opposite of how guardrails work."
+},
+{
+  type:'scenario',
+  q:"A team wants to catch attempts where a user tries to override the system's instructions with a message like \"ignore your previous instructions and...\" before it reaches the model. Which input guardrail category from the chapter fits this?",
+  options:[
+    "Prompt injection detection",
+    "PII detection and redaction",
+    "Input sanitization",
+    "Sensitive data blocking"
+  ],
+  correct:0,
+  explain:"The chapter names this exact scenario as prompt injection detection, catching attempts to override system instructions, and names Meta's Prompt Guard and Lakera Guard as tools that detect these reliably."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the chapter's input guardrail categories?",
+  options:[
+    "PII detection and redaction",
+    "Jailbreak detection",
+    "Scope filtering",
+    "Groundedness check"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter names six input guardrail categories: PII detection and redaction, prompt injection detection, jailbreak detection, sensitive data blocking, scope filtering, and input sanitization. Groundedness check is explicitly an output guardrail, not an input one."
+},
+{
+  type:'mc',
+  q:"How many input guardrails does the chapter recommend having active in most enterprise systems?",
+  options:[
+    "Three to five, tuned for your risk profile",
+    "Exactly one, to minimize added latency",
+    "All available guardrails with no exceptions",
+    "Zero, since input guardrails are optional for enterprise systems"
+  ],
+  correct:0,
+  explain:"The chapter states that each input guardrail trades a small amount of latency for a specific reduction in risk, and recommends most enterprise systems keep three to five of these active, tuned for their risk profile."
+},
+{
+  type:'scenario',
+  q:"A support system's response says \"I have applied a credit to your account,\" but the system is only supposed to draft replies for human review, not take real actions. Which output guardrail category catches this?",
+  options:[
+    "Action boundary enforcement",
+    "Tone and brand voice filtering",
+    "Citation validation",
+    "Domain boundary check"
+  ],
+  correct:0,
+  explain:"The chapter uses this exact example for action boundary enforcement: catching a response that claims an action the system did not actually take, like claiming a credit was applied when the system was only supposed to draft a reply."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the chapter's output guardrail categories?",
+  options:[
+    "Groundedness check",
+    "PII leakage detection",
+    "Citation validation",
+    "Prompt injection detection"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter names output guardrail categories including groundedness check, PII leakage detection, action boundary enforcement, tone and brand voice filtering, domain boundary check, citation validation, and tool call validation. Prompt injection detection is an input guardrail, not an output one."
+},
+{
+  type:'mc',
+  q:"According to the chapter, why do guardrails not replace evals?",
+  options:[
+    "The two tools do different jobs: evals measure whether the system is getting better over time, guardrails catch specific bad outputs in real time but do not tell you if the system is improving",
+    "Guardrails are strictly more powerful than evals in every situation",
+    "Evals can take action on a request, but guardrails cannot",
+    "The chapter says guardrails should always be built before evals"
+  ],
+  correct:0,
+  explain:"The chapter states plainly that evals measure whether the system is getting better or worse over time on a representative dataset, while guardrails catch specific bad outputs in real time but do not tell you whether the system is improving. It also recommends building evals first."
+},
+{
+  type:'mc',
+  q:"If a team had to pick only one to build first, evals or guardrails, what does the chapter recommend and why?",
+  options:[
+    "Build evals first, since they tell you how often guardrails will need to fire, which tells you which guardrails are worth building",
+    "Build guardrails first, since evals are optional for most systems",
+    "The chapter says the order never matters",
+    "Build both simultaneously starting on day one, with no prioritization"
+  ],
+  correct:0,
+  explain:"The chapter's direct recommendation is to build evals first, because evals tell you how often guardrails will need to fire, which in turn tells you which guardrails are actually worth building."
+},
+{
+  type:'scenario',
+  q:"A team building a system for medical information decides to err on the side of blocking more requests, even if it means occasionally blocking a legitimate question. According to the chapter's strictness guidance, is this the right call?",
+  options:[
+    "Yes, for high-risk domains like medical information, the chapter recommends erring strict, since a blocked legitimate question costs less than a harmful response reaching a user",
+    "No, the chapter says all domains should be tuned identically regardless of risk",
+    "No, the chapter recommends erring lenient for medical information specifically",
+    "The chapter does not address strictness tuning for specific domains"
+  ],
+  correct:0,
+  explain:"The chapter explicitly names financial advice, legal guidance, and medical information as high-risk domains where erring strict is correct, since false positives that block a legitimate question are less costly than false negatives that produce a harmful response."
+},
+{
+  type:'mc',
+  q:"How does the chapter say a team should tune a guardrail's strictness threshold?",
+  options:[
+    "Run the guardrail on a month of real traffic, check false positive and false negative rates, and adjust until the ratio matches your risk profile",
+    "Set the threshold once at launch and never revisit it",
+    "Always use the strictest possible setting regardless of domain",
+    "Copy the threshold used by a different, unrelated system"
+  ],
+  correct:0,
+  explain:"The chapter's guidance is to tune the threshold with real data: run the guardrail on a month of real traffic, check the false positive and false negative rates, and adjust until the ratio matches your risk profile."
+},
+{
+  type:'multi',
+  q:"Which three production patterns does the chapter say show up in most well-run guardrail systems?",
+  options:[
+    "Layer guardrails in sequence, cheap checks first",
+    "Log every guardrail decision",
+    "Build a fallback path for when a guardrail fires",
+    "Disable all logging to reduce storage costs"
+  ],
+  correctSet:[0,1,2],
+  explain:"The chapter names three production patterns: layering guardrails in sequence with cheap checks first, logging every guardrail decision, and building a graceful fallback path. Disabling logging is the opposite of the chapter's guidance, since logging is described as essential visibility into what guardrails catch."
+},
+{
+  type:'scenario',
+  q:"A team notices that a guardrail which used to block about 1% of traffic is now blocking 5%, but they only discovered this by accident. What does the chapter say would have caught this sooner?",
+  options:[
+    "Logging every guardrail decision, which is described as the way you catch drift like a rising block rate",
+    "Removing the guardrail entirely to avoid the issue",
+    "Switching from output guardrails to input guardrails",
+    "The chapter says this kind of drift cannot be detected"
+  ],
+  correct:0,
+  explain:"The chapter names this exact scenario when describing why logging matters: logging every guardrail decision is how you catch drift, when a guardrail that used to catch 1% of traffic starts catching 5%."
+},
+{
+  type:'mc',
+  q:"According to the chapter's right-sized guardrail stack, when is a groundedness check on output specifically recommended?",
+  options:[
+    "For any retrieval-based system",
+    "For every system regardless of whether it uses retrieval",
+    "Only for systems with no external users",
+    "Only for systems that never call any tools"
+  ],
+  correct:0,
+  explain:"The chapter's recommended stack lists groundedness check on output specifically for any retrieval-based system, where checking whether claims are supported by source documents matters most."
+},
+{
+  type:'mc',
+  q:"What does the chapter say a refusal mechanism should do when another guardrail triggers?",
+  options:[
+    "Provide a graceful decline that redirects the user helpfully, rather than returning a bare error",
+    "Always terminate the user's session immediately with no message",
+    "Silently ignore the triggered guardrail and proceed as normal",
+    "Refusal mechanisms are described as optional and rarely useful"
+  ],
+  correct:0,
+  explain:"The chapter defines refusal mechanisms directly: when another guardrail triggers, you need a graceful decline that redirects the user helpfully rather than returning an error."
+},
+{
+  type:'scenario',
+  q:"A team builds an internal drafting tool used only by employees for low-stakes writing tasks. According to the chapter's strictness guidance, how should they tune their guardrails compared to a medical information system?",
+  options:[
+    "Err on the side of lenient, since over-blocking here creates a bad user experience with little upside, unlike a high-risk domain",
+    "Use the exact same strict settings as a medical information system in every case",
+    "Disable all guardrails entirely, since internal tools need no safety layer",
+    "The chapter says internal tools should always be stricter than customer-facing systems"
+  ],
+  correct:0,
+  explain:"The chapter names internal knowledge assistance and internal drafting tools as lower-risk domains where erring lenient is correct, since over-blocking here creates a bad user experience with little upside, in contrast to high-risk domains like medical information."
+},
+{
+  type:'mc',
+  q:"The Throughline: what does the chapter say is the relationship between evals and guardrails as production layers?",
+  options:[
+    "Evals show the aggregate picture offline on a dataset, while guardrails act in the moment on every real request as the last line of defense",
+    "Guardrails replace the need for evals once a system reaches production",
+    "Evals and guardrails should never be used in the same system",
+    "Guardrails are only useful before a system launches, never after"
+  ],
+  correct:0,
+  explain:"The chapter's closing synthesis states that evals show the aggregate picture offline on a dataset, while guardrails act in the moment on every real request, serving as the last line of defense before a bad output reaches a user."
+}
+];
+
+/* ============================================================
    GLOSSARY
    Grows across the whole book. Add new terms here as each chapter
    is built. chapter refers to the chapter number the term was
@@ -2477,7 +3925,28 @@ const glossary = [
   { term:"Prompting Reasoning Models", chapter:5, def:"Three rules that change when prompting a reasoning model: less hand-holding, more context and less structure, and separating the what from the how. You are briefing a specialist, not scripting a task." },
   { term:"Few-Shot Examples", chapter:5, def:"Two or three input-output pairs included in a prompt. Consistently outperforms almost any other single intervention on subjective or structured tasks." },
   { term:"Output Format Choices", chapter:5, def:"Structured JSON for machine consumers, markdown for human readers, and tagged sections for mixed narrative and structured output. Match the format to the next consumer." },
-  { term:"Prompt Engineering Ceiling", chapter:5, def:"The point where additional prompt iteration stops producing gains and starts producing noise. The fix is usually better retrieval, a model upgrade, a workflow restructure, or fine-tuning, not more prompt edits." }
+  { term:"Prompt Engineering Ceiling", chapter:5, def:"The point where additional prompt iteration stops producing gains and starts producing noise. The fix is usually better retrieval, a model upgrade, a workflow restructure, or fine-tuning, not more prompt edits." },
+{ term:"The 80/20 Flip", chapter:6, def:"The shift where traditional software spends 80% of effort before shipping and AI systems spend roughly 80% of effort after shipping, in a continuous loop of watching, adjusting, and reshipping." },
+  { term:"Eval Harness", chapter:6, def:"A set of test cases plus a way to score how your system does on them. Tells you if a change helped, surfaces what is broken, creates a shared language, and turns model upgrades into experiments." },
+  { term:"Correctness vs Quality", chapter:6, def:"The two questions every eval answers. Correctness asks if the system did the right thing. Quality asks if the way it did it was safe and usable. Most production systems need both." },
+  { term:"Evals as Infrastructure", chapter:6, def:"Treating evals as always running, always visible, and always evolving, rather than a pre-launch checkbox run once and then left untouched while the system quietly drifts." },
+  { term:"CC/CD Framework", chapter:6, def:"Continuous Calibration keeps evals fresh as the world changes. Continuous Development keeps the system improving against them. Together they replace one-time-launch software with a living-system model." },
+{ term:"Code-Based Evals", chapter:7, def:"Evals that check a deterministic criterion using plain code: no labels, no human in the loop, no LLM judge. Just a function that returns true or false. Cheap, fast, and the first eval type to build." },
+  { term:"Schema Validation", chapter:7, def:"Checking whether an output matches the expected JSON schema, with all required fields present and correct types. The highest-leverage code-based eval for structured-output systems." },
+  { term:"Exact Match Eval", chapter:7, def:"Checking whether an output exactly matches an expected value. The canonical pattern for classification: does the predicted category match the labeled one." },
+  { term:"Run Function and Score Function", chapter:7, def:"The two functions behind a code-based eval. The run function calls your system and returns its output. The score function compares that output to the expected result and returns true or false." },
+  { term:"60/70 Eval Coverage Rule", chapter:7, def:"The chapter's rule of thumb that roughly 60 to 70% of total eval coverage should be code-based, since it catches the widest net of real failures at the lowest cost. The rest goes to LLM judges and human review." },
+{ term:"LLM-as-Judge", chapter:8, def:"A language model that scores your system's output against a rubric. The second pillar of a serious eval suite, used for subjective quality questions code cannot judge." },
+  { term:"When LLM Judges Make Sense", chapter:8, def:"Three conditions that must line up: the question requires judgment, the scale is too big for humans, and you can write a clear rubric. If any is missing, reach for a different tool." },
+  { term:"Label Taxonomy", chapter:8, def:"Using labels like Good, Acceptable, Poor instead of fine-grained numeric scores in a judge prompt. Labels are blunter but far more stable across runs than numeric scores." },
+  { term:"Judge Calibration", chapter:8, def:"The process of checking how well an LLM judge agrees with human labelers before trusting it at scale. At 90%+ agreement, deploy. At 70-90%, iterate. Below 70%, the rubric is not ready." },
+  { term:"LLM Judge Failure Modes", chapter:8, def:"Five known ways judges fail: position bias, length bias, over-lenient scoring, sensitivity to phrasing, and model drift. None disqualify judges, but all require ongoing checks." },
+  { term:"Eval Suite Mix", chapter:8, def:"The recommended split across a full eval suite: 60-70% code-based evals, 20-30% LLM judge evals calibrated quarterly, and 5-10% human review spot-checking weekly." },
+{ term:"Guardrails", chapter:9, def:"Checks that run automatically as part of a system's request flow in real time, in production, on every request, and that can block, modify, or route a request. The production safety layer, distinct from evals." },
+  { term:"Input Guardrails", chapter:9, def:"Checks that run before the model sees a request: PII detection, prompt injection detection, jailbreak detection, sensitive data blocking, scope filtering, and input sanitization." },
+  { term:"Output Guardrails", chapter:9, def:"Checks that run after the model responds but before the user sees it: groundedness check, PII leakage detection, action boundary enforcement, tone filtering, domain boundary check, citation validation, and tool call validation." },
+  { term:"Strictness Tradeoff", chapter:9, def:"The tradeoff every guardrail makes between false positives and false negatives. High-risk domains should err strict. Lower-risk domains should err lenient to avoid frustrating users." },
+  { term:"Guardrail Production Patterns", chapter:9, def:"Three patterns that show up in well-run systems: layering guardrails cheapest-first, logging every guardrail decision to catch drift, and building a graceful fallback path for when a guardrail fires." }
 ];
 
 const chapters = [
@@ -2520,15 +3989,47 @@ const chapters = [
     threadNodes:["Six parts","Reasoning models","Bigger picture","Few-shot","Output format","The ceiling"],
     slides:ch5_slides,
     quiz:ch5_quiz
-  }
-  /* Add one object per chapter here, e.g.:
+  },
   {
     id:6,
     part:"Part 3: The Evaluation Core",
-    title:"...",
-    threadNodes:["...","...","..."],
+    title:"Why Evals Are the Real Work",
+    threadNodes:["The 80/20 flip","What evals buy you","Two questions","Infrastructure","Next three chapters"],
     slides:ch6_slides,
     quiz:ch6_quiz
+  },
+  {
+    id:7,
+    part:"Part 3: The Evaluation Core",
+    title:"Code-Based Evals",
+    threadNodes:["What they check","When enough","Building one","Failure modes","The limits","Starter suite"],
+    slides:ch7_slides,
+    quiz:ch7_quiz
+  },
+  {
+    id:8,
+    part:"Part 3: The Evaluation Core",
+    title:"LLM-as-Judge and Calibration",
+    threadNodes:["When it makes sense","Worked example","Judge prompts","Calibration","Failure modes","Full suite","Recalibration"],
+    slides:ch8_slides,
+    quiz:ch8_quiz
+  },
+  {
+    id:9,
+    part:"Part 3: The Evaluation Core",
+    title:"Guardrails: Input and Output",
+    threadNodes:["What they are","Input guardrails","Output guardrails","Vs evals","Strictness","Production patterns","Right-sized stack"],
+    slides:ch9_slides,
+    quiz:ch9_quiz
+  }
+  /* Add one object per chapter here, e.g.:
+  {
+    id:10,
+    part:"Part 4: Building Agentic Systems",
+    title:"...",
+    threadNodes:["...","...","..."],
+    slides:ch10_slides,
+    quiz:ch10_quiz
   },
   */
 ];
@@ -2584,6 +4085,7 @@ function renderSlide(){
   const s = slides[idx];
   document.getElementById('slideHost').innerHTML = `
     <div class="slide">
+      <button class="focus-toggle-btn" onclick="toggleFocusMode()" aria-label="Toggle focus mode" id="focusToggleBtn">${focusIconSVG(false)}</button>
       <div class="eyebrow">${s.eyebrow}</div>
       <h2>${s.title}</h2>
       ${s.body}
@@ -2592,8 +4094,10 @@ function renderSlide(){
   document.getElementById('prevBtn').disabled = idx===0;
   document.getElementById('nextBtn').disabled = idx===slides.length-1;
   document.getElementById('nextBtn').innerText = idx===slides.length-1 ? 'Done' : 'Next →';
+  document.getElementById('focusPosition').innerText = (idx+1) + ' / ' + slides.length;
   renderDots();
   renderThread();
+  syncFocusIcon();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 function renderDots(){
@@ -2607,6 +4111,33 @@ function go(dir){
   const next = idx + dir;
   if(next>=0 && next<slides.length){ idx = next; renderSlide(); }
 }
+
+/* ---------------- FOCUS MODE ---------------- */
+let focusMode = false;
+function focusIconSVG(isFocused){
+  return isFocused
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V5a2 2 0 0 1 2-2h4M20 9V5a2 2 0 0 0-2-2h-4M4 15v4a2 2 0 0 0 2 2h4M20 15v4a2 2 0 0 1-2 2h-4"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>`;
+}
+function toggleFocusMode(){
+  focusMode = !focusMode;
+  document.getElementById('wrap').classList.toggle('focus-mode', focusMode);
+  syncFocusIcon();
+}
+function syncFocusIcon(){
+  const btn = document.getElementById('focusToggleBtn');
+  if(btn) btn.innerHTML = focusIconSVG(focusMode);
+}
+document.addEventListener('keydown', function(e){
+  if(!focusMode) return;
+  const tag = (e.target && e.target.tagName) || '';
+  if(tag === 'INPUT' || tag === 'TEXTAREA') return;
+  const slidesVisible = document.getElementById('slides').style.display !== 'none';
+  if(!slidesVisible) return;
+  if(e.key === 'ArrowRight'){ e.preventDefault(); go(1); }
+  else if(e.key === 'ArrowLeft'){ e.preventDefault(); go(-1); }
+  else if(e.key === 'Escape'){ e.preventDefault(); toggleFocusMode(); }
+});
 
 /* ---------------- MODE TOGGLE ---------------- */
 function showMode(mode){
