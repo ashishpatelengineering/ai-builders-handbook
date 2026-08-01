@@ -1,0 +1,3812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The AI Builder's Handbook: Study Companion</title>
+<style>
+  :root{
+    --ink:#161f2e;
+    --ink-2:#1e2a3d;
+    --paper:#f3efe3;
+    --paper-dim:#c9c2ad;
+    --amber:#e8a33d;
+    --amber-dim:#a97a2f;
+    --amber-solid:#e8a33d;
+    --slate:#7c8aa0;
+    --good:#5fae7a;
+    --bad:#d16d6d;
+    --serif: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    /* One font family throughout. Hierarchy comes from size and weight, not typeface switching. */
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--sans);
+    min-height:100vh;
+  }
+  .wrap{
+    max-width:1160px;
+    margin:0 auto;
+    padding:32px 20px 80px;
+    display:flex;
+    gap:32px;
+    align-items:flex-start;
+  }
+  .sidebar{
+    width:220px;
+    flex-shrink:0;
+    position:sticky;
+    top:32px;
+    overflow:hidden;
+    transition:width .2s ease, opacity .2s ease, margin .2s ease;
+  }
+  .wrap.collapsed .sidebar{
+    width:0;
+    opacity:0;
+    pointer-events:none;
+  }
+  .wrap.collapsed{ gap:0; }
+  .sidebar-label{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--slate);
+    margin-bottom:12px;
+    white-space:nowrap;
+  }
+  .sidebar-collapse-btn{
+    background:transparent;
+    border:1px solid rgba(240,237,228,0.2);
+    color:var(--slate);
+    font-size:11px;
+    padding:3px 7px;
+    border-radius:5px;
+    cursor:pointer;
+    line-height:1;
+  }
+  .sidebar-collapse-btn:hover{ border-color:var(--amber); color:var(--amber); }
+  .sidebar-expand-btn{
+    display:none;
+    background:var(--ink-2);
+    border:1px solid rgba(240,237,228,0.15);
+    color:var(--paper-dim);
+    font-family:var(--sans);
+    font-size:12px;
+    padding:7px 12px;
+    border-radius:7px;
+    cursor:pointer;
+    margin-bottom:16px;
+    align-items:center;
+    gap:6px;
+  }
+  .sidebar-expand-btn:hover{ border-color:var(--amber); color:var(--amber); }
+  .wrap.collapsed .sidebar-expand-btn{ display:inline-flex; }
+  .part-label{
+    font-size:10px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--amber-dim);
+    font-weight:700;
+    margin:18px 0 6px 14px;
+    white-space:nowrap;
+  }
+  .part-label:first-child{ margin-top:0; }
+  .chapter-tab{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:transparent;
+    border:none;
+    border-left:2px solid rgba(240,237,228,0.12);
+    color:var(--paper-dim);
+    font-family:var(--sans);
+    font-size:13.5px;
+    line-height:1.4;
+    padding:10px 14px;
+    cursor:pointer;
+    margin-bottom:2px;
+    white-space:nowrap;
+  }
+  .chapter-tab .num{
+    display:block;
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--slate);
+    margin-bottom:2px;
+  }
+  .chapter-tab.active{
+    border-left:2px solid var(--amber);
+    color:var(--paper);
+    background:rgba(232,163,61,0.06);
+  }
+  .chapter-tab.active .num{ color:var(--amber); }
+  .chapter-tab:hover:not(.active){
+    background:rgba(240,237,228,0.04);
+    color:var(--paper);
+  }
+  .main-col{
+    flex:1;
+    min-width:0;
+  }
+  @media (max-width:760px){
+    .wrap{ flex-direction:column; }
+    .wrap.collapsed{ gap:32px; }
+    .sidebar{ width:100%; position:static; }
+    .wrap.collapsed .sidebar{ width:100%; opacity:1; pointer-events:auto; display:none; }
+    .sidebar-expand-btn{ margin-bottom:16px; }
+    .chapter-tab{ display:inline-block; width:auto; border-left:none; border-bottom:2px solid rgba(240,237,228,0.12); margin-right:6px; }
+    .chapter-tab.active{ border-left:none; border-bottom:2px solid var(--amber); }
+    .part-label{ width:100%; margin:14px 0 6px 4px; }
+  }
+  header.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-bottom:1px solid rgba(240,237,228,0.15);
+    padding-bottom:14px;
+    margin-bottom:28px;
+  }
+  header.top .kicker{
+    font-family:var(--sans);
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    font-size:11px;
+    color:var(--amber);
+  }
+  header.top h1{
+    font-size:21px;
+    margin:4px 0 0;
+    font-weight:700;
+    color:var(--paper);
+  }
+  .mode-toggle{
+    display:flex;
+    gap:8px;
+  }
+  .mode-toggle button{
+    background:transparent;
+    border:1px solid rgba(240,237,228,0.25);
+    color:var(--paper-dim);
+    font-family:var(--sans);
+    font-size:12px;
+    padding:7px 14px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:all .15s;
+  }
+  .mode-toggle button.active{
+    background:var(--amber);
+    border-color:var(--amber);
+    color:var(--ink);
+    font-weight:600;
+  }
+
+  /* ===== SLIDES ===== */
+  #slides{display:block;}
+  #quiz{display:none;}
+  #glossary{display:none;}
+
+  .glossary-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    padding-bottom:16px;
+    margin-bottom:20px;
+    border-bottom:1px solid rgba(240,237,228,0.12);
+  }
+  .glossary-search{
+    flex:1;
+    max-width:340px;
+    background:rgba(20,28,42,0.6);
+    border:1px solid rgba(240,237,228,0.2);
+    color:var(--paper);
+    font-family:var(--sans);
+    font-size:14px;
+    padding:9px 14px;
+    border-radius:7px;
+  }
+  .glossary-search::placeholder{ color:var(--slate); }
+  .glossary-search:focus{ outline:none; border-color:var(--amber); }
+  .glossary-count{
+    font-size:12px;
+    color:var(--slate);
+    white-space:nowrap;
+  }
+  .gterm{
+    background:var(--ink-2);
+    border:1px solid rgba(240,237,228,0.08);
+    border-radius:10px;
+    padding:18px 22px;
+    margin-bottom:10px;
+  }
+  .gterm .gname{
+    font-size:16px;
+    font-weight:700;
+    color:var(--paper);
+    margin-bottom:6px;
+  }
+  .gterm .gdef{
+    font-size:14.5px;
+    line-height:1.65;
+    color:#dcd8c9;
+  }
+  .glossary-empty{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--slate);
+    font-size:14px;
+  }
+
+  .concept-thread{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+    font-size:11px;
+    color:var(--slate);
+    margin-bottom:22px;
+    padding-bottom:14px;
+    border-bottom:1px dashed rgba(240,237,228,0.12);
+  }
+  .concept-thread .node{
+    padding:3px 9px;
+    border-radius:4px;
+    border:1px solid rgba(124,138,160,0.4);
+    white-space:nowrap;
+  }
+  .concept-thread .node.done{ color:var(--amber); border-color:var(--amber-dim); }
+  .concept-thread .arrow{ color:var(--slate); }
+
+  .slide{
+    background:var(--ink-2);
+    border:1px solid rgba(240,237,228,0.08);
+    border-radius:10px;
+    padding:38px 42px;
+    min-height:420px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    position:relative;
+  }
+  .focus-toggle-btn{
+    position:absolute;
+    top:16px;
+    right:16px;
+    width:32px;
+    height:32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(20,28,42,0.5);
+    border:1px solid rgba(240,237,228,0.15);
+    border-radius:7px;
+    color:var(--slate);
+    cursor:pointer;
+    transition:background .15s, color .15s;
+    z-index:5;
+  }
+  .focus-toggle-btn:hover{
+    background:rgba(20,28,42,0.9);
+    color:var(--paper);
+    border-color:rgba(240,237,228,0.3);
+  }
+  .focus-toggle-btn svg{ width:16px; height:16px; }
+
+  /* ===== FOCUS MODE ===== */
+  #wrap.focus-mode .sidebar,
+  #wrap.focus-mode .sidebar-expand-btn,
+  #wrap.focus-mode header.top,
+  #wrap.focus-mode .concept-thread{
+    display:none !important;
+  }
+  #wrap.focus-mode .main-col{
+    max-width:1120px;
+    margin:0 auto;
+    padding-top:40px;
+  }
+  #wrap.focus-mode .slide{
+    min-height:65vh;
+    padding:64px 76px;
+  }
+  #wrap.focus-mode .slide .eyebrow{
+    font-size:13px;
+  }
+  #wrap.focus-mode .slide h2{
+    font-size:38px;
+    margin-bottom:24px;
+  }
+  #wrap.focus-mode .slide p,
+  #wrap.focus-mode .slide li{
+    font-size:18px;
+    line-height:1.7;
+  }
+  #wrap.focus-mode .slide .card h3{
+    font-size:15px;
+  }
+  #wrap.focus-mode .slide .card p{
+    font-size:16px;
+  }
+  #wrap.focus-mode .slide .callout,
+  #wrap.focus-mode .slide .example{
+    font-size:17px;
+    padding:22px 26px;
+  }
+  #wrap.focus-mode .nav{
+    display:none;
+  }
+  .focus-position{
+    display:none;
+    text-align:center;
+    margin-top:24px;
+    font-size:13px;
+    letter-spacing:0.08em;
+    color:var(--slate);
+    text-transform:uppercase;
+  }
+  #wrap.focus-mode .focus-position{
+    display:block;
+  }
+  @media (max-width: 1200px){
+    #wrap.focus-mode .main-col{ max-width:94vw; }
+  }
+  @media (max-width: 720px){
+    #wrap.focus-mode .slide{ padding:32px 24px; min-height:50vh; }
+    #wrap.focus-mode .slide h2{ font-size:26px; }
+    #wrap.focus-mode .slide p,
+    #wrap.focus-mode .slide li{ font-size:16px; }
+  }
+  .slide .eyebrow{
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:10px;
+  }
+  .slide h2{
+    font-size:27px;
+    margin:0 0 18px;
+    line-height:1.3;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .slide p{
+    font-size:16px;
+    line-height:1.7;
+    color:#dcd8c9;
+    margin:0 0 14px;
+  }
+  .slide .callout{
+    background:rgba(232,163,61,0.08);
+    border-left:3px solid var(--amber);
+    padding:12px 16px;
+    border-radius:4px;
+    font-size:14.5px;
+    color:var(--paper);
+    margin-top:10px;
+  }
+  .slide .example{
+    background:rgba(20,28,42,0.6);
+    border:1px solid rgba(240,237,228,0.1);
+    border-radius:6px;
+    padding:14px 18px;
+    font-family:var(--sans);
+    font-size:14px;
+    color:var(--paper-dim);
+    margin-top:12px;
+    line-height:1.7;
+  }
+  .slide .diagram{
+    margin-top:14px;
+    background:rgba(20,28,42,0.4);
+    border:1px solid rgba(240,237,228,0.08);
+    border-radius:8px;
+    padding:16px;
+  }
+  .slide svg text{ font-family:var(--sans); }
+  .slide .dcap{
+    font-size:12px;
+    color:var(--slate);
+    text-align:center;
+    margin-top:8px;
+  }
+  /* Standalone SVG diagram colors, hardcoded so they render outside any special runtime */
+  .dteal rect{ fill:rgba(95,174,122,0.16); stroke:#5fae7a; }
+  .dteal text{ fill:#cfe8d9; }
+  .damber rect{ fill:rgba(232,163,61,0.22); stroke:#e8a33d; }
+  .damber text{ fill:#f6dcae; }
+  .dgray rect{ fill:rgba(124,138,160,0.14); stroke:#7c8aa0; }
+  .dgray text{ fill:#c6cdd9; }
+  .dsvg-label{ fill:#dcd8c9; }
+  .dsvg-sub{ fill:#9aa4b5; font-size:12px; }
+  .slide svg .t{ font-size:14px; }
+  .slide svg .th{ font-size:14px; font-weight:700; }
+  .slide svg .ts{ font-size:12px; }
+  .slide svg .arr{ stroke:#7c8aa0; stroke-width:1.2; fill:none; }
+  .slide svg text:not(.dteal text):not(.damber text):not(.dgray text){ fill:#dcd8c9; }
+  .grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-top:14px;
+  }
+  .card{
+    background:rgba(20,28,42,0.5);
+    border:1px solid rgba(240,237,228,0.1);
+    border-radius:8px;
+    padding:16px 18px;
+  }
+  .card h3{
+    font-size:14.5px;
+    margin:0 0 6px;
+    color:var(--amber);
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+  }
+  .card p{ font-size:13.5px; margin:0; }
+  ul.plain{ padding-left:20px; margin:10px 0; }
+  ul.plain li{ font-size:15px; line-height:1.7; color:#dcd8c9; margin-bottom:6px; }
+
+  .nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:22px;
+  }
+  .nav button{
+    background:var(--ink-2);
+    border:1px solid rgba(240,237,228,0.2);
+    color:var(--paper);
+    font-family:var(--sans);
+    padding:10px 20px;
+    border-radius:7px;
+    cursor:pointer;
+    font-size:14px;
+  }
+  .nav button:disabled{ opacity:0.3; cursor:default; }
+  .nav button:not(:disabled):hover{ border-color:var(--amber); color:var(--amber); }
+  .dots{ display:flex; gap:6px; }
+  .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:rgba(240,237,228,0.2);
+    transition:all .2s;
+  }
+  .dot.active{ background:var(--amber); width:20px; border-radius:4px; }
+
+  /* ===== QUIZ ===== */
+  .quiz-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-bottom:16px;
+    margin-bottom:20px;
+    border-bottom:1px solid rgba(240,237,228,0.12);
+  }
+  .quiz-head-title{
+    font-size:15px;
+    font-weight:700;
+    color:var(--paper);
+  }
+  .reset-btn{
+    background:transparent;
+    border:1px solid rgba(240,237,228,0.25);
+    color:var(--paper-dim);
+    font-family:var(--sans);
+    font-size:12.5px;
+    padding:7px 14px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .reset-btn:hover{ border-color:var(--amber); color:var(--amber); }
+  .qcard{
+    background:var(--ink-2);
+    border:1px solid rgba(240,237,228,0.08);
+    border-radius:10px;
+    padding:26px 30px;
+    margin-bottom:16px;
+  }
+  .qcard .qnum{
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:8px;
+  }
+  .qcard h3{
+    font-weight:600;
+    font-size:17px;
+    margin:0 0 16px;
+    line-height:1.5;
+  }
+  .opt{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:rgba(20,28,42,0.5);
+    border:1px solid rgba(240,237,228,0.15);
+    color:var(--paper);
+    padding:12px 16px;
+    border-radius:7px;
+    margin-bottom:8px;
+    cursor:pointer;
+    font-size:14.5px;
+    font-family:var(--sans);
+    transition:all .12s;
+  }
+  .opt:hover{ border-color:var(--amber); }
+  .opt.correct{ border-color:var(--good); background:rgba(95,174,122,0.12); }
+  .opt.incorrect{ border-color:var(--bad); background:rgba(209,109,109,0.12); }
+  .opt:disabled{ cursor:default; }
+  .explain{
+    display:none;
+    margin-top:10px;
+    padding:12px 16px;
+    background:rgba(232,163,61,0.06);
+    border-left:3px solid var(--amber);
+    border-radius:4px;
+    font-size:13.5px;
+    line-height:1.6;
+    color:var(--paper-dim);
+  }
+  .score-bar{
+    text-align:center;
+    padding:20px;
+    font-family:var(--serif);
+    font-size:17px;
+    color:var(--amber);
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap">
+
+  <aside class="sidebar">
+    <div class="sidebar-label">
+      Chapters
+      <button class="sidebar-collapse-btn" onclick="toggleSidebar()" aria-label="Hide chapter list">← Hide</button>
+    </div>
+    <div id="chapterRow"></div>
+  </aside>
+
+  <div class="main-col">
+
+    <button class="sidebar-expand-btn" onclick="toggleSidebar()" aria-label="Show chapter list">☰ Chapters</button>
+
+    <header class="top">
+      <div>
+        <div class="kicker">The AI Builder's Handbook, study companion</div>
+        <h1 id="chapterTitle">The Language of Generative and Agentic AI</h1>
+      </div>
+      <div class="mode-toggle">
+        <button id="btnSlides" class="active" onclick="showMode('slides')">Lesson</button>
+        <button id="btnQuiz" onclick="showMode('quiz')">Quiz</button>
+        <button id="btnGlossary" onclick="showMode('glossary')">Glossary</button>
+      </div>
+    </header>
+
+    <!-- ============ SLIDES ============ -->
+    <div id="slides">
+      <div class="concept-thread" id="thread"></div>
+      <div id="slideHost"></div>
+      <div class="nav">
+        <button id="prevBtn" onclick="go(-1)">← Back</button>
+        <div class="dots" id="dots"></div>
+        <button id="nextBtn" onclick="go(1)">Next →</button>
+      </div>
+      <div class="focus-position" id="focusPosition"></div>
+    </div>
+
+    <!-- ============ QUIZ ============ -->
+    <div id="quiz"></div>
+
+    <!-- ============ GLOSSARY ============ -->
+    <div id="glossary"></div>
+
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   TEMPLATE CHAPTER DATA
+   Copy this whole block once per chapter, rename ch1 -> ch2, ch3, etc.
+   Delete this example content and replace with real chapter content.
+   ============================================================ */
+
+const ch1_slides = [
+{
+  eyebrow:"Chapter 1",
+  title:"The Language of Generative and Agentic AI",
+  body:`
+    <ul class="plain">
+      <li>The AI field's vocabulary doubles every six months</li>
+      <li>"Agent" might mean a Python script that loops through tool calls, or an autonomous system that plans, acts, and recovers on its own</li>
+      <li>"Eval" might mean a unit test, a scorecard, or a full human-labeled benchmark</li>
+      <li>This chapter is your ground truth: a shared map of the vocabulary, organized the way builders actually use it</li>
+    </ul>
+    <div class="callout">Wherever two reputable sources define a term differently, this guide follows the usage closest to how the work actually gets done in production.</div>
+  `
+},
+{
+  eyebrow:"The Raw Material",
+  title:"The Raw Material",
+  body:`
+    <ul class="plain">
+      <li>The system you are building on top of is a probability machine trained to predict text</li>
+      <li>Every other concept in this guide extends from that one fact</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Raw Material",
+  title:"Generative AI",
+  body:`
+    <ul class="plain">
+      <li>A class of AI systems that produces new content (text, images, audio, code, video) rather than classifying existing content</li>
+      <li>Generative AI is the umbrella</li>
+      <li>Large language models are the most familiar shape it takes</li>
+      <li>Image models, audio models, and video models live under the same umbrella</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Raw Material",
+  title:"Foundation Model",
+  body:`
+    <ul class="plain">
+      <li>A model trained on broad data at scale, designed to be adapted to many downstream tasks rather than built for any one task</li>
+      <li>Term coined by the Stanford Center for Research on Foundation Models in 2021</li>
+      <li>Today GPT, Claude, Gemini, Llama are all foundation models</li>
+      <li>You can use them directly, or adapt them for a specific job through fine-tuning</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Raw Material",
+  title:"Large Language Model (LLM)",
+  body:`
+    <ul class="plain">
+      <li>A foundation model specialized for language. It reads text, produces text</li>
+      <li>"Large" refers to the parameter count: today's frontier LLMs have hundreds of billions of parameters, some approaching the trillion mark</li>
+    </ul>
+    <div class="callout">An LLM does not "know" facts the way a database does. It has learned to produce text that fits the patterns of its training data. The behavior that feels magical and the behavior that feels wrong both trace back to that one fact.</div>
+  `
+},
+{
+  eyebrow:"The Raw Material",
+  title:"Tokens",
+  body:`
+    <ul class="plain">
+      <li>The unit of text a model reads and writes</li>
+      <li>A token is usually a word, part of a word, or a character, depending on the tokenizer</li>
+      <li>"Evaluation" might be one token in one model and three in another</li>
+    </ul>
+    <div class="callout">Two practical consequences: you pay by the token, and you have a limited number of tokens you can fit into a single request.</div>
+  `
+},
+{
+  eyebrow:"The Raw Material",
+  title:"Context Window",
+  body:`
+    <ul class="plain">
+      <li>The total number of tokens a model can consider in a single request: your prompt, the conversation history, any retrieved documents, and the response it is generating</li>
+      <li>Frontier models in 2026 range from around 200,000 tokens (Claude Sonnet 4.6 standard) up to 1,000,000 tokens (Claude Opus 4.7 with extended context, Gemini 2.5 Pro)</li>
+    </ul>
+    <div class="callout">A larger context window does not mean the model will use every token well. Attention quality often degrades toward the middle and edges of very long contexts. This is called the "lost in the middle" problem and is a real production concern.</div>
+  `
+},
+{
+  eyebrow:"The Raw Material",
+  title:"Pretraining, Fine-Tuning, Post-Training",
+  body:`
+    <p>Three stages a model passes through on the way to being useful.</p>
+    <ul class="plain">
+      <li><b>Pretraining:</b> the expensive, general step: train on trillions of tokens of web, book, and code data. This is where the model learns the shape of language.</li>
+      <li><b>Fine-tuning:</b> adapts a pretrained model to a narrower task using a much smaller labeled dataset. Classic example: a general LLM fine-tuned on legal documents to be better at contract review.</li>
+      <li><b>Post-training:</b> the umbrella for everything between raw pretraining and a deployable model: instruction tuning, RLHF, safety tuning, reasoning training.</li>
+    </ul>
+    <div class="callout">Most of what distinguishes a "good" frontier model from a weaker one in practice is post-training, not pretraining scale.</div>
+  `
+},
+{
+  eyebrow:"From Text to Thought",
+  title:"From Text to Thought",
+  body:`
+    <ul class="plain">
+      <li>A raw language model produces text that sounds confident</li>
+      <li>But confident text is not the same as a correct answer</li>
+      <li>The next layer of the field is about getting models to actually reason, not just speak fluently</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"From Text to Thought",
+  title:"Chain-of-Thought",
+  body:`
+    <ul class="plain">
+      <li>Asking the model to "think step by step" before producing a final answer</li>
+      <li>First shown by a Google Brain paper in 2022: simply prompting a model to show its reasoning can dramatically improve accuracy on math, logic, and multi-step problems</li>
+      <li>Chain-of-thought is the foundational technique behind every reasoning technique that came after it</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"From Text to Thought",
+  title:"Reasoning Models",
+  body:`
+    <ul class="plain">
+      <li>A newer class of models trained specifically to reason longer and more carefully before answering</li>
+      <li>Current examples: OpenAI's o-series and GPT-5's reasoning mode, Anthropic's Claude with extended thinking, Google's Gemini 2.5 with thinking, DeepSeek's R-series</li>
+      <li>They trade speed and cost for reliability on hard problems</li>
+    </ul>
+    <div class="callout">For simple tasks, a standard model is faster and cheaper. For planning, math, code debugging, and agentic work, a reasoning model is usually worth it.</div>
+  `
+},
+{
+  eyebrow:"From Text to Thought",
+  title:"Multimodality",
+  body:`
+    <ul class="plain">
+      <li>Models that accept more than text as input or output</li>
+      <li>GPT-5 with vision, Claude with vision, Gemini 2.5, and Qwen-VL can read images, charts, screenshots, and in some cases audio and video</li>
+    </ul>
+    <div class="callout">The practical consequence for enterprise: you no longer need a separate OCR pipeline for most document work. A screenshot of a spreadsheet, a photo of a form, or a diagram can go directly into the prompt.</div>
+  `
+},
+{
+  eyebrow:"Talking to the Model",
+  title:"Talking to the Model",
+  body:`
+    <ul class="plain">
+      <li>Now the practical question: how to actually get the model to do what you want</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Talking to the Model",
+  title:"Prompting",
+  body:`
+    <ul class="plain">
+      <li>The practice of crafting the input to a model so it produces the output you want</li>
+      <li>One part craft (how you phrase things)</li>
+      <li>One part design (what structure you give the model)</li>
+      <li>One part empirical testing (what actually works for your specific task)</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Talking to the Model",
+  title:"System Prompt",
+  body:`
+    <ul class="plain">
+      <li>A special kind of prompt that sits above the user's message and sets the model's role, rules, and scope</li>
+      <li>System prompts are sticky: they apply to every user turn in a conversation</li>
+    </ul>
+    <div class="example">This is where you write things like: "You are a billing specialist. Do not claim you have applied a credit. Use only the tools provided."</div>
+  `
+},
+{
+  eyebrow:"Talking to the Model",
+  title:"Few-Shot and In-Context Learning",
+  body:`
+    <ul class="plain">
+      <li>Giving the model examples of the input-output pattern you want, directly inside the prompt</li>
+      <li>The model learns the pattern on the fly, without any fine-tuning</li>
+    </ul>
+    <div class="callout">Few-shot learning is one of the most underrated techniques in the toolkit: three good examples often outperform a carefully tuned zero-shot prompt.</div>
+  `
+},
+{
+  eyebrow:"Talking to the Model",
+  title:"Context Engineering",
+  body:`
+    <ul class="plain">
+      <li>The current evolution of prompt engineering</li>
+      <li>Prompting focuses on the wording of a single instruction</li>
+      <li>Context engineering is the broader discipline of deciding what goes into the context window, in what order, with what structure</li>
+      <li>Includes system prompts, few-shot examples, retrieved documents, tool definitions, conversation history, and output format constraints, all orchestrated together</li>
+    </ul>
+    <div class="callout">When people talk about "building an AI product" in 2026, they are almost always talking about context engineering more than model choice.</div>
+  `
+},
+{
+  eyebrow:"Beyond Single Calls",
+  title:"Beyond Single Calls",
+  body:`
+    <ul class="plain">
+      <li>Everything so far assumes one request to a model and one response</li>
+      <li>Every interesting system in 2026 involves multiple calls, chained together in specific patterns</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Beyond Single Calls",
+  title:"Tool Use and Function Calling",
+  body:`
+    <ul class="plain">
+      <li>Giving the model the ability to invoke external functions: search, database queries, calculators, custom APIs</li>
+      <li>The model decides when a tool is needed, formulates the call, reads the result, and incorporates it into its answer</li>
+    </ul>
+    <div class="example">A billing specialist in a customer-support system might have tools like get_billing_account, get_invoice_details, and read_billing_reference.</div>
+    <div class="callout">Tool use is the single most important capability that turns an LLM into something closer to an employee.</div>
+  `
+},
+{
+  eyebrow:"Beyond Single Calls",
+  title:"Agent",
+  body:`
+    <ul class="plain">
+      <li>A system where a language model uses tools in a loop to accomplish a goal, with the model deciding what to do at each step</li>
+      <li>Not every system that uses an LLM is an agent</li>
+      <li>An agent has to make runtime decisions about its next action based on what it observes</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Beyond Single Calls",
+  title:"Workflow vs Agent",
+  body:`
+    <div class="diagram">
+      <svg width="100%" viewBox="0 0 680 220" role="img">
+        <title>Workflow versus agent</title>
+        <desc>A workflow follows a predefined path the developer decides with the model filling in steps; an agent decides its own steps dynamically in a loop.</desc>
+        <g class="dgray"><rect x="30" y="40" width="280" height="140" rx="8" stroke-width="0.5"/>
+          <text class="th" x="170" y="65" text-anchor="middle">Workflow</text>
+        </g>
+        <text class="t dsvg-label" x="170" y="95" text-anchor="middle">Step 1 → Step 2 → Step 3</text>
+        <text class="ts dsvg-sub" x="170" y="118" text-anchor="middle">You decide the steps.</text>
+        <text class="ts dsvg-sub" x="170" y="136" text-anchor="middle">The model fills in the blanks.</text>
+        <text class="ts dsvg-sub" x="170" y="160" text-anchor="middle">Easier to evaluate, control, debug.</text>
+        <g class="damber"><rect x="370" y="40" width="280" height="140" rx="8" stroke-width="0.5"/>
+          <text class="th" x="510" y="65" text-anchor="middle">Agent</text>
+        </g>
+        <text class="t dsvg-label" x="510" y="95" text-anchor="middle">Observe → Decide → Act → loop</text>
+        <text class="ts dsvg-sub" x="510" y="118" text-anchor="middle">The LLM decides the steps.</text>
+        <text class="ts dsvg-sub" x="510" y="136" text-anchor="middle">More powerful, harder to trust.</text>
+        <text class="ts dsvg-sub" x="510" y="160" text-anchor="middle">Build workflow first, add this later.</text>
+      </svg>
+    </div>
+    <ul class="plain">
+      <li>Anthropic's useful distinction</li>
+      <li>A workflow is a system where an LLM is embedded in a predefined path. You decide the steps; the model fills in the blanks</li>
+      <li>An agent is a system where the LLM decides the steps dynamically</li>
+      <li>Most production systems are workflows today, because workflows are easier to evaluate, control, and debug</li>
+    </ul>
+    <div class="callout">The honest answer for most enterprise problems: build the workflow first, add agentic flexibility only where it clearly earns its keep.</div>
+  `
+},
+{
+  eyebrow:"Beyond Single Calls",
+  title:"Router and Classifier Patterns",
+  body:`
+    <ul class="plain">
+      <li>A very common workflow shape: one LLM call decides which downstream specialist or path handles the request, and then the matching specialist takes over</li>
+    </ul>
+    <div class="example">A router might classify each support request as permissions, review-workflow, billing, or escalation, and then dispatch to the right specialist.</div>
+    <div class="callout">Routers are cheap, fast, and one of the most effective ways to lift quality in production systems.</div>
+  `
+},
+{
+  eyebrow:"Beyond Single Calls",
+  title:"Specialist and Sub-Agent",
+  body:`
+    <ul class="plain">
+      <li>A downstream component that handles a narrower task than the orchestrator above it</li>
+      <li>In the customer-support example, the billing specialist has its own prompt, its own tools, and its own evaluation criteria, while the router only has to pick a category</li>
+    </ul>
+    <div class="callout">Decomposing a system into specialists is one of the most reliable ways to make it both better and easier to evaluate.</div>
+  `
+},
+{
+  eyebrow:"Beyond Single Calls",
+  title:"Multi-Agent System",
+  body:`
+    <ul class="plain">
+      <li>A system where multiple agents coordinate to solve a larger problem</li>
+      <li>Each agent has a role and often its own tools, and they communicate through messages or a shared state</li>
+    </ul>
+    <div class="callout">Multi-agent systems are powerful but hard to get right: failure modes compound, debugging gets non-trivial, and the temptation to over-engineer is real. The current production consensus: start with one agent, add a second only when you have clear evidence you need one.</div>
+  `
+},
+{
+  eyebrow:"Knowing What You Don't Know",
+  title:"Knowing What You Don't Know",
+  body:`
+    <ul class="plain">
+      <li>Models are trained on a snapshot of the world</li>
+      <li>They do not know your company's documents, today's news, or what your customer asked yesterday</li>
+      <li>Retrieval is how you fill that gap</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Knowing What You Don't Know",
+  title:"Retrieval",
+  body:`
+    <ul class="plain">
+      <li>The general capability of looking something up and including it in the model's context before asking for an answer</li>
+      <li>Retrieval can pull from a document store, a database, a search engine, a knowledge graph, or a mix of all of them</li>
+    </ul>
+    <div class="callout">This guide deliberately calls it retrieval, not RAG, because the concept is broader than any single pattern.</div>
+  `
+},
+{
+  eyebrow:"Knowing What You Don't Know",
+  title:"Semantic Search and Embeddings",
+  body:`
+    <ul class="plain">
+      <li>Instead of matching keywords, convert text into a vector of numbers that captures its meaning</li>
+      <li>Then find other text whose vectors are close in that space. This is semantic search</li>
+      <li>The vectors are called embeddings</li>
+    </ul>
+    <div class="callout">Embeddings are the connective tissue of most retrieval systems, and they are cheap to generate.</div>
+  `
+},
+{
+  eyebrow:"Knowing What You Don't Know",
+  title:"Vector Database",
+  body:`
+    <ul class="plain">
+      <li>Infrastructure built to store and search embeddings at scale</li>
+      <li>Popular choices in 2026: Pinecone, Weaviate, Qdrant, pgvector (for teams already on Postgres), and LanceDB</li>
+    </ul>
+    <div class="callout">Choice of vector database matters less than most vendors want you to believe. What matters is your retrieval strategy and your evals.</div>
+  `
+},
+{
+  eyebrow:"Knowing What You Don't Know",
+  title:"Memory",
+  body:`
+    <ul class="plain">
+      <li>Persisted state across turns or sessions</li>
+      <li><b>Short-term memory:</b> the current conversation: previous turns held in the context window</li>
+      <li><b>Long-term memory:</b> information the system chooses to remember across sessions: user preferences, past interactions, learned facts</li>
+    </ul>
+    <div class="callout">The mechanics of long-term memory are still an active research area.</div>
+  `
+},
+{
+  eyebrow:"Keeping It Honest",
+  title:"Keeping It Honest",
+  body:`
+    <ul class="plain">
+      <li>Once you have a model answering, the next problem is trust: whether the answer is good, whether it is truthful, whether it is safe</li>
+      <li>This section covers the vocabulary of that problem, which turns out to be most of the work in production</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Keeping It Honest",
+  title:"Evaluation (Evals)",
+  body:`
+    <ul class="plain">
+      <li>The practice of measuring how well your system performs on specific tasks, at scale, with a repeatable method</li>
+      <li>Evals are the one muscle worth building the most if you are shipping AI systems</li>
+      <li>Two broad families: code-based evals (deterministic checks on format, schema, or exact matches) and LLM-as-judge evals (another model scores the output against a rubric)</li>
+    </ul>
+    <div class="callout">Most serious teams blend them.</div>
+  `
+},
+{
+  eyebrow:"Keeping It Honest",
+  title:"LLM-as-Judge",
+  body:`
+    <ul class="plain">
+      <li>Using one language model to score another language model's output against a rubric</li>
+      <li>A common application: scoring whether a specialist's drafts match a brand voice</li>
+      <li>LLM judges are powerful because they scale and they can assess subjective quality</li>
+    </ul>
+    <div class="callout">They are dangerous if they are not calibrated against human labels first. The rule: never trust a judge you have not calibrated.</div>
+  `
+},
+{
+  eyebrow:"Keeping It Honest",
+  title:"Hallucination",
+  body:`
+    <ul class="plain">
+      <li>When a model produces confident text that is not grounded in reality</li>
+      <li>Hallucinations are not bugs you can fix by tweaking a prompt</li>
+      <li>They are a consequence of how LLMs work</li>
+    </ul>
+    <div class="callout">You reduce them through retrieval, grounding, guardrails, and evals. You do not eliminate them.</div>
+  `
+},
+{
+  eyebrow:"Keeping It Honest",
+  title:"Grounding",
+  body:`
+    <ul class="plain">
+      <li>Tying a model's output to a verified source, usually a retrieved document or a structured data record</li>
+      <li>A grounded answer can be traced back to its source</li>
+      <li>An ungrounded answer cannot</li>
+    </ul>
+    <div class="callout">Grounding is the most effective defense against hallucinations in enterprise systems.</div>
+  `
+},
+{
+  eyebrow:"Keeping It Honest",
+  title:"Guardrails",
+  body:`
+    <p>Safety checks that run before or after the model.</p>
+    <div class="grid2">
+      <div class="card"><h3>Input guardrails</h3><p>Filter user input: PII redaction, prompt injection detection, scope filtering.</p></div>
+      <div class="card"><h3>Output guardrails</h3><p>Filter model output: hallucination checks, PII leakage detection, tone filtering, action boundary enforcement.</p></div>
+    </div>
+    <div class="callout">Chapter 9 of this guide goes much deeper on the taxonomy and production patterns.</div>
+  `
+},
+{
+  eyebrow:"Plumbing",
+  title:"Plumbing",
+  body:`
+    <ul class="plain">
+      <li>Last, the layer nobody talks about at demos</li>
+      <li>And everyone cares about in production</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Plumbing",
+  title:"Observability and Tracing",
+  body:`
+    <ul class="plain">
+      <li>Watching what your system is actually doing in production</li>
+      <li>Every prompt, every tool call, every response, captured as a structured trace you can filter and analyze</li>
+    </ul>
+    <div class="callout">Observability is what turns a one-time evaluation into a continuous one. It is the foundation of CC/CD.</div>
+  `
+},
+{
+  eyebrow:"Plumbing",
+  title:"Model Context Protocol (MCP)",
+  body:`
+    <ul class="plain">
+      <li>An open protocol, originally published by Anthropic in late 2024, for connecting language models to external tools, data sources, and systems in a standardized way</li>
+      <li>Before MCP, every vendor had its own way of wiring up tools</li>
+    </ul>
+    <div class="callout">MCP is fast becoming the USB-C of AI integrations. If you are building any non-trivial enterprise system in 2026, you are almost certainly going to encounter MCP.</div>
+  `
+},
+{
+  eyebrow:"Plumbing",
+  title:"Agents SDK",
+  body:`
+    <ul class="plain">
+      <li>OpenAI's official framework for building agent applications, released in 2025</li>
+      <li>Handles the orchestration plumbing: the agent loop, tool calls, handoffs between agents, and built-in tracing</li>
+      <li>The package is called openai-agents</li>
+      <li>Other frameworks in the same space: LangGraph, CrewAI, LlamaIndex agents</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Map, Assembled",
+  title:"The Map, Assembled",
+  body:`
+    <p>That is the vocabulary. Read across it and you have the conceptual backbone of modern AI systems.</p>
+    <div class="callout">A foundation model trained on text, talked to through prompts, extended through tools, grounded through retrieval, kept honest through evaluation, coordinated through protocols, observed through tracing.</div>
+    <ul class="plain">
+      <li>Every chapter that follows drops deeper into one part of this map</li>
+      <li>Chapter 2 steps back out to look at what enterprises are actually building with this language, and what is working in practice</li>
+    </ul>
+  `
+}
+];
+
+
+const ch1_quiz = [
+{
+  type:'mc',
+  q:"Why does this chapter exist?",
+  options:[
+    "Because terms like \"agent\" and \"eval\" mean different things to different people, and the guide provides a shared, production-grounded vocabulary",
+    "Because the AI field has agreed on one universal definition for every term",
+    "Because the book wants to introduce brand-new terms not used anywhere else",
+    "Because vocabulary never matters once you start building"
+  ],
+  correct:0,
+  explain:"\"Agent\" can mean a simple script or a fully autonomous system, and \"eval\" can mean a unit test or a full benchmark. Wherever sources disagree, this guide follows the usage closest to production work."
+},
+{
+  type:'mc',
+  q:"What is the one fact every other concept in this chapter extends from?",
+  options:[
+    "The system you are building on is a probability machine trained to predict text",
+    "Every AI system is a database of verified facts",
+    "All models are built the same way regardless of provider",
+    "Context windows are unlimited in modern systems"
+  ],
+  correct:0,
+  explain:"Section 1.1 opens with this exact claim: the system you are building on is a probability machine trained to predict text, and every other concept extends from that one fact."
+},
+{
+  type:'mc',
+  q:"What is the relationship between Generative AI and large language models?",
+  options:[
+    "Generative AI is the umbrella term; LLMs are the most familiar shape it takes, but image, audio, and video models live under the same umbrella",
+    "Generative AI and LLMs are two completely unrelated fields",
+    "LLMs are the umbrella term, and Generative AI is one type of LLM",
+    "Generative AI only refers to image-generating systems"
+  ],
+  correct:0,
+  explain:"Generative AI is the umbrella class of systems producing new content, with large language models as the most familiar shape it takes, alongside image, audio, and video models under the same umbrella."
+},
+{
+  type:'multi',
+  q:"Which of the following are true about Foundation Models?",
+  options:[
+    "The term was coined by the Stanford Center for Research on Foundation Models in 2021",
+    "GPT, Claude, Gemini, and Llama are all foundation models",
+    "A foundation model is built for exactly one task and cannot be adapted",
+    "You can use a foundation model directly or adapt it through fine-tuning"
+  ],
+  correctSet:[0,1,3],
+  explain:"Stanford coined the term in 2021. GPT, Claude, Gemini, and Llama are all examples, and you can use them directly or adapt them through fine-tuning. Foundation models are designed to be adapted to many tasks, not built for just one."
+},
+{
+  type:'mc',
+  q:"Does an LLM \"know\" facts the way a database does?",
+  options:[
+    "An LLM does not know facts the way a database does, it has learned to produce text that fits the patterns of its training data",
+    "An LLM stores every fact it was trained on in a searchable database",
+    "An LLM verifies every statement against a live fact-checking service before responding",
+    "An LLM only produces text it has memorized word-for-word"
+  ],
+  correct:0,
+  explain:"An LLM does not know facts the way a database does. It has learned to produce text that fits the patterns of its training data, and both its magical and its wrong behavior trace back to that one fact."
+},
+{
+  type:'mc',
+  q:"What are the two practical consequences of tokens being the unit a model reads and writes?",
+  options:[
+    "You pay by the token, and you have a limited number of tokens you can fit into a single request",
+    "Tokens are always exactly one word each, with no exceptions",
+    "Tokens only matter for image-generating models, not language models",
+    "Tokens are free and unlimited on all providers"
+  ],
+  correct:0,
+  explain:"Two practical consequences follow directly: you pay by the token, and you have a limited number of tokens you can fit into a single request."
+},
+{
+  type:'scenario',
+  q:"A team notices their model gives worse answers when a key fact sits in the middle of a very long prompt, even though it fits well within the context window. What is this called?",
+  options:[
+    "The \"lost in the middle\" problem",
+    "A hallucination",
+    "A tokenizer error",
+    "A guardrail failure"
+  ],
+  correct:0,
+  explain:"Attention quality often degrades toward the middle and edges of very long contexts, a real production concern called the \"lost in the middle\" problem, separate from context window size itself."
+},
+{
+  type:'multi',
+  q:"Which statements correctly describe the three stages a model passes through?",
+  options:[
+    "Pretraining trains on trillions of tokens of web, book, and code data",
+    "Fine-tuning uses a much smaller labeled dataset than pretraining",
+    "Post-training scale is what mostly distinguishes a good frontier model from a weaker one, not pretraining scale",
+    "Fine-tuning always happens before pretraining"
+  ],
+  correctSet:[0,1,2],
+  explain:"Pretraining is the expensive, general step on huge data. Fine-tuning adapts a pretrained model with a smaller labeled dataset. Most of what distinguishes a good frontier model is post-training, not pretraining scale. Fine-tuning happens after pretraining, never before."
+},
+{
+  type:'mc',
+  q:"What did the 2022 Google Brain paper on Chain-of-Thought show?",
+  options:[
+    "Simply prompting a model to show its reasoning can dramatically improve accuracy on math, logic, and multi-step problems",
+    "Chain-of-thought only works on image-based tasks",
+    "Asking a model to think step by step always makes it slower with no accuracy benefit",
+    "Chain-of-thought was proven ineffective and abandoned"
+  ],
+  correct:0,
+  explain:"This is the counterintuitive result: asking a model to think step by step before answering measurably improves accuracy. Chain-of-thought is the foundational technique behind every reasoning technique that came after it."
+},
+{
+  type:'mc',
+  q:"When is a reasoning model usually worth the extra speed and cost?",
+  options:[
+    "For planning, math, code debugging, and agentic work",
+    "For every single task, regardless of complexity",
+    "Only for tasks involving image generation",
+    "Reasoning models are never worth the extra cost according to the chapter"
+  ],
+  correct:0,
+  explain:"For simple tasks, a standard model is faster and cheaper, but for planning, math, code debugging, and agentic work, a reasoning model is usually worth it."
+},
+{
+  type:'scenario',
+  q:"A team wants their AI assistant to read a photo of a handwritten form and a screenshot of a spreadsheet directly, without building a separate text-extraction pipeline first. Which capability makes this possible?",
+  options:[
+    "Multimodality",
+    "Few-shot learning",
+    "Chain-of-thought prompting",
+    "Fine-tuning"
+  ],
+  correct:0,
+  explain:"Multimodality means a model accepts more than text as input. The practical payoff for enterprise: a screenshot or photo of a document can go directly into the prompt, removing the need for a separate OCR pipeline."
+},
+{
+  type:'mc',
+  q:"How is prompting best described?",
+  options:[
+    "One part craft, one part design, one part empirical testing",
+    "A purely mechanical process with no creative element",
+    "Something only engineers are capable of doing well",
+    "A technique that has been fully replaced by fine-tuning"
+  ],
+  correct:0,
+  explain:"Prompting is one part craft (how you phrase things), one part design (what structure you give the model), and one part empirical testing (what actually works for your specific task)."
+},
+{
+  type:'scenario',
+  q:"A prompt opens with \"You are a billing specialist. Do not claim you have applied a credit. Use only the tools provided.\" Which part of a prompt does this represent, and what makes it distinct from a regular user message?",
+  options:[
+    "A system prompt, which sits above the user's message and is sticky, applying to every turn in the conversation",
+    "A one-time instruction that only applies to the very first message",
+    "An output format constraint",
+    "A few-shot example"
+  ],
+  correct:0,
+  explain:"This is the classic example of a system prompt: it sits above the user's message, sets role, rules, and scope, and is sticky, meaning it applies to every user turn in the conversation."
+},
+{
+  type:'mc',
+  q:"How many good examples can often outperform a carefully tuned zero-shot prompt?",
+  options:[
+    "Three",
+    "Fifty",
+    "None, examples never help",
+    "One thousand"
+  ],
+  correct:0,
+  explain:"Few-shot learning is one of the most underrated techniques in the toolkit: three good examples often outperform a carefully tuned zero-shot prompt."
+},
+{
+  type:'mc',
+  q:"What do people usually mean when they say \"building an AI product\" in 2026?",
+  options:[
+    "Context engineering, more than model choice",
+    "Picking the single most expensive model available",
+    "Writing the shortest possible prompt",
+    "Fine-tuning a custom model from scratch every time"
+  ],
+  correct:0,
+  explain:"When people talk about building an AI product in 2026, they are almost always talking about context engineering, more than which model they picked."
+},
+{
+  type:'scenario',
+  q:"A billing specialist agent has tools like get_billing_account and get_invoice_details, and decides for itself which tool to call and when. What is giving a model this ability called?",
+  options:[
+    "Tool use and function calling",
+    "Context engineering",
+    "Chain-of-thought prompting",
+    "Multimodality"
+  ],
+  correct:0,
+  explain:"This mirrors the billing specialist example, with tools like get_billing_account, get_invoice_details, and read_billing_reference. Tool use is giving the model the ability to invoke external functions and decide when they are needed."
+},
+{
+  type:'mc',
+  q:"What distinguishes an agent from any other system that uses an LLM?",
+  options:[
+    "An agent has to make runtime decisions about its next action based on what it observes",
+    "An agent is any system that calls an API at least once",
+    "An agent must always involve multiple language models",
+    "An agent is defined purely by how much it costs to run"
+  ],
+  correct:0,
+  explain:"Not every system that uses an LLM is an agent. An agent has to make runtime decisions about its next action based on what it observes."
+},
+{
+  type:'mc',
+  q:"Anthropic draws a useful distinction between a workflow and an agent. What separates the two?",
+  options:[
+    "In a workflow, the developer decides the steps and the model fills in the blanks; in an agent, the model decides the steps dynamically",
+    "A workflow never involves a language model at all",
+    "An agent is always cheaper to run than a workflow",
+    "A workflow can only ever have one single step"
+  ],
+  correct:0,
+  explain:"A workflow is a system where the developer decides the steps and the model fills in the blanks, while an agent decides the steps dynamically. Most production systems today are workflows because they are easier to evaluate, control, and debug."
+},
+{
+  type:'scenario',
+  q:"A team is building a customer support system where one LLM call reads an incoming ticket and decides whether it goes to permissions, review-workflow, billing, or escalation, then hands it to the right specialist. Which pattern is this?",
+  options:[
+    "Router and classifier pattern",
+    "Multi-agent system",
+    "Fine-tuning",
+    "Grounding"
+  ],
+  correct:0,
+  explain:"This mirrors the router example: one LLM call classifies the request as permissions, review-workflow, billing, or escalation, then dispatches to the matching specialist, exactly the router and classifier pattern."
+},
+{
+  type:'mc',
+  q:"In the customer-support example, what distinguishes a specialist from the router above it?",
+  options:[
+    "The specialist has its own prompt, its own tools, and its own evaluation criteria, while the router only has to pick a category",
+    "The specialist never uses any tools at all",
+    "The router and the specialist are always the exact same component",
+    "The specialist is always more expensive to run than the router regardless of task"
+  ],
+  correct:0,
+  explain:"The billing specialist has its own prompt, its own tools, and its own evaluation criteria, while the router only has to pick a category. Decomposing a system into specialists is one of the most reliable ways to make it both better and easier to evaluate."
+},
+{
+  type:'mc',
+  q:"What is the stated production consensus on when to add a second agent to a multi-agent system?",
+  options:[
+    "Start with one agent, add a second only when you have clear evidence you need one",
+    "Always start with at least three agents for redundancy",
+    "Multi-agent systems should never be used under any circumstances",
+    "Add agents freely since failure modes never compound"
+  ],
+  correct:0,
+  explain:"Multi-agent systems are powerful but hard to get right, since failure modes compound and debugging gets non-trivial. The current production consensus is to start with one agent and add a second only with clear evidence."
+},
+{
+  type:'mc',
+  q:"Why is the term \"retrieval\" used here instead of \"RAG\"?",
+  options:[
+    "Because the concept of retrieval is broader than any single pattern like RAG",
+    "Because RAG is a deprecated and no longer used term",
+    "Because retrieval and RAG refer to completely unrelated technologies",
+    "Because the chapter avoids all acronyms as a general rule"
+  ],
+  correct:0,
+  explain:"It's deliberately called retrieval, not RAG, because the concept is broader than any single pattern, since retrieval can pull from a document store, database, search engine, knowledge graph, or a mix of all of them."
+},
+{
+  type:'mc',
+  q:"What are the numerical vectors produced by semantic search called?",
+  options:[
+    "Embeddings",
+    "Tokens",
+    "Guardrails",
+    "Checkpoints"
+  ],
+  correct:0,
+  explain:"Converting text into a vector of numbers that captures its meaning is called semantic search, and the resulting vectors are called embeddings, the connective tissue of most retrieval systems."
+},
+{
+  type:'mc',
+  q:"What actually matters more than which vector database a team chooses?",
+  options:[
+    "Your retrieval strategy and your evals",
+    "The total dollar amount spent on the vector database license",
+    "Whether the vector database was released in the current calendar year",
+    "The chapter says vector database choice is the single most important decision in a retrieval system"
+  ],
+  correct:0,
+  explain:"Choice of vector database matters less than most vendors want you to believe. What actually matters is your retrieval strategy and your evals."
+},
+{
+  type:'multi',
+  q:"Which statements correctly distinguish short-term memory from long-term memory?",
+  options:[
+    "Short-term memory is the current conversation, held in the context window",
+    "Long-term memory is information the system chooses to remember across sessions, like user preferences",
+    "The mechanics of long-term memory are still an active research area",
+    "Short-term and long-term memory are identical concepts with different names"
+  ],
+  correctSet:[0,1,2],
+  explain:"Short-term memory is the current conversation held in context. Long-term memory is information chosen to persist across sessions. Long-term memory mechanics are still an active research area."
+},
+{
+  type:'mc',
+  q:"What is described as the one muscle worth building the most if you are shipping AI systems?",
+  options:[
+    "Evaluation (Evals)",
+    "Prompt engineering",
+    "Model fine-tuning",
+    "Multi-agent orchestration"
+  ],
+  correct:0,
+  explain:"Evals are the one muscle worth building the most if you are shipping AI systems: measuring how well a system performs on specific tasks, at scale, with a repeatable method."
+},
+{
+  type:'mc',
+  q:"What is the rule about trusting an LLM judge?",
+  options:[
+    "Never trust a judge you have not calibrated against human labels first",
+    "Always trust an LLM judge more than a human reviewer",
+    "LLM judges should never be used under any circumstances",
+    "LLM judges do not need calibration since they are inherently accurate"
+  ],
+  correct:0,
+  explain:"LLM judges are dangerous if they are not calibrated against human labels first. The rule: never trust a judge you have not calibrated."
+},
+{
+  type:'mc',
+  q:"Are hallucinations something you can fix by tweaking a prompt?",
+  options:[
+    "No, they are a consequence of how LLMs work, reduced through retrieval, grounding, guardrails, and evals, but never eliminated",
+    "Yes, a sufficiently well-written prompt eliminates hallucinations completely",
+    "Hallucinations only happen in reasoning models, never in standard models",
+    "The chapter says hallucinations are not a real phenomenon"
+  ],
+  correct:0,
+  explain:"Hallucinations are not bugs you can fix by tweaking a prompt. They are a consequence of how LLMs work. You reduce them through retrieval, grounding, guardrails, and evals, but you do not eliminate them."
+},
+{
+  type:'mc',
+  q:"Why is grounding the most effective defense against hallucinations in enterprise systems?",
+  options:[
+    "A grounded answer can be traced back to its source, while an ungrounded answer cannot",
+    "Grounding makes a model respond faster with no other effect",
+    "Grounding is only useful for image-generating models",
+    "Grounding eliminates the need for any evaluation"
+  ],
+  correct:0,
+  explain:"Grounding ties a model's output to a verified source. A grounded answer can be traced back to its source while an ungrounded answer cannot, making it the most effective defense against hallucination."
+},
+{
+  type:'multi',
+  q:"Which of these are output guardrails, as opposed to input guardrails?",
+  options:[
+    "Hallucination checks",
+    "PII leakage detection",
+    "Action boundary enforcement",
+    "Prompt injection detection"
+  ],
+  correctSet:[0,1,2],
+  explain:"Hallucination checks, PII leakage detection, tone filtering, and action boundary enforcement are output guardrails. Prompt injection detection is an input guardrail instead."
+},
+{
+  type:'mc',
+  q:"What is observability described as the foundation of?",
+  options:[
+    "CC/CD",
+    "Chain-of-thought prompting",
+    "Vector databases",
+    "Multimodality"
+  ],
+  correct:0,
+  explain:"Observability is what turns a one-time evaluation into a continuous one. It is the foundation of CC/CD."
+},
+{
+  type:'scenario',
+  q:"An engineer wants their AI assistant to connect to several external tools and data sources using one standardized, vendor-neutral protocol instead of writing custom integration code for each one. Which concept fits this need?",
+  options:[
+    "Model Context Protocol (MCP)",
+    "Chain-of-thought prompting",
+    "Vector database",
+    "System prompt"
+  ],
+  correct:0,
+  explain:"MCP is described as an open protocol, published by Anthropic in late 2024, for connecting models to external tools and data sources in a standardized way, fast becoming the \"USB-C of AI integrations.\""
+},
+{
+  type:'mc',
+  q:"What is the Agents SDK package called, and who released it?",
+  options:[
+    "openai-agents, released by OpenAI in 2025",
+    "anthropic-agents, released by Anthropic in 2024",
+    "google-agents, released by Google in 2026",
+    "meta-agents, released by Meta in 2025"
+  ],
+  correct:0,
+  explain:"The Agents SDK is OpenAI's official framework, released in 2025, with the package called openai-agents, handling the agent loop, tool calls, handoffs, and built-in tracing."
+},
+{
+  type:'mc',
+  q:"The closing summary chains this vocabulary into one sequence. Which order is correct?",
+  options:[
+    "A foundation model trained on text, talked to through prompts, extended through tools, grounded through retrieval, kept honest through evaluation, coordinated through protocols, observed through tracing",
+    "A vector database trained on tools, extended through prompts, and grounded through agents",
+    "A guardrail trained on evals, extended through retrieval, and observed through prompts",
+    "A reasoning model trained on tracing, extended through protocols, and grounded through tokens"
+  ],
+  correct:0,
+  explain:"This is the closing sentence that ties the vocabulary together: a foundation model trained on text, talked to through prompts, extended through tools, grounded through retrieval, kept honest through evaluation, coordinated through protocols, observed through tracing."
+}
+];
+
+/* ============================================================
+   CHAPTER 2
+   ============================================================ */
+
+const ch2_slides = [
+{
+  eyebrow:"Chapter 2",
+  title:"What Enterprises Are Building",
+  body:`
+    <ul class="plain">
+      <li>Now that you share a vocabulary, the next question is: what are other companies actually doing with these systems?</li>
+      <li>The honest answer has shifted a lot between 2023 and 2026</li>
+      <li>The early years of generative AI were dominated by demos and pilot projects</li>
+      <li>In the last eighteen months: more systems are in production, more teams measure ROI seriously, and a few clear patterns have emerged about what works and what doesn't</li>
+    </ul>
+    <div class="callout">This chapter draws from public enterprise AI reports and LevelUp Labs' own work, to map the territory so your own product choices land inside the zone where success is plausible.</div>
+  `
+},
+{
+  eyebrow:"The Shift From Pilots to Production",
+  title:"The Shift From Pilots to Production",
+  body:`
+    <ul class="plain">
+      <li>McKinsey's annual State of AI survey shows the majority of enterprises now use generative AI regularly, a sharp climb from roughly a third of organizations just two years earlier</li>
+      <li>Menlo Ventures' 2025 State of AI in the Enterprise report put enterprise AI spending well into the tens of billions, with the steepest growth in production-grade systems rather than experiments</li>
+      <li>The direction is unmistakable: AI spending is graduating out of the innovation budget</li>
+    </ul>
+    <div class="callout">What this has surfaced is a gap. Teams that succeeded in pilots did not always succeed in production. The work that turns a demo into a system your customers rely on is different work: evaluation harnesses, guardrails, observability, retraining loops. Chapters 6 through 18 of this guide are mostly about closing that gap.</div>
+  `
+},
+{
+  eyebrow:"Where the Value Is Actually Landing",
+  title:"Where the Value Is Actually Landing",
+  body:`
+    <ul class="plain">
+      <li>The reports broadly agree on where enterprise AI is creating value today</li>
+      <li>Five categories dominate</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Where the Value Is Actually Landing",
+  title:"Internal Knowledge and Support",
+  body:`
+    <ul class="plain">
+      <li>Internal Q&A systems, onboarding assistants, documentation bots, help desk routing</li>
+    </ul>
+    <div class="callout">This is the largest category in most enterprise AI spend surveys because the ROI case is cleanest: fewer tickets, faster onboarding, less repetitive work for experts.</div>
+  `
+},
+{
+  eyebrow:"Where the Value Is Actually Landing",
+  title:"Document Processing and Extraction",
+  body:`
+    <ul class="plain">
+      <li>Contract review, invoice processing, form parsing, compliance checking</li>
+      <li>A natural fit for document-heavy enterprises</li>
+      <li>Long documents are structured enough for LLMs to handle, and the errors are catchable</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Where the Value Is Actually Landing",
+  title:"Coding Copilots",
+  body:`
+    <ul class="plain">
+      <li>GitHub Copilot, Claude Code, Cursor, and a growing set of IDE-integrated agents</li>
+      <li>Developer productivity is the category with the clearest adoption numbers</li>
+      <li>A meaningful share of engineering time now runs through some form of AI assistance</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Where the Value Is Actually Landing",
+  title:"Customer-Facing Assistants",
+  body:`
+    <ul class="plain">
+      <li>Support chat, sales qualification, onboarding flows</li>
+      <li>Less dominant than internal tools because the risk bar is higher</li>
+      <li>But this category is growing as guardrails mature</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Where the Value Is Actually Landing",
+  title:"Research and Analysis Workflows",
+  body:`
+    <ul class="plain">
+      <li>Literature review, competitive research, market analysis, investment diligence</li>
+      <li>Often built on top of retrieval systems</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Where the Value Is Actually Landing",
+  title:"What's Missing From This List",
+  body:`
+    <ul class="plain">
+      <li>Fully autonomous agents doing complex multi-step work without human oversight are still rare in production</li>
+    </ul>
+    <div class="callout">The honest story is that agentic patterns ship, but they ship with a lot of workflow scaffolding around them.</div>
+  `
+},
+{
+  eyebrow:"The Patterns That Are Working",
+  title:"The Patterns That Are Working",
+  body:`
+    <ul class="plain">
+      <li>Across the production systems that stuck, a few design patterns show up again and again</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Patterns That Are Working",
+  title:"Augment First, Automate Later",
+  body:`
+    <ul class="plain">
+      <li>Systems that shipped and stayed shipped tend to assist a human rather than replace one</li>
+      <li>The human stays in the loop, the system proposes and drafts, the human approves</li>
+      <li>Over time, the most trusted parts get automated one step at a time, as evals prove each step is safe to hand off</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Patterns That Are Working",
+  title:"Narrow Scope, Deep Quality",
+  body:`
+    <ul class="plain">
+      <li>Teams that picked a narrow problem, like "draft responses to billing questions about plan changes," and built a single great system for it shipped faster and with better quality than teams that tried to build "an AI assistant for everything"</li>
+    </ul>
+    <div class="callout">Narrow scope makes evaluation tractable. Evaluation makes improvement possible.</div>
+  `
+},
+{
+  eyebrow:"The Patterns That Are Working",
+  title:"Retrieval Over Fine-Tuning for Knowledge",
+  body:`
+    <ul class="plain">
+      <li>For getting a model to answer with your organization's specific information, retrieval almost always beats fine-tuning in both cost and flexibility</li>
+      <li>Fine-tuning is for style, format, and tightly scoped task behavior</li>
+      <li>Retrieval is for knowledge</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Patterns That Are Working",
+  title:"Workflows Before Agents",
+  body:`
+    <ul class="plain">
+      <li>The router-and-specialist pattern is the most common production shape</li>
+      <li>It is structured, debuggable, and evaluable</li>
+      <li>Teams that tried to build free-roaming agents first often came back to workflows later</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Patterns That Are Working",
+  title:"Evaluation as Durable Infrastructure",
+  body:`
+    <ul class="plain">
+      <li>Teams with production systems that actually improve over time built their eval harness as ongoing infrastructure, maintained continuously and visible to everyone</li>
+      <li>Teams that treat evals as a launch-time checkbox see quality drift within months</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"What Is Failing (and Why)",
+  title:"What Is Failing (and Why)",
+  body:`
+    <ul class="plain">
+      <li>Almost every public enterprise AI post-mortem traces back to one of three failures</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"What Is Failing (and Why)",
+  title:"No Clear Problem",
+  body:`
+    <ul class="plain">
+      <li>The project started with "we should use AI" rather than "we have a specific pain, and AI might be the right tool"</li>
+      <li>Nine months later, there is a system with no adopter</li>
+    </ul>
+    <div class="callout">This is the single most common cause of failure, and it is almost entirely preventable with thirty minutes of problem discovery upfront.</div>
+  `
+},
+{
+  eyebrow:"What Is Failing (and Why)",
+  title:"No Evaluation Discipline",
+  body:`
+    <ul class="plain">
+      <li>The team built something that looked good in demos, shipped it, and then could not tell why it was failing in production</li>
+    </ul>
+    <div class="callout">With no evals, every bug becomes a guessing game. With no guessing game, the system drifts. With drift, trust erodes.</div>
+  `
+},
+{
+  eyebrow:"What Is Failing (and Why)",
+  title:"Over-Scoped Agentic Design",
+  body:`
+    <ul class="plain">
+      <li>The team bet on a multi-agent autonomous system for a problem that needed a workflow</li>
+      <li>Failure modes compound, debugging gets expensive, and the project cannot ship</li>
+    </ul>
+    <div class="callout">The pattern across all three failures: each is a sign of skipping the boring work. The companies shipping production AI in 2026 are the ones who embraced the boring work early.</div>
+  `
+},
+{
+  eyebrow:"What This Means for Your Roadmap",
+  title:"What This Means for Your Roadmap",
+  body:`
+    <p>A few practical takeaways for a product team reading this in 2026.</p>
+    <ul class="plain">
+      <li>Start with a narrow problem that has clear users and clear success criteria. If you cannot name who will use it and what changes when they do, go back to the problem.</li>
+      <li>Build augmentation first. Let a human sit in the loop for the first version. Automate steps only after evals prove they are safe to automate.</li>
+      <li>Pick retrieval over fine-tuning for anything knowledge-related.</li>
+      <li>Budget more time for evaluation than for the demo. Demos are cheap. Evals are the work.</li>
+      <li>Expect iteration. The first version will be wrong by design, and the second version will be better because you shipped the first.</li>
+    </ul>
+  `
+}
+];
+
+const ch2_quiz = [
+{
+  type:'mc',
+  q:"What has changed about enterprise AI adoption between 2023 and 2026?",
+  options:[
+    "The early years were dominated by demos and pilots; the last eighteen months have seen more systems in production with clear patterns emerging about what works",
+    "Enterprise AI adoption has steadily declined since 2023",
+    "Nothing meaningful has changed in how enterprises approach AI",
+    "Pilots have entirely replaced production systems as the dominant approach"
+  ],
+  correct:0,
+  explain:"The early years of generative AI were dominated by demos and pilot projects. In the last eighteen months, more systems are in production, more teams measure ROI seriously, and clear patterns have emerged about what works and what doesn't."
+},
+{
+  type:'multi',
+  q:"Which of these are cited as evidence of AI spending graduating out of the innovation budget?",
+  options:[
+    "McKinsey's survey shows the majority of enterprises now use generative AI regularly, up from roughly a third two years earlier",
+    "Menlo Ventures put enterprise AI spending well into the tens of billions",
+    "The steepest growth is in production-grade systems rather than experiments",
+    "Enterprise AI spending has remained flat since 2023"
+  ],
+  correctSet:[0,1,2],
+  explain:"McKinsey's survey shows majority regular use, up from roughly a third two years prior. Menlo Ventures reported spending well into the tens of billions, with the steepest growth in production-grade systems, not experiments."
+},
+{
+  type:'mc',
+  q:"What gap did the shift toward production surface?",
+  options:[
+    "Teams that succeeded in pilots did not always succeed in production, since production requires different work like eval harnesses, guardrails, observability, and retraining loops",
+    "There is no meaningful difference between running a pilot and running a production system",
+    "Pilots now cost more to run than full production systems",
+    "Enterprises have stopped running pilots entirely"
+  ],
+  correct:0,
+  explain:"Pilot success does not guarantee production success, since production requires different work: evaluation harnesses, guardrails, observability, and retraining loops."
+},
+{
+  type:'multi',
+  q:"Which five categories are named as where enterprise AI value is actually landing?",
+  options:[
+    "Internal knowledge and support",
+    "Document processing and extraction",
+    "Coding copilots",
+    "Fully autonomous agents replacing entire teams"
+  ],
+  correctSet:[0,1,2],
+  explain:"The five named categories are internal knowledge and support, document processing and extraction, coding copilots, customer-facing assistants, and research and analysis workflows. Fully autonomous agents replacing teams is explicitly named as still rare, not a value-landing category."
+},
+{
+  type:'mc',
+  q:"Why is internal knowledge and support the largest category in most enterprise AI spend surveys?",
+  options:[
+    "The ROI case is cleanest: fewer tickets, faster onboarding, less repetitive work for experts",
+    "It requires the least amount of guardrails of any category",
+    "It is the newest category to emerge",
+    "Customers demand it more than any other use case"
+  ],
+  correct:0,
+  explain:"This category is largest because the ROI case is cleanest, with fewer tickets, faster onboarding, and less repetitive work for experts as the concrete payoffs."
+},
+{
+  type:'scenario',
+  q:"A team wants to automate contract review and invoice processing at a document-heavy enterprise. Which category does this fall under, and why is it a natural fit?",
+  options:[
+    "Document processing and extraction, since long documents are structured enough for LLMs to handle and the errors are catchable",
+    "Coding copilots, since contracts are treated like code",
+    "Customer-facing assistants, since contracts involve customers",
+    "Research and analysis workflows, since contracts require research"
+  ],
+  correct:0,
+  explain:"Document processing and extraction covers contract review, invoice processing, form parsing, and compliance checking. It's a natural fit for document-heavy enterprises because long documents are structured enough for LLMs to handle, and errors are catchable."
+},
+{
+  type:'mc',
+  q:"What makes coding copilots the category with the clearest adoption numbers?",
+  options:[
+    "A meaningful share of engineering time now runs through some form of AI assistance",
+    "Coding copilots require no evaluation or testing",
+    "They are the newest category to exist",
+    "They have no competitors in the market"
+  ],
+  correct:0,
+  explain:"Developer productivity is the category with the clearest adoption numbers, with a meaningful share of engineering time now running through some form of AI assistance, citing GitHub Copilot, Claude Code, and Cursor."
+},
+{
+  type:'mc',
+  q:"Why are customer-facing assistants less dominant than internal tools, even though the category is growing?",
+  options:[
+    "The risk bar is higher for customer-facing systems",
+    "Customers do not want AI assistance of any kind",
+    "Customer-facing assistants are more expensive to build than any other category",
+    "There is no demand for customer-facing AI assistants"
+  ],
+  correct:0,
+  explain:"Customer-facing assistants are less dominant than internal tools because the risk bar is higher, but the category is growing as guardrails mature."
+},
+{
+  type:'scenario',
+  q:"A team notices that despite the hype, almost no production system lets an agent handle a complex multi-step task completely without a human checking in. What does this match?",
+  options:[
+    "The chapter's own observation: fully autonomous agents without human oversight are still rare in production, and agentic patterns ship wrapped in workflow scaffolding",
+    "This observation is incorrect and fully autonomous agents are already the dominant production pattern",
+    "This only applies to small companies, not enterprises",
+    "Autonomous agents are not discussed anywhere in the material"
+  ],
+  correct:0,
+  explain:"Fully autonomous agents doing complex multi-step work without human oversight are still rare in production. Agentic patterns that do ship come wrapped in a lot of workflow scaffolding."
+},
+{
+  type:'mc',
+  q:"What is the sequence described in \"augment first, automate later\"?",
+  options:[
+    "The human stays in the loop while the system proposes and drafts, then the most trusted parts get automated one step at a time as evals prove it's safe",
+    "The system is fully automated from day one, with a human added later only if something breaks",
+    "Automation and evaluation happen in parallel with no particular order",
+    "The human is removed from the loop as soon as the system passes a demo"
+  ],
+  correct:0,
+  explain:"Systems that stayed shipped assist a human rather than replace one from the start. The human approves while the system drafts, and automation is added incrementally only once evals prove each step is safe."
+},
+{
+  type:'multi',
+  q:"Which statements match the guidance on narrow scope and retrieval over fine-tuning?",
+  options:[
+    "Teams that picked a narrow problem shipped faster and with better quality than teams trying to build \"an AI assistant for everything\"",
+    "Retrieval almost always beats fine-tuning in cost and flexibility for organization-specific knowledge",
+    "Fine-tuning is the recommended approach for organization-specific knowledge",
+    "Narrow scope makes evaluation tractable, which in turn makes improvement possible"
+  ],
+  correctSet:[0,1,3],
+  explain:"Narrow scope beats broad ambition, and retrieval beats fine-tuning for knowledge. Narrow scope enables evaluation, which enables improvement. Fine-tuning is for style, format, and tightly scoped behavior, not for organization-specific knowledge."
+},
+{
+  type:'mc',
+  q:"What happened to teams that tried building free-roaming agents first?",
+  options:[
+    "They often came back to workflows later, since the router-and-specialist pattern is structured, debuggable, and evaluable",
+    "They always succeeded on the first attempt and never revisited the design",
+    "They were required to abandon AI entirely",
+    "They found agents were easier to debug than workflows in every case"
+  ],
+  correct:0,
+  explain:"The router-and-specialist workflow pattern is the most common production shape because it is structured, debuggable, and evaluable. Teams that tried free-roaming agents first often came back to workflows later."
+},
+{
+  type:'mc',
+  q:"What distinguishes teams whose systems actually improve over time?",
+  options:[
+    "They built their eval harness as ongoing infrastructure, maintained continuously and visible to everyone, rather than a launch-time checkbox",
+    "They avoided evaluation entirely to move faster",
+    "They ran evals exactly once, right before launch, and never again",
+    "They relied only on user complaints to detect problems"
+  ],
+  correct:0,
+  explain:"Teams with systems that actually improve built their eval harness as durable, continuously maintained infrastructure, while teams that treat evals as a launch-time checkbox see quality drift within months."
+},
+{
+  type:'multi',
+  q:"Which three failure modes does almost every enterprise AI post-mortem trace back to?",
+  options:[
+    "No clear problem",
+    "No evaluation discipline",
+    "Over-scoped agentic design",
+    "Choosing a foundation model that is too large"
+  ],
+  correctSet:[0,1,2],
+  explain:"The three recurring failure modes are no clear problem, no evaluation discipline, and over-scoped agentic design. Model size is not one of the three."
+},
+{
+  type:'scenario',
+  q:"A team spent nine months building an AI system that started from \"we should use AI\" rather than a specific identified pain point, and the system now has no adopter. How avoidable was this?",
+  options:[
+    "Almost entirely preventable with thirty minutes of problem discovery upfront",
+    "Completely unavoidable in any nine-month project",
+    "Rare and unusual as a failure pattern",
+    "Not related to any known failure pattern"
+  ],
+  correct:0,
+  explain:"This is the \"no clear problem\" failure mode, the single most common cause of failure, and it is almost entirely preventable with thirty minutes of problem discovery upfront."
+},
+{
+  type:'mc',
+  q:"What happens when a team ships something that looked good in demos but has no evaluation discipline?",
+  options:[
+    "Every bug becomes a guessing game, the system drifts, and trust erodes",
+    "The system automatically self-corrects over time",
+    "Nothing changes since demos are a reliable predictor of production performance",
+    "The team saves time compared to building evals upfront"
+  ],
+  correct:0,
+  explain:"With no evals, every bug becomes a guessing game. With no guessing game, the system drifts. With drift, trust erodes."
+},
+{
+  type:'mc',
+  q:"What went wrong when a team bet on a multi-agent autonomous system for a problem that needed a workflow?",
+  options:[
+    "Failure modes compound, debugging gets expensive, and the project cannot ship",
+    "The project shipped faster than expected with no issues",
+    "Multi-agent systems are always the correct choice regardless of problem shape",
+    "Nothing went wrong, this is the recommended approach"
+  ],
+  correct:0,
+  explain:"Over-scoped agentic design means failure modes compound, debugging gets expensive, and the project cannot ship."
+},
+{
+  type:'mc',
+  q:"What is the common thread across all three failure modes?",
+  options:[
+    "Each is a sign of skipping the boring work; the companies shipping production AI in 2026 are the ones who embraced the boring work early",
+    "Each failure mode is completely unrelated to the others",
+    "All three failures are caused by using too advanced a foundation model",
+    "The failures only happen at small companies, never at large enterprises"
+  ],
+  correct:0,
+  explain:"Each failure mode is a sign of skipping the boring work: problem discovery, evaluation discipline, or picking the right system shape. The companies that succeed are the ones who embraced that boring work early."
+},
+{
+  type:'multi',
+  q:"Which of these are among the practical roadmap takeaways for a product team?",
+  options:[
+    "Start with a narrow problem that has clear users and clear success criteria",
+    "Build augmentation first and automate steps only after evals prove they are safe",
+    "Budget more time for evaluation than for the demo",
+    "Avoid retrieval systems in favor of fine-tuning wherever possible"
+  ],
+  correctSet:[0,1,2],
+  explain:"The roadmap takeaways include starting narrow, augmenting first, picking retrieval over fine-tuning for knowledge, budgeting more time for evals than demos, and expecting iteration. Recommending fine-tuning over retrieval is the opposite of the guidance given."
+},
+{
+  type:'mc',
+  q:"What should a team expect about their first shipped version?",
+  options:[
+    "The first version will be wrong by design, and the second version will be better because you shipped the first",
+    "The first version should be perfect before shipping anything",
+    "There should only ever be one version, with no iteration",
+    "The first version should always take longer to build than the second"
+  ],
+  correct:0,
+  explain:"Expect iteration: the first version will be wrong by design, and the second version will be better precisely because the first one shipped and generated real feedback."
+}
+];
+
+/* ============================================================
+   CHAPTER 3
+   ============================================================ */
+
+const ch3_slides = [
+{
+  eyebrow:"Chapter 3",
+  title:"Models: How to Choose",
+  body:`
+    <ul class="plain">
+      <li>The instinct to start by comparing GPT, Claude, Gemini, Llama, and the latest open-source frontier is understandable. It feels concrete: there are leaderboards, there are price-per-token tables</li>
+      <li>The problem: the best model for your system depends on your task, your users, your latency budget, your cost ceiling, and the quality of your evals, none of which a leaderboard can tell you</li>
+    </ul>
+    <div class="callout">This chapter skips the "which model is better" question and gives you the decision framework that actually produces good model choices in production.</div>
+  `
+},
+{
+  eyebrow:"There Is No Best Model",
+  title:"There Is No Best Model",
+  body:`
+    <ul class="plain">
+      <li>The top-line benchmark (MMLU, HumanEval, GSM8K, whatever was trending last quarter) is a weak signal</li>
+      <li>Two reasons</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"There Is No Best Model",
+  title:"Reason One: The Gap Is Smaller Than Your Prompt Design",
+  body:`
+    <ul class="plain">
+      <li>Frontier models are close enough on general benchmarks that the gap is usually smaller than the variance from your prompt design</li>
+      <li>The gap between the top three closed models in any given month is often within a few points on most evals</li>
+      <li>The gap between a good prompt and a bad prompt on the same model can be twenty points</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"There Is No Best Model",
+  title:"Reason Two: Your Task Is Not the Benchmark",
+  body:`
+    <ul class="plain">
+      <li>A model that dominates on MMLU may be average on your specific retrieval synthesis task</li>
+    </ul>
+    <div class="callout">The only model comparison that matters is the one you run on your own evals.</div>
+  `
+},
+{
+  eyebrow:"The Dimensions That Actually Matter",
+  title:"The Dimensions That Actually Matter",
+  body:`
+    <ul class="plain">
+      <li>Frame model selection as a multi-dimensional tradeoff</li>
+      <li>These are the dimensions that move the decision in production</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Dimensions That Actually Matter",
+  title:"Capability",
+  body:`
+    <ul class="plain">
+      <li>How well does the model do on your task, measured on your evals</li>
+    </ul>
+    <div class="callout">This is the dimension teams focus on almost exclusively, and then realize later that other dimensions matter as much.</div>
+  `
+},
+{
+  eyebrow:"The Dimensions That Actually Matter",
+  title:"Latency",
+  body:`
+    <ul class="plain">
+      <li>How long does a response take</li>
+      <li>Reasoning models can take 20 to 60 seconds. Standard models return in 1 to 3 seconds</li>
+      <li>For a customer-facing chat, latency is part of the product. For a background batch job, it is irrelevant</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Dimensions That Actually Matter",
+  title:"Cost",
+  body:`
+    <ul class="plain">
+      <li>Per-token input and output pricing varies by 10x across providers and by 100x between frontier and small models</li>
+      <li>A high-volume workflow can easily be the difference between $200/month and $20,000/month</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Dimensions That Actually Matter",
+  title:"Context Length",
+  body:`
+    <ul class="plain">
+      <li>The maximum prompt size you can feed</li>
+      <li>In 2026, 200K tokens is standard, 1M is available from multiple providers</li>
+      <li>Larger does not mean better; attention quality often degrades past a certain point</li>
+      <li>But a larger window can simplify retrieval design</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Dimensions That Actually Matter",
+  title:"Modality",
+  body:`
+    <ul class="plain">
+      <li>Text only, vision in, audio in, tool use, structured output support</li>
+      <li>Match to your input types</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Dimensions That Actually Matter",
+  title:"Reasoning",
+  body:`
+    <ul class="plain">
+      <li>Whether the model is a reasoning model (Claude with extended thinking, OpenAI o-series, Gemini with thinking, DeepSeek-R1) or a standard model</li>
+      <li>Reasoning models are slower and more expensive but often dramatically better on multi-step problems</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Dimensions That Actually Matter",
+  title:"Licensing and Deployment",
+  body:`
+    <ul class="plain">
+      <li>Closed (API only) vs open (Llama, Mistral, Qwen) vs hosted-open (Together, Fireworks, Groq)</li>
+      <li>Matters if you have data residency requirements or need on-premise deployment</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"A Decision Framework That Works",
+  title:"A Decision Framework That Works",
+  body:`
+    <div class="diagram">
+      <svg width="100%" viewBox="0 0 680 210" role="img">
+        <title>Start capable, downsize where you can, escalate when you must</title>
+        <desc>A three-step model selection framework: start with a capable model, downsize cheaper components once the system works, escalate to reasoning models only where evals demand it.</desc>
+        <g class="damber"><rect x="20" y="30" width="190" height="120" rx="8" stroke-width="0.5"/>
+          <text class="th" x="115" y="58" text-anchor="middle">1. Start capable</text>
+        </g>
+        <g class="dteal"><rect x="245" y="30" width="190" height="120" rx="8" stroke-width="0.5"/>
+          <text class="th" x="340" y="58" text-anchor="middle">2. Downsize</text>
+        </g>
+        <g class="dgray"><rect x="470" y="30" width="190" height="120" rx="8" stroke-width="0.5"/>
+          <text class="th" x="565" y="58" text-anchor="middle">3. Escalate</text>
+        </g>
+        <text class="ts dsvg-sub" x="340" y="175" text-anchor="middle">A simple rule that consistently produces good model choices in production</text>
+      </svg>
+    </div>
+    <div class="callout">A simple rule: start capable, downsize where you can, escalate when you must.</div>
+  `
+},
+{
+  eyebrow:"A Decision Framework That Works",
+  title:"Start Capable",
+  body:`
+    <ul class="plain">
+      <li>Prototype with the strongest model you can afford: Claude Opus 4.7 or Sonnet 4.6, GPT-5, Gemini 2.5 Pro</li>
+      <li>A capable model makes your prompts forgiving, your evals interpretable, and your early iterations fast</li>
+    </ul>
+    <div class="callout">Debugging prompt problems while also debugging model limitations is twice the pain.</div>
+  `
+},
+{
+  eyebrow:"A Decision Framework That Works",
+  title:"Downsize Where You Can",
+  body:`
+    <ul class="plain">
+      <li>Once your system works end to end on a strong model, swap in smaller and cheaper models on the components where quality does not degrade</li>
+      <li>Simple classifiers, routing calls, and narrow specialists often perform nearly identically on Claude Haiku 4.5 or GPT-5 mini at a tenth the cost</li>
+    </ul>
+    <div class="callout">The router-specialist pattern is perfect for this: use a cheap fast model to route, a capable model for the hard specialist.</div>
+  `
+},
+{
+  eyebrow:"A Decision Framework That Works",
+  title:"Escalate When You Must",
+  body:`
+    <ul class="plain">
+      <li>If your evals plateau below the quality bar your product needs, and you have exhausted prompt engineering and retrieval improvements, move up to a reasoning model</li>
+      <li>Reasoning models are overkill for most tasks but transformative for the few where they help</li>
+      <li>Multi-step planning, complex code, careful document analysis, decisions that require showing work</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Reasoning Models: A Different Kind of Tool",
+  title:"Reasoning Models: A Different Kind of Tool",
+  body:`
+    <ul class="plain">
+      <li>Reasoning models do not just think longer. They are trained specifically to reason through problems, make plans, and check their own work</li>
+    </ul>
+    <div class="callout">The consequence: they are very good at problems that decompose into steps, and average to worse on problems that do not.</div>
+  `
+},
+{
+  eyebrow:"Reasoning Models: A Different Kind of Tool",
+  title:"When to Reach for a Reasoning Model",
+  body:`
+    <ul class="plain">
+      <li>Agentic planning</li>
+      <li>Multi-step math or logic</li>
+      <li>Code debugging across a codebase</li>
+      <li>Careful document synthesis with cross-references</li>
+      <li>Any task where you currently rely on chain-of-thought prompting and wish it were better</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Reasoning Models: A Different Kind of Tool",
+  title:"When Not To",
+  body:`
+    <ul class="plain">
+      <li>Single-turn classification</li>
+      <li>Simple extraction</li>
+      <li>Summarization</li>
+      <li>Style transfer</li>
+      <li>Chat</li>
+    </ul>
+    <div class="callout">The extra cost and latency buy you nothing. A classifier router is a standard-model task. A specialist that has to reason across many records, like comparing line items across multiple invoices, is a good candidate for upgrading to a reasoning model.</div>
+  `
+},
+{
+  eyebrow:"Open vs Closed",
+  title:"Open vs Closed",
+  body:`
+    <ul class="plain">
+      <li>The open-model story in 2026 is stronger than it has ever been</li>
+      <li>Meta's Llama 4 family, Alibaba's latest Qwen generation, and DeepSeek's V3 and R-series are genuinely competitive with frontier closed models on many benchmarks</li>
+      <li>They are fully controllable, cheap at scale, and deployable anywhere</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Open vs Closed",
+  title:"Reasons to Choose Open",
+  body:`
+    <ul class="plain">
+      <li>Data residency requirements</li>
+      <li>Predictable per-inference cost at high scale</li>
+      <li>Hard controls on what the model can and cannot do</li>
+      <li>Fine-tuning for narrow tasks</li>
+      <li>Avoiding lock-in</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Open vs Closed",
+  title:"Reasons to Choose Closed",
+  body:`
+    <ul class="plain">
+      <li>The frontier for the most capable reasoning is still closed (Claude Opus 4.7, OpenAI's o-series and GPT-5, Gemini 2.5 Pro)</li>
+      <li>API maturity is higher</li>
+      <li>Tool use and structured output are more reliable</li>
+      <li>The operational overhead of self-hosting is zero</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Open vs Closed",
+  title:"Most Enterprises Use Both",
+  body:`
+    <ul class="plain">
+      <li>Most enterprise systems in 2026 end up using both: a frontier closed model for the hardest parts, an open model deployed on an inference platform for the high-volume simple parts</li>
+    </ul>
+    <div class="callout">The mix is cost engineering. Match each component to the cheapest model that passes your evals for it.</div>
+  `
+},
+{
+  eyebrow:"Your Evals Beat Any Benchmark",
+  title:"Your Evals Beat Any Benchmark",
+  body:`
+    <ul class="plain">
+      <li>This chapter is full of signals you can use to narrow the choice</li>
+      <li>None of them replace the one thing that matters most: your own evals</li>
+    </ul>
+    <div class="callout">Write evals that reflect your product's real users and real failure modes. Run the candidate models against those evals. Decide based on results, not on marketing posts or benchmark tables.</div>
+  `
+}
+];
+
+const ch3_quiz = [
+{
+  type:'mc',
+  q:"What does the best model for a system actually depend on?",
+  options:[
+    "Your task, your users, your latency budget, your cost ceiling, and the quality of your evals",
+    "Only which model tops the current public leaderboard",
+    "Only the sticker price per token",
+    "Whichever model was released most recently"
+  ],
+  correct:0,
+  explain:"The best model depends on your task, users, latency budget, cost ceiling, and the quality of your evals, none of which a leaderboard can tell you."
+},
+{
+  type:'multi',
+  q:"What are the two reasons top-line benchmarks are a weak signal for model selection?",
+  options:[
+    "The gap between top closed models is often smaller than the gap a good vs bad prompt creates on the same model",
+    "Your task is not the benchmark, a model that dominates MMLU may be average on your specific task",
+    "Benchmarks like MMLU and HumanEval do not actually exist",
+    "Benchmarks are updated too frequently to be useful"
+  ],
+  correctSet:[0,1],
+  explain:"The gap between frontier models is often within a few points while a good vs bad prompt can differ by twenty points. And your task is not the benchmark, so benchmark dominance doesn't guarantee it will win on your specific evals."
+},
+{
+  type:'mc',
+  q:"Which dimension do teams focus on almost exclusively, only to later realize other dimensions matter just as much?",
+  options:[
+    "Capability",
+    "Licensing and deployment",
+    "Modality",
+    "Context length"
+  ],
+  correct:0,
+  explain:"Capability, how well a model performs on your evals, is the dimension teams focus on almost exclusively, before realizing other dimensions like latency and cost matter as much in production."
+},
+{
+  type:'scenario',
+  q:"A team is running a high-volume background batch job where nobody is waiting on the response in real time, but token costs are adding up fast. Which two dimensions should weigh most heavily in their model choice?",
+  options:[
+    "Cost heavily, latency lightly, since costs can swing between $200 and $20,000 a month while latency is irrelevant for a background job",
+    "Latency heavily, cost lightly, since users are waiting for a response",
+    "Modality heavily, context length lightly, regardless of the batch job's nature",
+    "Reasoning heavily, licensing lightly, regardless of the batch job's nature"
+  ],
+  correct:0,
+  explain:"Latency is part of the product for customer-facing chat but irrelevant for a background batch job, while cost can vary 10x across providers and swing a high-volume workflow between $200 and $20,000 a month."
+},
+{
+  type:'mc',
+  q:"What is true about context window size in 2026?",
+  options:[
+    "200K tokens is standard and 1M is available from multiple providers, but larger does not automatically mean better",
+    "200K tokens is the maximum any provider offers in 2026",
+    "Larger context windows always produce better quality answers with no tradeoffs",
+    "Context length has no effect on retrieval system design"
+  ],
+  correct:0,
+  explain:"200K tokens is standard in 2026, with 1M available from multiple providers. Larger does not mean better, since attention quality can degrade past a certain point, though a larger window can simplify retrieval design."
+},
+{
+  type:'mc',
+  q:"What is the three-step rule for model selection?",
+  options:[
+    "Start capable, downsize where you can, escalate when you must",
+    "Start cheap, upgrade everything at once, never downsize",
+    "Always use the newest model regardless of task",
+    "Pick one model and use it for every component of the system"
+  ],
+  correct:0,
+  explain:"This simple rule consistently produces good model choices in production: start capable, downsize where you can, escalate when you must."
+},
+{
+  type:'scenario',
+  q:"A team's system already works end to end on a capable model. They notice their routing classifier performs identically whether they use a large frontier model or a much smaller one. What should they do?",
+  options:[
+    "Downsize the routing classifier to a smaller, cheaper model like Claude Haiku 4.5 or GPT-5 mini, since quality does not degrade there",
+    "Immediately escalate the entire system to a reasoning model",
+    "Keep every component on the most expensive model available, regardless of measured quality",
+    "Shut down the project since model choice does not matter"
+  ],
+  correct:0,
+  explain:"This is exactly the \"downsize where you can\" step: once a system works end to end, swap smaller and cheaper models into components where quality does not degrade, and simple classifiers and routing calls are prime candidates."
+},
+{
+  type:'mc',
+  q:"Why are reasoning models very good at problems that decompose into steps but only average or worse on problems that do not?",
+  options:[
+    "They are trained specifically to reason through problems, make plans, and check their own work, not simply to think for a longer time",
+    "They are identical to standard models except for a longer default response length",
+    "They only work on math problems and fail at every other task type",
+    "They are always faster than standard models regardless of task"
+  ],
+  correct:0,
+  explain:"Reasoning models are trained specifically to reason through problems, make plans, and check their own work, which is why they excel at decomposable problems and offer little benefit elsewhere."
+},
+{
+  type:'multi',
+  q:"Which tasks are good candidates for a reasoning model?",
+  options:[
+    "Agentic planning",
+    "Code debugging across a codebase",
+    "Single-turn classification",
+    "Careful document synthesis with cross-references"
+  ],
+  correctSet:[0,1,3],
+  explain:"Agentic planning, multi-step math or logic, code debugging across a codebase, and document synthesis with cross-references are good reasoning-model candidates. Single-turn classification is a task where reasoning models buy you nothing."
+},
+{
+  type:'mc',
+  q:"What do most enterprise systems in 2026 actually do about model choice?",
+  options:[
+    "Use both: a frontier closed model for the hardest parts, an open model for the high-volume simple parts",
+    "Use only open models to avoid all API costs",
+    "Use only closed models and avoid open models entirely",
+    "Avoid using any hosted-open providers like Together, Fireworks, or Groq"
+  ],
+  correct:0,
+  explain:"Most enterprise systems in 2026 end up using both a frontier closed model and an open model, matching each component to the cheapest model that passes its evals, a mix described as cost engineering."
+},
+{
+  type:'multi',
+  q:"Which reasons are given for choosing an open model?",
+  options:[
+    "Data residency requirements",
+    "Predictable per-inference cost at high scale",
+    "Higher API maturity than closed models",
+    "Avoiding vendor lock-in"
+  ],
+  correctSet:[0,1,3],
+  explain:"Data residency requirements, predictable per-inference cost at scale, hard behavior controls, fine-tuning for narrow tasks, and avoiding lock-in are reasons to choose open models. Higher API maturity is a reason to choose closed models instead."
+},
+{
+  type:'mc',
+  q:"What should ultimately decide which model a team uses?",
+  options:[
+    "Their own evals, reflecting the product's real users and real failure modes, run against the candidate models",
+    "Whichever model has the most positive marketing posts",
+    "Whichever model appears highest on a public benchmark table",
+    "Whichever model launched most recently"
+  ],
+  correct:0,
+  explain:"Write evals that reflect your product's real users and real failure modes, run candidate models against them, and decide based on results, not marketing posts or benchmark tables."
+}
+];
+
+/* ============================================================
+   CHAPTER 4
+   ============================================================ */
+
+const ch4_slides = [
+{
+  eyebrow:"Chapter 4",
+  title:"Problem-First Design, Revisited",
+  body:`
+    <ul class="plain">
+      <li>Every AI project that fails in production traces back to a design decision made months earlier</li>
+      <li>Almost always, that decision happened before anyone wrote a single prompt</li>
+    </ul>
+    <div class="callout">Problem-First Design is the framework used to ground every AI project before any prompt gets written. This chapter surfaces the design traps that come up most often, the questions that separate good AI product thinking from the rest, and gives you a simple scoping tool.</div>
+  `
+},
+{
+  eyebrow:"Why Problem-First Matters More in AI",
+  title:"Why Problem-First Matters More in AI",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Traditional software</h3><p>A weak problem statement still usually produces a working system. Engineers write code, the code does what it says, and the worst outcome is a product nobody wants. Expensive, but recoverable.</p></div>
+      <div class="card"><h3>AI systems</h3><p>A weak problem statement produces a system whose outputs look plausible but drift in ways you cannot predict. The failures are not deterministic. Evals do not catch what was never specified.</p></div>
+    </div>
+    <ul class="plain">
+      <li>The system ships, underperforms in a fuzzy way, and six months later nobody is sure whether the fix is a better prompt, a better model, a better dataset, or a different problem</li>
+    </ul>
+    <div class="callout">Problem-First Design is the cheapest insurance you can buy against this failure mode. Thirty minutes of clean problem definition upfront saves months of unclear iteration later.</div>
+  `
+},
+{
+  eyebrow:"The Four Layers Framework",
+  title:"The Four Layers Framework",
+  body:`
+    <div class="diagram">
+      <svg width="100%" viewBox="0 0 680 260" role="img">
+        <title>The Four Layers Framework</title>
+        <desc>Four layers written in strict order: the user and their pain, the outcome, the AI intervention, and the system and safety scaffolding around it.</desc>
+        <g class="damber"><rect x="20" y="15" width="640" height="50" rx="8" stroke-width="0.5"/>
+          <text class="th" x="40" y="45" text-anchor="start">Layer 1: The User and Their Pain</text>
+        </g>
+        <g class="dteal"><rect x="20" y="75" width="640" height="50" rx="8" stroke-width="0.5"/>
+          <text class="th" x="40" y="105" text-anchor="start">Layer 2: The Outcome</text>
+        </g>
+        <g class="dgray"><rect x="20" y="135" width="640" height="50" rx="8" stroke-width="0.5"/>
+          <text class="th" x="40" y="165" text-anchor="start">Layer 3: The AI Intervention</text>
+        </g>
+        <g class="damber"><rect x="20" y="195" width="640" height="50" rx="8" stroke-width="0.5"/>
+          <text class="th" x="40" y="225" text-anchor="start">Layer 4: The System and Safety</text>
+        </g>
+      </svg>
+    </div>
+    <ul class="plain">
+      <li>A four-layer framework to structure any AI design conversation. It maps roughly to Marty Cagan's product framing, adapted for AI's specific failure modes</li>
+      <li>The four layers should be written in order. Every layer should fit in a paragraph</li>
+    </ul>
+    <div class="callout">If Layer 2 is vague, no amount of clever work on Layer 3 will save you.</div>
+  `
+},
+{
+  eyebrow:"The Four Layers Framework",
+  title:"Layer 1: The User and Their Pain",
+  body:`
+    <ul class="plain">
+      <li>Who is the user, and what are they doing today that you want to change? Be specific: named role, actual task, measurable pain</li>
+    </ul>
+    <div class="example">"Compliance analysts spend 90 minutes per filing checking disclosure completeness, and miss 3-5% of required items."</div>
+  `
+},
+{
+  eyebrow:"The Four Layers Framework",
+  title:"Layer 2: The Outcome",
+  body:`
+    <ul class="plain">
+      <li>What changes when your system works? How do you know?</li>
+      <li>Write the outcome before you write the system</li>
+    </ul>
+    <div class="example">"Analyst completes a filing check in under 20 minutes, with miss rate under 1%."</div>
+  `
+},
+{
+  eyebrow:"The Four Layers Framework",
+  title:"Layer 3: The AI Intervention",
+  body:`
+    <ul class="plain">
+      <li>What does the AI system actually do? This is the narrowest useful definition of the system: the specific pattern (retrieve and check, draft and review, classify and route) and the specific capability (summarization, extraction, classification, generation)</li>
+    </ul>
+    <div class="callout">This layer is often bloated in failed projects. Narrow it until it hurts.</div>
+  `
+},
+{
+  eyebrow:"The Four Layers Framework",
+  title:"Layer 4: The System and Safety",
+  body:`
+    <ul class="plain">
+      <li>What does the system need around it to be trustworthy? Evals, guardrails, observability, human oversight, rollback, audit trail</li>
+      <li>The production scaffolding</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Six Traps We See Constantly",
+  title:"Six Traps We See Constantly",
+  body:`
+    <ul class="plain">
+      <li>After thirty-plus enterprise implementations, six design traps come up over and over</li>
+      <li>Recognizing one is often enough to avoid it</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Six Traps We See Constantly",
+  title:"Tech-First Thinking",
+  body:`
+    <ul class="plain">
+      <li>"We want to use AI for X." AI is the given, the problem is the search</li>
+    </ul>
+    <div class="callout">Every AI project that leads with the technology ends up building something without a user.</div>
+  `
+},
+{
+  eyebrow:"Six Traps We See Constantly",
+  title:"Over-Scoping",
+  body:`
+    <ul class="plain">
+      <li>Three problems packed into one system because they feel related</li>
+      <li>The resulting system does none of them well and is impossible to evaluate</li>
+    </ul>
+    <div class="callout">Split them.</div>
+  `
+},
+{
+  eyebrow:"Six Traps We See Constantly",
+  title:"Problem With No Owner",
+  body:`
+    <ul class="plain">
+      <li>A vaguely-agreed pain that nobody actually has to live with</li>
+      <li>Without a specific owner whose workflow is affected, you cannot define the outcome measurably</li>
+      <li>The project drifts</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Six Traps We See Constantly",
+  title:"Solutioning in the Problem Statement",
+  body:`
+    <ul class="plain">
+      <li>A statement like this describes an architecture. The actual problem (who hurts, where, how much) is missing</li>
+    </ul>
+    <div class="example">"Build an LLM that uses RAG over our document store with a workflow agent on top."</div>
+    <div class="callout">Describe the pain first and let the architecture follow from it.</div>
+  `
+},
+{
+  eyebrow:"Six Traps We See Constantly",
+  title:"Skipping the Human Baseline",
+  body:`
+    <ul class="plain">
+      <li>Building a system without ever measuring how long the task takes a human, how often they get it wrong, or where they struggle</li>
+    </ul>
+    <div class="callout">Without a baseline, you cannot tell if the AI system is an improvement.</div>
+  `
+},
+{
+  eyebrow:"Six Traps We See Constantly",
+  title:"Confusing Pilot Success With Production Readiness",
+  body:`
+    <ul class="plain">
+      <li>A pilot run with selected users on curated data tells you the system can work under ideal conditions</li>
+      <li>It does not tell you how it holds up when real users throw real edge cases at it</li>
+    </ul>
+    <div class="callout">Most teams skip the hard transition.</div>
+  `
+},
+{
+  eyebrow:"A Scoping Template You Can Use",
+  title:"A Scoping Template You Can Use",
+  body:`
+    <ul class="plain">
+      <li>Before you kick off a design, fill in the following template</li>
+      <li>If you cannot, you are not ready to design</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"A Scoping Template You Can Use",
+  title:"Who Is the User?",
+  body:`
+    <div class="callout">Named role. Not "employees." A specific team with a specific task.</div>
+  `
+},
+{
+  eyebrow:"A Scoping Template You Can Use",
+  title:"What Are They Doing Today, and How Is It Painful?",
+  body:`
+    <div class="callout">Describe the current workflow. Time it. Measure the error rate. Include a quote from one of them if you have one.</div>
+  `
+},
+{
+  eyebrow:"A Scoping Template You Can Use",
+  title:"What Would Change If the New System Works?",
+  body:`
+    <div class="callout">Describe the new workflow. How long does it take now. What error rate is acceptable. What new things become possible.</div>
+  `
+},
+{
+  eyebrow:"A Scoping Template You Can Use",
+  title:"What Is the Single AI Capability at the Core?",
+  body:`
+    <div class="callout">One sentence. One pattern. If you cannot say it in a sentence, the system is too complicated.</div>
+  `
+},
+{
+  eyebrow:"A Scoping Template You Can Use",
+  title:"What Does \"Ready to Ship\" Mean?",
+  body:`
+    <div class="callout">Specific eval scores. Specific guardrail coverage. A human fallback. A rollback plan.</div>
+  `
+},
+{
+  eyebrow:"A Scoping Template You Can Use",
+  title:"What Can Go Wrong, and What Happens When It Does?",
+  body:`
+    <div class="callout">Enumerate failure modes. Map each to a recovery path.</div>
+    <ul class="plain">
+      <li>Fill this in collaboratively with the user and the engineering team in the room</li>
+    </ul>
+    <div class="callout">The act of filling it in surfaces every unresolved disagreement before any code gets written.</div>
+  `
+},
+{
+  eyebrow:"Designing for Iteration",
+  title:"Designing for Iteration",
+  body:`
+    <ul class="plain">
+      <li>AI systems are not build-once artifacts. They are products that live in a loop: deploy, observe, learn, improve, redeploy</li>
+      <li>Problem-First Design has to accommodate this</li>
+    </ul>
+    <div class="callout">Design your first version as the simplest thing that could work. Resist the urge to jump straight to the full end-state architecture. Ship the minimum in front of three users. Watch what breaks. Fix the top problem. Ship again.</div>
+    <ul class="plain">
+      <li>The cost of being wrong about the design is much higher than the cost of shipping something small</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Designing for Iteration",
+  title:"The CC/CD Framework",
+  body:`
+    <ul class="plain">
+      <li>The operational version of designing for iteration</li>
+      <li>Continuous Calibration keeps your evals fresh as the world changes</li>
+      <li>Continuous Development keeps the system improving against them</li>
+    </ul>
+    <div class="callout">Together, they turn a designed system into a working one.</div>
+  `
+},
+{
+  eyebrow:"Problem-First Doesn't Mean Problem-Forever",
+  title:"Problem-First Doesn't Mean Problem-Forever",
+  body:`
+    <ul class="plain">
+      <li>Problem-First Design is a discipline for the first thirty minutes of a project, used well and then set aside</li>
+      <li>Once the problem is clear and the system is shipping, you should be spending most of your time on evaluation and iteration</li>
+    </ul>
+    <div class="callout">Teams sometimes cycle back into endless problem-definition meetings when the actual issue was slow execution. The value of Problem-First is that it ends clean, fast, and with enough clarity to unlock the build.</div>
+  `
+},
+{
+  eyebrow:"The Throughline",
+  title:"Good Problem Definition Is Like a Map",
+  body:`
+    <div class="callout">It is worth reading carefully before the trip, worth keeping folded in your pocket while you travel, and worth not arguing about once you are moving.</div>
+    <ul class="plain">
+      <li>Chapter 5 goes to Prompting and Context Engineering</li>
+    </ul>
+  `
+}
+];
+
+const ch4_quiz = [
+{
+  type:'mc',
+  q:"When does the decision that causes most AI project failures actually happen?",
+  options:[
+    "Months earlier, almost always before anyone wrote a single prompt",
+    "During the final testing phase, right before launch",
+    "It never happens, failures are always random",
+    "Immediately after launch, once real users start using the system"
+  ],
+  correct:0,
+  explain:"Every AI project that fails in production traces back to a design decision made months earlier, almost always before anyone wrote a single prompt."
+},
+{
+  type:'mc',
+  q:"How does a weak problem statement fail differently in AI systems compared to traditional software?",
+  options:[
+    "In AI, outputs look plausible but drift unpredictably and evals don't catch what was never specified, while traditional software still usually produces a working system",
+    "AI systems always crash immediately, while traditional software never crashes",
+    "There is no difference, both fail in exactly the same way",
+    "Traditional software fails more often than AI systems"
+  ],
+  correct:0,
+  explain:"Traditional software with a weak problem statement usually still works, just unwanted. AI systems produce plausible-looking but unpredictably drifting outputs, and the failures are not deterministic since evals never caught what was never specified."
+},
+{
+  type:'mc',
+  q:"What can thirty minutes of clean problem definition upfront save?",
+  options:[
+    "Months of unclear iteration later",
+    "The entire cost of hiring an engineering team",
+    "The need for any evaluation work at all",
+    "The need to ever choose a model"
+  ],
+  correct:0,
+  explain:"Problem-First Design is the cheapest insurance against this failure mode: thirty minutes of clean problem definition upfront saves months of unclear iteration later."
+},
+{
+  type:'multi',
+  q:"Which of the following correctly describe the four layers, in order?",
+  options:[
+    "Layer 1 is the user and their pain, defined with a named role, actual task, and measurable pain",
+    "Layer 2 is the outcome, and it should be written before the system itself",
+    "Layer 3 is the AI intervention, and it is often bloated in failed projects",
+    "Layer 4 comes first, since safety must be designed before the user is identified"
+  ],
+  correctSet:[0,1,2],
+  explain:"The layers go in this order: User and Their Pain, then Outcome, then AI Intervention, then System and Safety. Layer 4 comes last, not first, and Layer 3 is explicitly called out as often bloated in failed projects, needing to be narrowed until it hurts."
+},
+{
+  type:'scenario',
+  q:"A team writes \"Compliance analysts spend 90 minutes per filing checking disclosure completeness, and miss 3 to 5% of required items.\" Which layer of the framework does this statement belong to?",
+  options:[
+    "Layer 1: The User and Their Pain",
+    "Layer 2: The Outcome",
+    "Layer 3: The AI Intervention",
+    "Layer 4: The System and Safety"
+  ],
+  correct:0,
+  explain:"This is the worked example for Layer 1: a named role (compliance analysts), an actual task (checking disclosure completeness), and measurable pain (90 minutes, 3 to 5% miss rate)."
+},
+{
+  type:'mc',
+  q:"What does Layer 4, The System and Safety, actually cover?",
+  options:[
+    "Evals, guardrails, observability, human oversight, rollback, and audit trail, the production scaffolding around the system",
+    "Only the choice of which foundation model to use",
+    "Only the user interface design",
+    "Only the marketing plan for the system's launch"
+  ],
+  correct:0,
+  explain:"Layer 4 covers what the system needs around it to be trustworthy: evals, guardrails, observability, human oversight, rollback, and audit trail, described as the production scaffolding."
+},
+{
+  type:'scenario',
+  q:"A team starts a project by saying \"we want to use AI for customer support\" without first identifying a specific user or pain point. Which trap does this match?",
+  options:[
+    "Tech-first thinking",
+    "Skipping the human baseline",
+    "Confusing pilot success with production readiness",
+    "Problem with no owner"
+  ],
+  correct:0,
+  explain:"This is tech-first thinking, where AI is the given and the problem is the search. Every AI project that leads with the technology ends up building something without a user."
+},
+{
+  type:'multi',
+  q:"Which of these are named among the six design traps?",
+  options:[
+    "Over-scoping",
+    "Solutioning in the problem statement",
+    "Skipping the human baseline",
+    "Choosing a model that is too expensive"
+  ],
+  correctSet:[0,1,2],
+  explain:"The six traps are tech-first thinking, over-scoping, problem with no owner, solutioning in the problem statement, skipping the human baseline, and confusing pilot success with production readiness. Choosing an expensive model is not one of them."
+},
+{
+  type:'scenario',
+  q:"A team writes their problem statement as \"Build an LLM that uses RAG over our document store with a workflow agent on top.\" What is wrong with this?",
+  options:[
+    "It describes an architecture instead of a problem; who hurts, where, and how much is missing",
+    "RAG and workflow agents should never be used together under any circumstances",
+    "The statement is too short and needs more technical detail",
+    "This is actually a perfect problem statement"
+  ],
+  correct:0,
+  explain:"This is solutioning in the problem statement: a statement like this describes an architecture, but the actual problem, who hurts, where, and how much, is missing. Describe the pain first and let the architecture follow."
+},
+{
+  type:'mc',
+  q:"Why is skipping the human baseline a problem?",
+  options:[
+    "Without measuring how long a task takes a human today and how often they get it wrong, you cannot tell if the AI system is actually an improvement",
+    "Humans are always faster than AI systems, so a baseline is unnecessary",
+    "Baselines are only needed for traditional software, never for AI",
+    "Measuring a human baseline is illegal in most industries"
+  ],
+  correct:0,
+  explain:"Without a baseline, measuring how long the task takes a human and how often they get it wrong, you cannot tell if the AI system is an improvement over the status quo."
+},
+{
+  type:'mc',
+  q:"What is the value of filling in the scoping template collaboratively with the user and engineering team in the room?",
+  options:[
+    "The act of filling it in surfaces every unresolved disagreement before any code gets written",
+    "It guarantees the project will never need any changes later",
+    "It replaces the need for evaluation entirely",
+    "It is only useful for very large enterprise projects, never small ones"
+  ],
+  correct:0,
+  explain:"Filling it in together surfaces every unresolved disagreement before any code gets written, catching misalignment at the cheapest possible point."
+},
+{
+  type:'multi',
+  q:"Which of these are among the six questions in the scoping template?",
+  options:[
+    "Who is the user?",
+    "What is the single AI capability at the core?",
+    "What can go wrong, and what happens when it does?",
+    "Which programming language will the team use?"
+  ],
+  correctSet:[0,1,2],
+  explain:"The scoping template asks who the user is, what they are doing today and how it is painful, what would change if the system works, what the single AI capability at the core is, what \"ready to ship\" means, and what can go wrong. Choice of programming language is not one of the six questions."
+},
+{
+  type:'scenario',
+  q:"A team fills in their scoping template with \"Support agents currently take 15 minutes per ticket and get the answer wrong 20% of the time, based on timing 50 tickets last week.\" Which scoping template question does this answer?",
+  options:[
+    "What are they doing today, and how is it painful?",
+    "What is the single AI capability at the core?",
+    "What does \"ready to ship\" mean?",
+    "Who is the user?"
+  ],
+  correct:0,
+  explain:"This answers \"what are they doing today, and how is it painful,\" which asks teams to describe the current workflow, time it, and measure the error rate, exactly what this example does."
+},
+{
+  type:'mc',
+  q:"What does the scoping template question \"what does 'ready to ship' mean\" ask a team to define?",
+  options:[
+    "Specific eval scores, specific guardrail coverage, a human fallback, and a rollback plan",
+    "Only the total budget available for the project",
+    "Only the visual design of the user interface",
+    "Only the marketing launch date"
+  ],
+  correct:0,
+  explain:"This scoping question asks teams to define specific eval scores, specific guardrail coverage, a human fallback, and a rollback plan, concrete criteria rather than a vague sense of \"done.\""
+},
+{
+  type:'mc',
+  q:"What is recommended for a system's first version?",
+  options:[
+    "The simplest thing that could work, shipped in front of a few users, watched for what breaks, then improved",
+    "The full end-state architecture, built and polished before any user sees it",
+    "A version with every possible feature included from day one",
+    "No first version at all, skip straight to a company-wide rollout"
+  ],
+  correct:0,
+  explain:"Design the first version as the simplest thing that could work, ship the minimum in front of a few users, watch what breaks, fix the top problem, and ship again, resisting the pull to build the full end-state architecture first."
+},
+{
+  type:'mc',
+  q:"What do Continuous Calibration and Continuous Development do in the CC/CD framework?",
+  options:[
+    "Continuous Calibration keeps the evals fresh as the world changes, Continuous Development keeps the system improving against them",
+    "Continuous Calibration writes new code, Continuous Development writes new evals",
+    "Both terms refer to the exact same activity performed twice",
+    "Continuous Calibration only applies to code-based evals, never to LLM-as-judge"
+  ],
+  correct:0,
+  explain:"Continuous Calibration keeps the evals fresh as the world changes, and Continuous Development keeps the system improving against them, together turning a designed system into a working one."
+},
+{
+  type:'mc',
+  q:"What caveat is added about how long Problem-First Design should be used?",
+  options:[
+    "It is a discipline for the first thirty minutes of a project, used well and then set aside in favor of evaluation and iteration",
+    "It should be repeated in a full meeting every single week for the life of the project",
+    "It should never be used more than once across an entire company",
+    "It replaces the need for evaluation permanently once completed"
+  ],
+  correct:0,
+  explain:"Problem-First Design is a discipline for the first thirty minutes of a project, used well and then set aside, after which most time should go to evaluation and iteration, not endless problem-definition meetings."
+},
+{
+  type:'mc',
+  q:"What is the closing metaphor for good problem definition?",
+  options:[
+    "A map: worth reading carefully before the trip, worth keeping folded in your pocket while traveling, and worth not arguing about once you are moving",
+    "A locked door that should never be reopened once closed",
+    "A single meeting that should be held every day of the project",
+    "A contract that only lawyers should be allowed to write"
+  ],
+  correct:0,
+  explain:"Good problem definition is like a map, worth reading carefully before the trip, worth keeping folded in your pocket while you travel, and worth not arguing about once you are moving."
+}
+];
+
+/* ============================================================
+   CHAPTER 5
+   ============================================================ */
+
+const ch5_slides = [
+{
+  eyebrow:"Chapter 5",
+  title:"Prompting and Context Engineering",
+  body:`
+    <ul class="plain">
+      <li>There is a version of this chapter that lists twenty prompting techniques and calls it done. This is something more useful</li>
+      <li>The craft of getting a model to do what you want has shifted over the last two years</li>
+      <li>In 2023, it was prompting: the art of phrasing a single instruction well</li>
+      <li>In 2026, the field calls it context engineering: the discipline of deciding what goes into the model's context window, in what order, with what structure</li>
+      <li>Prompting is one piece of that. There are several others</li>
+    </ul>
+    <div class="callout">This chapter covers the parts of context engineering that matter most for product teams. Engineers, designers, and PMs all end up writing prompts and shaping context, so this chapter is for everyone.</div>
+  `
+},
+{
+  eyebrow:"The Six Parts of a Working Prompt",
+  title:"The Six Parts of a Working Prompt",
+  body:`
+    <ul class="plain">
+      <li>A prompt that consistently works has the same six parts, even when they are implicit</li>
+      <li>Making them explicit is the fastest way to improve prompt quality</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Six Parts of a Working Prompt",
+  title:"Role",
+  body:`
+    <ul class="plain">
+      <li>Who is the model acting as</li>
+      <li>The role anchors tone, scope, and default behavior</li>
+    </ul>
+    <div class="example">"You are a billing support specialist." "You are a contract review assistant."</div>
+  `
+},
+{
+  eyebrow:"The Six Parts of a Working Prompt",
+  title:"Context",
+  body:`
+    <ul class="plain">
+      <li>The situation the model is operating in: the authenticated user, the current document, the relevant policy</li>
+      <li>Context is not static: in a real system, it gets assembled at runtime from the user, the retrieval layer, and the tool results</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"The Six Parts of a Working Prompt",
+  title:"Task",
+  body:`
+    <ul class="plain">
+      <li>What you want the model to do. One clear instruction</li>
+    </ul>
+    <div class="callout">If you find yourself writing three tasks, consider splitting into three prompts.</div>
+  `
+},
+{
+  eyebrow:"The Six Parts of a Working Prompt",
+  title:"Constraints",
+  body:`
+    <ul class="plain">
+      <li>What the model must not do, or must do in a specific way</li>
+    </ul>
+    <div class="example">"Never claim you applied a credit." "Cite the policy ID for every claim." "Respond in under 200 words."</div>
+  `
+},
+{
+  eyebrow:"The Six Parts of a Working Prompt",
+  title:"Examples",
+  body:`
+    <ul class="plain">
+      <li>Two or three cases showing input-output pairs for non-obvious patterns</li>
+    </ul>
+    <div class="callout">Examples are the highest-leverage tool in the prompt toolkit for anything subjective or structured.</div>
+  `
+},
+{
+  eyebrow:"The Six Parts of a Working Prompt",
+  title:"Output Format",
+  body:`
+    <ul class="plain">
+      <li>How the response should be structured: JSON schema, markdown template, a specific tag set</li>
+    </ul>
+    <div class="callout">The output format is the interface between your model and everything downstream.</div>
+  `
+},
+{
+  eyebrow:"The Six Parts of a Working Prompt",
+  title:"Order Matters",
+  body:`
+    <ul class="plain">
+      <li>Models weight the earliest and latest sections of a prompt more heavily</li>
+      <li>Most teams put role and context first, task and constraints in the middle, examples before the final output format reminder</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Prompting for Reasoning Models Is Different",
+  title:"Prompting for Reasoning Models Is Different",
+  body:`
+    <ul class="plain">
+      <li>Reasoning models (Claude with extended thinking, OpenAI o-series, Gemini with thinking) do not prompt the same way standard models do</li>
+      <li>Teams that carry over their old prompts often see worse results</li>
+      <li>Three rules change</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Prompting for Reasoning Models Is Different",
+  title:"Less Hand-Holding",
+  body:`
+    <ul class="plain">
+      <li>Reasoning models do their own step-by-step thinking</li>
+      <li>Telling them to "think step by step" is redundant and sometimes harmful</li>
+      <li>Instead, describe the goal and the constraints, then let them reason</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Prompting for Reasoning Models Is Different",
+  title:"More Context, Less Structure",
+  body:`
+    <ul class="plain">
+      <li>Where a standard model benefits from tight structure and explicit formatting, reasoning models often do better when given more room</li>
+      <li>Give them the full picture, not a tightly pre-processed summary</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Prompting for Reasoning Models Is Different",
+  title:"Separate the What From the How",
+  body:`
+    <ul class="plain">
+      <li>Tell the model what you want it to achieve and what success looks like</li>
+      <li>Skip the procedural instructions about how to get there</li>
+    </ul>
+    <div class="callout">The short version: for standard models you are scripting the task. For reasoning models you are briefing a capable specialist.</div>
+  `
+},
+{
+  eyebrow:"Context Engineering: The Bigger Picture",
+  title:"Context Engineering: The Bigger Picture",
+  body:`
+    <ul class="plain">
+      <li>Once you move past single prompts, the discipline changes shape</li>
+      <li>You are no longer writing one prompt. You are assembling a context window dynamically, every time the model runs</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Context Engineering: The Bigger Picture",
+  title:"A Real Production Request",
+  body:`
+    <ul class="plain">
+      <li>A system prompt (the role and rules)</li>
+      <li>A running conversation history (turns 1 through 7)</li>
+      <li>Retrieved documents (three chunks, each 300 tokens)</li>
+      <li>Tool definitions (the schema for the tools the model can call)</li>
+      <li>Tool results (the output from a previous tool call)</li>
+      <li>The current user message</li>
+    </ul>
+    <div class="callout">Context engineering is about deciding what goes in, what stays out, in what order, with what structure, and how to compress or summarize when the window gets crowded. It is the difference between a prototype that works on short conversations and a system that holds up across a ten-turn customer support thread.</div>
+  `
+},
+{
+  eyebrow:"Context Engineering: The Bigger Picture",
+  title:"Recency Matters",
+  body:`
+    <ul class="plain">
+      <li>Models attend more strongly to recent content</li>
+      <li>Keep the most important context close to the end of the prompt</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Context Engineering: The Bigger Picture",
+  title:"Summarize When You Compress",
+  body:`
+    <ul class="plain">
+      <li>When the conversation gets long, do not just truncate</li>
+      <li>Summarize old turns into a running summary that preserves the key facts</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Context Engineering: The Bigger Picture",
+  title:"Retrieve What You Need, When You Need It",
+  body:`
+    <ul class="plain">
+      <li>Do not dump everything into context at once</li>
+      <li>Pull the relevant chunks at the moment they are relevant</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Context Engineering: The Bigger Picture",
+  title:"Keep Tool Definitions Stable",
+  body:`
+    <ul class="plain">
+      <li>Frequently changing tool schemas confuse models</li>
+      <li>Stabilize the interface, iterate on the logic</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Few-Shot Examples: Your Highest-Leverage Tool",
+  title:"Few-Shot Examples: Your Highest-Leverage Tool",
+  body:`
+    <ul class="plain">
+      <li>If only one prompting technique could be taught, it would be few-shot examples</li>
+      <li>Including two to three example input-output pairs in your prompt consistently outperforms almost any other single intervention on subjective or structured tasks</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Few-Shot Examples: Your Highest-Leverage Tool",
+  title:"Why Examples Work",
+  body:`
+    <ul class="plain">
+      <li>They teach the model the pattern without describing it</li>
+      <li>They calibrate tone and style, which are hard to describe in the abstract</li>
+      <li>They resolve ambiguity in the task definition implicitly</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Few-Shot Examples: Your Highest-Leverage Tool",
+  title:"Rules for Picking Good Examples",
+  body:`
+    <ul class="plain">
+      <li>Pick examples that cover the variety of real cases, not just the easy ones</li>
+      <li>Include one or two edge cases, not only the middle of the distribution</li>
+      <li>If your task has different categories, cover each category with at least one example</li>
+      <li>When the task changes, update the examples. Stale examples become a drag on quality</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Output Format: The Interface Nobody Talks About",
+  title:"Output Format: The Interface Nobody Talks About",
+  body:`
+    <ul class="plain">
+      <li>The format of the model's output is the handshake between the AI system and everything else in your product</li>
+    </ul>
+    <div class="callout">Get it wrong and downstream systems break, tests fail, and UX feels unreliable.</div>
+    <ul class="plain">
+      <li>Three choices show up in most production systems</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Output Format: The Interface Nobody Talks About",
+  title:"Structured JSON",
+  body:`
+    <ul class="plain">
+      <li>Best for anything a machine consumes next</li>
+      <li>All major providers support structured output with a schema, meaning the model is guaranteed to return valid JSON matching your shape</li>
+    </ul>
+    <div class="callout">Use this whenever the next step is code.</div>
+  `
+},
+{
+  eyebrow:"Output Format: The Interface Nobody Talks About",
+  title:"Markdown",
+  body:`
+    <ul class="plain">
+      <li>Best for anything a human reads directly</li>
+      <li>Clean, readable, supports lists and bold and code blocks</li>
+      <li>Useful as a default for chat interfaces</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Output Format: The Interface Nobody Talks About",
+  title:"Tagged Sections",
+  body:`
+    <ul class="plain">
+      <li>Best for output that mixes structured and narrative elements</li>
+      <li>Wrap each section in a tag like &lt;reasoning&gt;...&lt;/reasoning&gt; and &lt;answer&gt;...&lt;/answer&gt;</li>
+      <li>Easy to parse, flexible for the model</li>
+    </ul>
+    <div class="callout">Match the format to the next consumer, not to what feels natural to write.</div>
+  `
+},
+{
+  eyebrow:"When to Stop Iterating on Prompts",
+  title:"When to Stop Iterating on Prompts",
+  body:`
+    <ul class="plain">
+      <li>Prompt engineering has a ceiling</li>
+      <li>At some point, additional iteration stops producing gains and starts producing noise</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"When to Stop Iterating on Prompts",
+  title:"Signs You Have Hit the Ceiling",
+  body:`
+    <ul class="plain">
+      <li>Small prompt edits produce inconsistent score changes on your evals</li>
+      <li>The model succeeds on most cases but consistently fails on a specific kind of edge case</li>
+      <li>You are adding more constraints and each one introduces a new failure mode elsewhere</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"When to Stop Iterating on Prompts",
+  title:"What to Do Instead",
+  body:`
+    <ul class="plain">
+      <li>Better retrieval (the model is missing context, not instructions)</li>
+      <li>A model upgrade (the task is at the edge of what this model can do)</li>
+      <li>A workflow restructure (the task needs to be split into two calls)</li>
+      <li>Fine-tuning (the task has a specific style or domain that prompts cannot reliably induce)</li>
+    </ul>
+    <div class="callout">Recognizing the ceiling saves weeks of prompt-twiddling.</div>
+  `
+},
+{
+  eyebrow:"The Throughline",
+  title:"The Six Parts, the Reasoning Shift, and the Ceiling",
+  body:`
+    <ul class="plain">
+      <li>Six parts make a prompt work. Three rules change for reasoning models. Context engineering scales that discipline to a full running system. Examples are the single highest-leverage lever you have</li>
+      <li>When iteration stops helping, the fix is almost never more prompt-twiddling</li>
+    </ul>
+    <div class="callout">Chapter 6 opens Part 3 with the claim that evaluation, not prompting, is the single highest-impact skill for anyone shipping AI products in 2026.</div>
+  `
+}
+];
+
+const ch5_quiz = [
+{
+  type:'mc',
+  q:"What changed between 2023 and 2026 in how people get models to do what they want?",
+  options:[
+    "It shifted from prompting, phrasing a single instruction well, to context engineering, deciding what goes into the context window, in what order, with what structure",
+    "Prompting has been entirely replaced and no longer matters at all",
+    "Nothing has changed, the field uses the exact same terms and techniques as 2023",
+    "Context engineering was the term used in 2023, and prompting is the newer 2026 term"
+  ],
+  correct:0,
+  explain:"In 2023 it was called prompting, phrasing a single instruction well. By 2026 the field calls the larger discipline context engineering, with prompting as just one piece of it."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the six parts of a working prompt?",
+  options:[
+    "Role",
+    "Constraints",
+    "Output format",
+    "Model temperature setting"
+  ],
+  correctSet:[0,1,2],
+  explain:"The six parts are role, context, task, constraints, examples, and output format. Model temperature setting is not one of them."
+},
+{
+  type:'mc',
+  q:"What does it mean that the order of a prompt's parts matters?",
+  options:[
+    "Models weight the earliest and latest sections more heavily, so most teams put role and context first, and examples right before the output format reminder",
+    "Order never matters, a model reads the entire prompt with equal weight everywhere",
+    "The output format should always be the very first line of any prompt",
+    "Constraints should never appear anywhere in a prompt"
+  ],
+  correct:0,
+  explain:"Models weight the earliest and latest sections of a prompt more heavily, and the common ordering is role and context first, task and constraints in the middle, examples before a final output format reminder."
+},
+{
+  type:'scenario',
+  q:"A prompt opens with \"You are a billing support specialist.\" Which of the six parts of a working prompt does this line represent?",
+  options:[
+    "Role",
+    "Constraints",
+    "Output format",
+    "Examples"
+  ],
+  correct:0,
+  explain:"This is Role: who the model is acting as, which anchors tone, scope, and default behavior."
+},
+{
+  type:'mc',
+  q:"What should you do with the Task part of a prompt if you find yourself writing three separate tasks in it?",
+  options:[
+    "Consider splitting it into three separate prompts",
+    "Combine them into one very long sentence instead",
+    "Tasks should never be written as clear instructions",
+    "Three tasks in one prompt is always fine"
+  ],
+  correct:0,
+  explain:"Task should be one clear instruction, and if you find yourself writing three tasks, consider splitting into three prompts."
+},
+{
+  type:'mc',
+  q:"Why are examples described as the highest-leverage tool in the prompt toolkit?",
+  options:[
+    "For anything subjective or structured, two or three input-output pairs consistently outperform almost any other single intervention",
+    "Examples are required in every single prompt regardless of the task",
+    "Examples replace the need for a task instruction entirely",
+    "Examples only work for coding-related prompts"
+  ],
+  correct:0,
+  explain:"Examples are the highest-leverage tool for anything subjective or structured, and if only one prompting technique could be taught, it would be few-shot examples."
+},
+{
+  type:'multi',
+  q:"Which of the three rules change when prompting a reasoning model instead of a standard model?",
+  options:[
+    "Less hand-holding, since reasoning models already do step-by-step thinking on their own",
+    "More context, less structure, since reasoning models often do better with the full picture",
+    "Separate the what from the how, focusing on the goal rather than procedural steps",
+    "Always tell the model explicitly to think step by step for best results"
+  ],
+  correctSet:[0,1,2],
+  explain:"The three rules that change are less hand-holding, more context and less structure, and separating the what from the how. Telling a reasoning model to think step by step is redundant and sometimes harmful, the opposite of the fourth option."
+},
+{
+  type:'mc',
+  q:"What is the short summary of the difference between prompting standard models and reasoning models?",
+  options:[
+    "For standard models you are scripting the task, for reasoning models you are briefing a capable specialist",
+    "There is no meaningful difference between the two approaches",
+    "Reasoning models require more examples than standard models in every case",
+    "Standard models should never receive a role or context"
+  ],
+  correct:0,
+  explain:"The short version is exactly this: for standard models you are scripting the task, for reasoning models you are briefing a capable specialist."
+},
+{
+  type:'scenario',
+  q:"A production request includes a system prompt, seven turns of conversation history, three retrieved document chunks, tool definitions, tool results, and the current user message. What is the discipline of assembling all of this correctly called?",
+  options:[
+    "Context engineering",
+    "Fine-tuning",
+    "Chain-of-thought prompting",
+    "LLM-as-judge"
+  ],
+  correct:0,
+  explain:"This matches the description of a real production request almost exactly. Context engineering is deciding what goes in, what stays out, in what order and structure, across exactly this kind of assembled context."
+},
+{
+  type:'multi',
+  q:"Which of these are named among the practical context engineering principles?",
+  options:[
+    "Recency matters, keep the most important context close to the end of the prompt",
+    "Summarize when you compress, rather than simply truncating old turns",
+    "Retrieve what you need, when you need it, rather than dumping everything in at once",
+    "Change tool definitions frequently to keep the model adaptable"
+  ],
+  correctSet:[0,1,2],
+  explain:"The four principles are recency matters, summarize when you compress, retrieve just in time, and keep tool definitions stable. Frequently changing tool schemas confuses models, the opposite of the fourth option."
+},
+{
+  type:'mc',
+  q:"What are the three reasons examples work so well?",
+  options:[
+    "They teach the pattern without describing it, they calibrate tone and style, and they resolve ambiguity in the task definition implicitly",
+    "They make the prompt shorter, cheaper, and faster to run",
+    "They are required by every API provider for the model to function at all",
+    "They eliminate the need for a role or context entirely"
+  ],
+  correct:0,
+  explain:"Examples teach the model the pattern without describing it, calibrate tone and style which are hard to describe abstractly, and resolve ambiguity in the task definition implicitly."
+},
+{
+  type:'scenario',
+  q:"A team picks three few-shot examples for a support-ticket classifier, but all three are typical, easy cases with no unusual wording. What does the guidance suggest is missing?",
+  options:[
+    "One or two edge cases, since examples should not only cover the middle of the distribution",
+    "Nothing is missing, easy cases are always the correct choice for examples",
+    "The examples should be replaced entirely with a longer task instruction",
+    "Using zero examples instead is recommended"
+  ],
+  correct:0,
+  explain:"The rules for picking good examples explicitly include one or two edge cases, not only the middle of the distribution, which is exactly what this all-easy-cases selection is missing."
+},
+{
+  type:'mc',
+  q:"When should a team choose structured JSON as the output format?",
+  options:[
+    "Whenever the next step in the pipeline is code, since a machine will consume the output directly",
+    "Whenever a human will read the response directly in a chat interface",
+    "Only when the output needs to mix narrative and structured elements",
+    "Never, since JSON output is not supported by any major provider"
+  ],
+  correct:0,
+  explain:"Structured JSON is best for anything a machine consumes next, use it whenever the next step is code, contrasted with markdown for human readers and tagged sections for mixed narrative and structured output."
+},
+{
+  type:'scenario',
+  q:"A team wants a response that mixes reasoning with a final answer, and needs to parse each part separately while keeping the model's output flexible. Which output format fits best?",
+  options:[
+    "Tagged sections, wrapping each part in a tag like <reasoning> and <answer>",
+    "Structured JSON only",
+    "Plain markdown with no structure",
+    "A single unstructured paragraph"
+  ],
+  correct:0,
+  explain:"Tagged sections are best for output that mixes structured and narrative elements, wrapping each part in a tag like <reasoning>...</reasoning> and <answer>...</answer>, easy to parse and flexible for the model."
+},
+{
+  type:'mc',
+  q:"Which of these is a listed sign that prompt engineering has hit its ceiling?",
+  options:[
+    "Small prompt edits produce inconsistent score changes on your evals",
+    "The model succeeds on every single case with no exceptions",
+    "You have not made any changes to the prompt in over a week",
+    "Your evals show steadily improving scores with each edit"
+  ],
+  correct:0,
+  explain:"The three ceiling signs are small edits producing inconsistent score changes, consistent failure on one kind of edge case, and each new constraint introducing a new failure mode elsewhere."
+},
+{
+  type:'multi',
+  q:"Which fixes are recommended when prompt iteration has stopped helping?",
+  options:[
+    "Better retrieval, since the model may be missing context rather than instructions",
+    "A model upgrade, if the task is at the edge of what the current model can do",
+    "Fine-tuning, if the task needs a style or domain prompts cannot reliably induce",
+    "Writing the same prompt again with different wording repeatedly until it improves"
+  ],
+  correctSet:[0,1,2],
+  explain:"The four real fixes are better retrieval, a model upgrade, a workflow restructure, and fine-tuning. Continued prompt-twiddling past the ceiling produces noise rather than gains, the opposite of the fourth option."
+},
+{
+  type:'mc',
+  q:"What does Chapter 6 open with, right after this chapter?",
+  options:[
+    "The claim that evaluation, not prompting, is the single highest-impact skill for anyone shipping AI products in 2026",
+    "A twenty-technique list of every known prompting trick",
+    "A tutorial on how to fine-tune a model from scratch",
+    "A chapter about choosing which foundation model to use"
+  ],
+  correct:0,
+  explain:"Chapter 6 opens Part 3 with the claim that evaluation is the single highest-impact skill for anyone shipping AI products in 2026, beating prompting, agent design, and model selection."
+}
+];
+
+/* ============================================================
+   GLOSSARY
+   Grows across the whole book. Add new terms here as each chapter
+   is built. chapter refers to the chapter number the term was
+   first introduced in.
+   ============================================================ */
+
+const glossary = [
+{ term:"Generative AI", chapter:1, def:"AI that creates new content, text, images, audio, video, code, rather than just analyzing or sorting things that already exist. ChatGPT, Midjourney, and Claude are all generative AI." },
+  { term:"Foundation Model", chapter:1, def:"A large, general-purpose AI model trained on massive amounts of data, built to be adapted for many different tasks rather than one specific job. GPT, Claude, Gemini, and Llama are all foundation models." },
+  { term:"Large Language Model (LLM)", chapter:1, def:"A foundation model trained specifically on language: it reads text and generates text. It works by predicting likely patterns from its training data, not by looking up facts in a database." },
+  { term:"Tokens", chapter:1, def:"The small pieces of text a model actually processes, roughly a word or part of a word. Models are priced and limited by how many tokens they read and write." },
+  { term:"Context Window", chapter:1, def:"The total amount of text (measured in tokens) a model can \"see\" and consider at once, including your prompt, chat history, and any documents provided. Bigger isn't automatically better; models can lose track of details buried in the middle of a very long context." },
+  { term:"Pretraining, Fine-Tuning, Post-Training", chapter:1, def:"The three stages of building a model. Pretraining teaches it language from huge amounts of raw data. Fine-tuning specializes it for a narrower task using a smaller dataset. Post-training (including techniques like RLHF) polishes its behavior, tone, and safety." },
+  { term:"Chain-of-Thought", chapter:1, def:"A technique where a model is prompted to reason through a problem step by step before giving its final answer, which often improves accuracy on math, logic, and multi-step questions." },
+  { term:"Reasoning Models", chapter:1, def:"A class of models built to think longer and more carefully before responding, trading extra time and cost for better performance on hard, multi-step problems." },
+  { term:"Multimodality", chapter:1, def:"A model's ability to work with more than just text, such as understanding images, audio, or video, not only reading and writing words." },
+  { term:"Prompting", chapter:1, def:"Writing input to an AI model in a way that reliably gets you the output you want. Part clear communication, part trial and error." },
+  { term:"System Prompt", chapter:1, def:"A hidden instruction set placed above the user's messages that defines the model's role, rules, and behavior for an entire conversation." },
+  { term:"Few-Shot and In-Context Learning", chapter:1, def:"Teaching a model a pattern by showing it a few examples directly in the prompt, rather than retraining it. The model picks up the pattern on the spot." },
+  { term:"Context Engineering", chapter:1, def:"The broader practice of deciding exactly what information, instructions, and tools to put into a model's context, and in what order, to get the best possible result. A wider discipline than writing one clever prompt." },
+  { term:"Tool Use and Function Calling", chapter:1, def:"Giving a model access to external functions, like a search engine, a database, or a calculator, so it can fetch information or take actions beyond just generating text." },
+  { term:"Agent", chapter:1, def:"An AI system that can use tools repeatedly and decide its own next steps to accomplish a goal, rather than just responding once to a single instruction." },
+  { term:"Workflow vs Agent", chapter:1, def:"A workflow follows a fixed, human-designed sequence of steps with the AI filling in the details. An agent decides its own sequence of steps on the fly. Workflows are more predictable; agents are more flexible but harder to control." },
+  { term:"Router and Classifier Patterns", chapter:1, def:"A setup where one AI call first figures out what kind of request it's dealing with, then hands it off to the right specialized handler, similar to a receptionist directing calls to the correct department." },
+  { term:"Specialist and Sub-Agent", chapter:1, def:"A component focused on one narrow task within a larger system, with its own dedicated prompt and tools, as opposed to a general-purpose model trying to do everything." },
+  { term:"Multi-Agent System", chapter:1, def:"A setup where multiple AI agents work together, each handling part of a larger problem and communicating with one another. Powerful, but complex to build and debug well." },
+  { term:"Retrieval", chapter:1, def:"Looking up relevant information (from documents, databases, or the web) and feeding it to a model before it answers, so its response is grounded in real, current information rather than only what it remembers from training." },
+  { term:"RAG (Retrieval-Augmented Generation)", chapter:1, def:"A common pattern where a model retrieves relevant documents first, then uses them as context to generate its answer. One specific way of doing retrieval, not the only one." },
+  { term:"Semantic Search and Embeddings", chapter:1, def:"A way of finding information based on meaning rather than exact keyword matches. Text is converted into embeddings, lists of numbers that represent meaning, and similar meanings end up numerically close together." },
+  { term:"Vector Database", chapter:1, def:"A database specialized for storing and quickly searching embeddings, the numeric representations used in semantic search. Pinecone, Weaviate, and pgvector are common examples." },
+  { term:"Memory", chapter:1, def:"An AI system's ability to retain information across a conversation (short-term) or across multiple separate sessions over time (long-term), such as remembering a user's preferences." },
+  { term:"Evaluation (Evals)", chapter:1, def:"A structured, repeatable way of measuring how well an AI system is actually performing, rather than judging it by impression alone. Considered one of the most important skills in building reliable AI products." },
+  { term:"LLM-as-Judge", chapter:1, def:"Using one AI model to automatically score or grade another model's output against a rubric, a way to evaluate quality at a scale humans can't match by hand." },
+  { term:"Hallucination", chapter:1, def:"When an AI model confidently states something false or made-up as if it were fact. It's an inherent risk of how these models generate text, not a simple bug to patch." },
+  { term:"Grounding", chapter:1, def:"Connecting a model's answer to a real, verifiable source, so the response can be checked and trusted rather than taken on faith. One of the best defenses against hallucination." },
+  { term:"Guardrails", chapter:1, def:"Safety checks that filter what goes into a model (like blocking harmful requests) and what comes out of it (like catching false or inappropriate responses), keeping the system safe and reliable in production." },
+  { term:"Observability and Tracing", chapter:1, def:"The practice of logging and monitoring exactly what an AI system does in real use, every request, tool call, and response, so problems can be spotted, understood, and fixed." },
+  { term:"Model Context Protocol (MCP)", chapter:1, def:"An open, standardized way for AI models to connect to external tools and data sources, so developers don't need custom integration code for every single service." },
+  { term:"Agents SDK", chapter:1, def:"A developer toolkit (in this case, OpenAI's) for building AI agents, handling common needs like managing tool calls, multi-step loops, and handoffs between agents." },
+  { term:"Parameters", chapter:1, def:"The internal numerical values a model learns during training that determine how it processes input and generates output. Roughly, more parameters means a larger, generally more capable model." },
+  { term:"Zero-Shot Prompting", chapter:1, def:"Asking a model to complete a task with no examples at all, just an instruction, relying entirely on what it already learned during training." },
+  { term:"Temperature", chapter:1, def:"A setting that controls how random or predictable a model's output is. Low temperature gives safer, more consistent answers; high temperature gives more varied, creative ones." },
+  { term:"Fine-Tuned Model", chapter:1, def:"A foundation model that has been further trained on a smaller, specific dataset to specialize it for a particular task or domain, like customer support or legal writing." },
+{ term:"Pilot vs Production", chapter:2, def:"A pilot is a small trial run of an AI system to see if the idea works. Production means the system is actually relied on by real users daily. Succeeding at one doesn't guarantee succeeding at the other." },
+  { term:"ROI (Return on Investment)", chapter:2, def:"A measure of whether the value or savings a system produces are worth what it cost to build and run." },
+  { term:"Augment vs Automate", chapter:2, def:"Augmenting means the AI assists a human, who still makes the final call. Automating means the AI acts on its own, with no human review needed for that step." },
+  { term:"Narrow Scope", chapter:2, def:"Deliberately limiting an AI system to one specific, well-defined problem instead of trying to make it handle everything. Easier to build well and easier to evaluate." },
+  { term:"Router-and-Specialist Pattern", chapter:2, def:"A common system design where one component figures out what kind of request has come in, then routes it to a smaller, focused component built to handle exactly that type of task." },
+  { term:"Eval Harness", chapter:2, def:"The tooling and tests a team uses to regularly check how well their AI system is actually performing, rather than relying on gut feeling." },
+  { term:"Quality Drift", chapter:2, def:"When an AI system's real-world performance gradually gets worse over time without anyone noticing, usually because nobody is actively measuring it." },
+  { term:"Problem Discovery", chapter:2, def:"The upfront work of clearly identifying who has a problem, what that problem actually is, and whether AI is genuinely the right way to solve it, before any building starts." },
+  { term:"Post-Mortem", chapter:2, def:"A review conducted after a project fails or underperforms, aimed at understanding what went wrong so the same mistake isn't repeated." },
+  { term:"Over-Scoping", chapter:2, def:"Designing a system to be more complex or ambitious than the actual problem requires, such as building a multi-agent system when a simple workflow would have worked fine." },
+{ term:"Benchmark", chapter:3, def:"A standardized test used to measure and compare how well different AI models perform on specific tasks, like MMLU or HumanEval. Useful for a rough sense of quality, but not a substitute for testing on your own use case." },
+  { term:"Latency", chapter:3, def:"How long it takes a model to respond after receiving a request. Matters a lot for live chat, barely at all for background jobs nobody is waiting on." },
+  { term:"Inference", chapter:3, def:"The process of a trained model actually generating a response to a new input, as opposed to the training process that created the model in the first place." },
+  { term:"Open-Source Model vs Closed Model", chapter:3, def:"An open model's weights are publicly available and can be run and modified by anyone. A closed model can only be accessed through the provider's own API, with the underlying weights kept private." },
+  { term:"Self-Hosting", chapter:3, def:"Running an AI model on your own servers or infrastructure instead of calling it through a provider's API. Gives more control but adds operational work and cost." },
+  { term:"Data Residency", chapter:3, def:"Legal or policy requirements that data must be stored and processed within a specific country or region, often a deciding factor in whether a team can use a cloud-based API or must self-host a model instead." },
+  { term:"Vendor Lock-In", chapter:3, def:"Becoming so dependent on one provider's specific tools or APIs that switching to a different provider later becomes difficult or costly." },
+{ term:"Problem-First Design", chapter:4, def:"The practice of clearly defining who has a problem and what that problem actually is before writing any code or prompts, rather than starting with a technology and looking for a use for it." },
+  { term:"Scoping", chapter:4, def:"The process of clearly defining the boundaries of a project before building it, what it will do, who it's for, and what counts as done." },
+  { term:"Human Baseline", chapter:4, def:"A measurement of how a task is currently done by a person, how long it takes and how often mistakes happen, used as the comparison point for judging whether an AI system is actually an improvement." },
+  { term:"Pilot", chapter:4, def:"A small, controlled test of a system with a limited group of users, run to see whether an idea works before committing to building it for everyone." },
+  { term:"Rollback Plan", chapter:4, def:"A predefined way to quickly undo or disable a system if something goes wrong after launch, restoring the previous working state." },
+  { term:"Audit Trail", chapter:4, def:"A record of what a system did and when, kept so that actions can be reviewed, verified, or investigated later if something goes wrong." },
+  { term:"Iteration", chapter:4, def:"Repeatedly improving something through cycles of building, testing, and adjusting, rather than trying to get everything right in a single attempt." },
+{ term:"Structured Output", chapter:5, def:"AI output formatted in a strict, predictable shape, like valid JSON, that other software can reliably read and process without extra parsing work." },
+  { term:"Schema", chapter:5, def:"A defined structure or blueprint describing exactly what fields a piece of data should have and what type each one is, used to check that output matches the expected format." },
+  { term:"Zero-Shot Prompt", chapter:5, def:"A prompt that asks a model to complete a task with no examples included, relying entirely on the instructions and what the model already learned during training." },
+  { term:"Prompt Iteration", chapter:5, def:"The process of repeatedly testing and adjusting a prompt's wording to improve how well it performs, usually guided by evals rather than guesswork." },
+  { term:"Edge Case", chapter:5, def:"An unusual or extreme input that sits at the boundary of what a system was designed to handle, often where things are most likely to go wrong." }
+];
+
+const chapters = [
+  {
+    id:1,
+    part:"Part 1: The Landscape",
+    title:"The Language of Generative and Agentic AI",
+    threadNodes:["The Raw Material","From Text to Thought","Talking to the Model","Beyond Single Calls","Knowing What You Don't Know","Keeping It Honest","Plumbing"],
+    slides:ch1_slides,
+    quiz:ch1_quiz
+  },
+  {
+    id:2,
+    part:"Part 1: The Landscape",
+    title:"What Enterprises Are Building",
+    threadNodes:["Shift to Production","Where Value Lands","Patterns That Work","What's Failing","Your Roadmap"],
+    slides:ch2_slides,
+    quiz:ch2_quiz
+  },
+  {
+    id:3,
+    part:"Part 1: The Landscape",
+    title:"Models: How to Choose",
+    threadNodes:["No Best Model","Dimensions","Decision Framework","Reasoning Models","Open vs Closed","Your Evals"],
+    slides:ch3_slides,
+    quiz:ch3_quiz
+  },
+  {
+    id:4,
+    part:"Part 2: Designing AI Products",
+    title:"Problem-First Design, Revisited",
+    threadNodes:["Why It Matters","Four Layers","Six Traps","Scoping Template","Iteration","Not Forever"],
+    slides:ch4_slides,
+    quiz:ch4_quiz
+  },
+  {
+    id:5,
+    part:"Part 2: Designing AI Products",
+    title:"Prompting and Context Engineering",
+    threadNodes:["Six Parts","Reasoning Models","Bigger Picture","Few-Shot","Output Format","The Ceiling"],
+    slides:ch5_slides,
+    quiz:ch5_quiz
+  }
+  /* Add one object per chapter here, e.g.:
+  {
+    id:6,
+    part:"Part 3: The Evaluation Core",
+    title:"...",
+    threadNodes:["...","...","..."],
+    slides:ch6_slides,
+    quiz:ch6_quiz
+  },
+  */
+];
+
+
+let activeChapter = 0;
+let idx = 0;
+
+function renderChapterRow(){
+  const row = document.getElementById('chapterRow');
+  let html = '';
+  let lastPart = null;
+  chapters.forEach((c,i)=>{
+    if(c.part && c.part !== lastPart){
+      html += `<div class="part-label">${c.part}</div>`;
+      lastPart = c.part;
+    }
+    html += `<button class="chapter-tab ${i===activeChapter?'active':''}" onclick="switchChapter(${i})">
+      <span class="num">Chapter ${c.id}</span>${c.title}
+    </button>`;
+  });
+  row.innerHTML = html;
+}
+
+function switchChapter(i){
+  activeChapter = i;
+  idx = 0;
+  document.getElementById('chapterTitle').innerText = chapters[i].title;
+  renderChapterRow();
+  renderSlide();
+  renderQuiz();
+  showMode('slides');
+  document.getElementById('btnSlides').classList.add('active');
+  document.getElementById('btnQuiz').classList.remove('active');
+}
+
+/* ---------------- SLIDE RENDERING ---------------- */
+function renderThread(){
+  const t = document.getElementById('thread');
+  const nodes = chapters[activeChapter].threadNodes;
+  t.innerHTML = nodes.map((n,i)=>{
+    const doneClass = i <= currentThreadStage() ? 'done' : '';
+    return `<span class="node ${doneClass}">${n}</span>` + (i<nodes.length-1 ? `<span class="arrow">→</span>` : '');
+  }).join('');
+}
+function currentThreadStage(){
+  const slides = chapters[activeChapter].slides;
+  const nodes = chapters[activeChapter].threadNodes;
+  const currentEyebrow = slides[idx] && slides[idx].eyebrow;
+  const exactMatch = nodes.indexOf(currentEyebrow);
+  if(exactMatch !== -1) return exactMatch;
+  const stageCount = nodes.length;
+  return Math.min(stageCount - 1, Math.floor((idx / slides.length) * stageCount));
+}
+
+function renderSlide(){
+  const slides = chapters[activeChapter].slides;
+  const s = slides[idx];
+  document.getElementById('slideHost').innerHTML = `
+    <div class="slide">
+      <button class="focus-toggle-btn" onclick="toggleFocusMode()" aria-label="Toggle focus mode" id="focusToggleBtn">${focusIconSVG(false)}</button>
+      <div class="eyebrow">${s.eyebrow}</div>
+      <h2>${s.title}</h2>
+      ${s.body}
+    </div>
+  `;
+  document.getElementById('prevBtn').disabled = idx===0;
+  document.getElementById('nextBtn').disabled = idx===slides.length-1;
+  document.getElementById('nextBtn').innerText = idx===slides.length-1 ? 'Done' : 'Next →';
+  document.getElementById('focusPosition').innerText = (idx+1) + ' / ' + slides.length;
+  renderDots();
+  renderThread();
+  syncFocusIcon();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function renderDots(){
+  const slides = chapters[activeChapter].slides;
+  document.getElementById('dots').innerHTML = slides.map((_,i)=>
+    `<div class="dot ${i===idx?'active':''}"></div>`
+  ).join('');
+}
+function go(dir){
+  const slides = chapters[activeChapter].slides;
+  const next = idx + dir;
+  if(next>=0 && next<slides.length){ idx = next; renderSlide(); }
+}
+
+/* ---------------- FOCUS MODE ---------------- */
+let focusMode = false;
+function focusIconSVG(isFocused){
+  return isFocused
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V5a2 2 0 0 1 2-2h4M20 9V5a2 2 0 0 0-2-2h-4M4 15v4a2 2 0 0 0 2 2h4M20 15v4a2 2 0 0 1-2 2h-4"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>`;
+}
+function toggleFocusMode(){
+  focusMode = !focusMode;
+  document.getElementById('wrap').classList.toggle('focus-mode', focusMode);
+  syncFocusIcon();
+}
+function syncFocusIcon(){
+  const btn = document.getElementById('focusToggleBtn');
+  if(btn) btn.innerHTML = focusIconSVG(focusMode);
+}
+document.addEventListener('keydown', function(e){
+  if(!focusMode) return;
+  const tag = (e.target && e.target.tagName) || '';
+  if(tag === 'INPUT' || tag === 'TEXTAREA') return;
+  const slidesVisible = document.getElementById('slides').style.display !== 'none';
+  if(!slidesVisible) return;
+  if(e.key === 'ArrowRight'){ e.preventDefault(); go(1); }
+  else if(e.key === 'ArrowLeft'){ e.preventDefault(); go(-1); }
+  else if(e.key === 'Escape'){ e.preventDefault(); toggleFocusMode(); }
+});
+
+/* ---------------- MODE TOGGLE ---------------- */
+function showMode(mode){
+  document.getElementById('slides').style.display = mode==='slides' ? 'block' : 'none';
+  document.getElementById('quiz').style.display = mode==='quiz' ? 'block' : 'none';
+  document.getElementById('glossary').style.display = mode==='glossary' ? 'block' : 'none';
+  document.getElementById('btnSlides').classList.toggle('active', mode==='slides');
+  document.getElementById('btnQuiz').classList.toggle('active', mode==='quiz');
+  document.getElementById('btnGlossary').classList.toggle('active', mode==='glossary');
+  if(mode==='glossary') renderGlossary();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ---------------- GLOSSARY ---------------- */
+function renderGlossary(filterText){
+  const host = document.getElementById('glossary');
+  const q = (filterText || '').trim().toLowerCase();
+  const sorted = [...glossary].sort((a,b)=>a.term.localeCompare(b.term));
+  const filtered = q ? sorted.filter(g =>
+    g.term.toLowerCase().includes(q) || g.def.toLowerCase().includes(q)
+  ) : sorted;
+
+  let html = `<div class="glossary-head">
+    <input type="text" class="glossary-search" id="glossarySearch" placeholder="Search all terms..." value="${(filterText||'').replace(/"/g,'&quot;')}" oninput="renderGlossary(this.value)">
+    <div class="glossary-count">${filtered.length} of ${glossary.length} terms</div>
+  </div>`;
+
+  if(filtered.length === 0){
+    html += `<div class="glossary-empty">No terms match "${q}". Try a different search.</div>`;
+  } else {
+    filtered.forEach(g => {
+      html += `<div class="gterm">
+        <div class="gname">${g.term}</div>
+        <div class="gdef">${g.def}</div>
+      </div>`;
+    });
+  }
+  host.innerHTML = html;
+
+  const input = document.getElementById('glossarySearch');
+  if(input && filterText !== undefined){
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+  }
+}
+
+function toggleSidebar(){
+  document.getElementById('wrap').classList.toggle('collapsed');
+}
+
+/* ---------------- QUIZ ---------------- */
+function renderQuiz(){
+  const quizData = chapters[activeChapter].quiz;
+  const host = document.getElementById('quiz');
+  let html = `<div class="quiz-head">
+    <div class="quiz-head-title">${chapters[activeChapter].title}</div>
+    <button class="reset-btn" onclick="resetQuiz()">Retake quiz</button>
+  </div>`;
+  quizData.forEach((item, i)=>{
+    const tag = item.type==='scenario' ? ' · Applied' : (item.type==='multi' ? ' · Select all that apply' : '');
+    html += `<div class="qcard" id="q${i}">
+      <div class="qnum">Question ${i+1} of ${quizData.length}${tag}</div>
+      <h3>${item.q}</h3>`;
+    if(item.type==='multi'){
+      item.options.forEach((opt, oi)=>{
+        html += `<label class="opt" id="opt${i}_${oi}" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="chk${i}_${oi}" style="width:16px;height:16px;flex-shrink:0;">
+          <span>${opt}</span>
+        </label>`;
+      });
+      html += `<button onclick="submitMulti(${i})" style="margin-top:8px;background:var(--amber);border:none;color:var(--ink);font-weight:700;padding:9px 18px;border-radius:7px;cursor:pointer;font-size:13.5px;" id="submitBtn${i}">Check answer</button>`;
+      html += `<div class="explain" id="exp${i}">${item.explain}</div>`;
+    } else {
+      item.options.forEach((opt, oi)=>{
+        html += `<button class="opt" id="opt${i}_${oi}" onclick="answer(${i},${oi})">${opt}</button>`;
+      });
+      html += `<div class="explain" id="exp${i}">${item.explain}</div>`;
+    }
+    html += `</div>`;
+  });
+  host.innerHTML = html;
+}
+
+function resetQuiz(){
+  renderQuiz();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function answer(qi, oi){
+  const quizData = chapters[activeChapter].quiz;
+  const item = quizData[qi];
+  for(let o=0;o<item.options.length;o++){
+    const btn = document.getElementById(`opt${qi}_${o}`);
+    btn.disabled = true;
+    if(o===item.correct) btn.classList.add('correct');
+    else if(o===oi) btn.classList.add('incorrect');
+  }
+  document.getElementById(`exp${qi}`).style.display = 'block';
+}
+
+function submitMulti(qi){
+  const quizData = chapters[activeChapter].quiz;
+  const item = quizData[qi];
+  const correctSet = new Set(item.correctSet);
+  item.options.forEach((opt, oi)=>{
+    const chk = document.getElementById(`chk${qi}_${oi}`);
+    const label = document.getElementById(`opt${qi}_${oi}`);
+    chk.disabled = true;
+    const picked = chk.checked;
+    const shouldBeChecked = correctSet.has(oi);
+    if(shouldBeChecked && picked) label.classList.add('correct');
+    else if(shouldBeChecked && !picked) label.classList.add('correct');
+    else if(!shouldBeChecked && picked) label.classList.add('incorrect');
+  });
+  document.getElementById(`submitBtn${qi}`).disabled = true;
+  document.getElementById(`submitBtn${qi}`).style.opacity = '0.4';
+  document.getElementById(`exp${qi}`).style.display = 'block';
+}
+
+/* ---------------- INIT ---------------- */
+renderChapterRow();
+renderSlide();
+renderQuiz();
+</script>
+</body>
+</html>
