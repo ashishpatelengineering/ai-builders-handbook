@@ -47,39 +47,21 @@
     flex-shrink:0;
     position:sticky;
     top:32px;
-    overflow:hidden;
-    transition:width .2s ease, opacity .2s ease, margin .2s ease;
   }
   .wrap.collapsed .sidebar{
-    width:0;
-    opacity:0;
-    pointer-events:none;
+    display:none;
   }
-  .wrap.collapsed{ gap:0; }
   .sidebar-label{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
     font-size:11px;
     letter-spacing:0.12em;
     text-transform:uppercase;
     color:var(--slate);
     margin-bottom:12px;
-    white-space:nowrap;
   }
-  .sidebar-collapse-btn{
-    background:transparent;
-    border:1px solid rgba(240,237,228,0.2);
-    color:var(--slate);
-    font-size:11px;
-    padding:3px 7px;
-    border-radius:5px;
-    cursor:pointer;
-    line-height:1;
-  }
-  .sidebar-collapse-btn:hover{ border-color:var(--amber); color:var(--amber); }
-  .sidebar-expand-btn{
-    display:none;
+  .sidebar-toggle-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
     background:var(--ink-2);
     border:1px solid rgba(240,237,228,0.15);
     color:var(--paper-dim);
@@ -89,11 +71,8 @@
     border-radius:7px;
     cursor:pointer;
     margin-bottom:16px;
-    align-items:center;
-    gap:6px;
   }
-  .sidebar-expand-btn:hover{ border-color:var(--amber); color:var(--amber); }
-  .wrap.collapsed .sidebar-expand-btn{ display:inline-flex; }
+  .sidebar-toggle-btn:hover{ border-color:var(--amber); color:var(--amber); }
   .part-label{
     font-size:10px;
     letter-spacing:0.1em;
@@ -144,10 +123,8 @@
   }
   @media (max-width:760px){
     .wrap{ flex-direction:column; padding:20px 16px 60px; }
-    .wrap.collapsed{ gap:32px; }
     .sidebar{ width:100%; position:static; }
-    .wrap.collapsed .sidebar{ width:100%; opacity:1; pointer-events:auto; display:none; }
-    .sidebar-expand-btn{ margin-bottom:16px; }
+    .sidebar-toggle-btn{ margin-bottom:16px; }
     .chapter-tab{ display:block; width:100%; border-left:2px solid rgba(240,237,228,0.12); border-bottom:none; margin-right:0; white-space:normal; }
     .chapter-tab.active{ border-left:2px solid var(--amber); border-bottom:none; }
     .part-label{ width:100%; margin:14px 0 6px 4px; }
@@ -383,7 +360,7 @@
 
   /* ===== FOCUS MODE ===== */
   #wrap.focus-mode .sidebar,
-  #wrap.focus-mode .sidebar-expand-btn,
+  #wrap.focus-mode .sidebar-toggle-btn,
   #wrap.focus-mode header.top{
     display:none !important;
   }
@@ -703,16 +680,13 @@
 
   <aside class="sidebar">
     <div class="sidebar-book-title">The AI Builder's Handbook</div>
-    <div class="sidebar-label">
-      Chapters
-      <button class="sidebar-collapse-btn" onclick="toggleSidebar()" aria-label="Hide chapter list">← Hide</button>
-    </div>
+    <div class="sidebar-label">Chapters</div>
     <div id="chapterRow"></div>
   </aside>
 
   <div class="main-col">
 
-    <button class="sidebar-expand-btn" onclick="toggleSidebar()" aria-label="Show chapter list">☰ Chapters</button>
+    <button class="sidebar-toggle-btn" onclick="toggleSidebar()" id="sidebarToggleBtn" aria-label="Hide chapter list">← Hide chapters</button>
 
     <header class="top">
       <div>
@@ -4504,7 +4478,12 @@ function renderGlossary(filterText){
 }
 
 function toggleSidebar(){
-  document.getElementById('wrap').classList.toggle('collapsed');
+  const collapsed = document.getElementById('wrap').classList.toggle('collapsed');
+  const btn = document.getElementById('sidebarToggleBtn');
+  if(btn){
+    btn.innerText = collapsed ? '☰ Show chapters' : '← Hide chapters';
+    btn.setAttribute('aria-label', collapsed ? 'Show chapter list' : 'Hide chapter list');
+  }
 }
 
 /* ---------------- NOTES ---------------- */
@@ -4617,6 +4596,11 @@ function submitMulti(qi){
 /* ---------------- INIT ---------------- */
 if(window.innerWidth <= 760){
   document.getElementById('wrap').classList.add('collapsed');
+  const initBtn = document.getElementById('sidebarToggleBtn');
+  if(initBtn){
+    initBtn.innerText = '☰ Show chapters';
+    initBtn.setAttribute('aria-label', 'Show chapter list');
+  }
 }
 renderChapterRow();
 renderSlide();
