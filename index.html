@@ -152,6 +152,14 @@
     font-weight:700;
     color:var(--paper);
   }
+  .header-progress{
+    display:none;
+    margin-top:6px;
+    font-size:12px;
+    color:var(--slate);
+    letter-spacing:0.04em;
+  }
+  .header-progress.visible{ display:block; }
   .mode-toggle{
     display:flex;
     gap:8px;
@@ -250,6 +258,23 @@
   }
 
   /* ===== NOTES ===== */
+  .notes-toolbar{
+    display:flex;
+    justify-content:center;
+    margin-bottom:14px;
+  }
+  .notes-page-number{
+    font-family:var(--sans);
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--amber);
+    background:rgba(232,163,61,0.1);
+    border:1px solid rgba(232,163,61,0.3);
+    padding:6px 14px;
+    border-radius:20px;
+  }
   .notes-page-wrap{
     display:flex;
     justify-content:center;
@@ -270,7 +295,7 @@
     padding:44px 40px 64px 40px;
     box-shadow:0 4px 16px rgba(0,0,0,0.3);
     border-radius:6px;
-    font-family:'Patrick Hand', sans-serif;
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
     box-sizing:border-box;
   }
   .notes-sheet .n-chapter{
@@ -299,9 +324,10 @@
     margin:0.9em 0 0.25em 0;
   }
   .notes-sheet p, .notes-sheet li{
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
     color:var(--n-blue);
-    font-size:1.05em;
-    line-height:1.5;
+    font-size:0.98em;
+    line-height:1.55;
     margin:0.2em 0;
   }
   .notes-sheet ul{ margin:0.2em 0 0.4em 0; padding-left:1.3em; }
@@ -409,7 +435,7 @@
     color:var(--slate);
     text-transform:uppercase;
   }
-  #wrap.focus-mode .focus-position{
+  #wrap.focus-mode #slides .focus-position{
     display:block;
   }
   @media (max-width: 1200px){
@@ -691,6 +717,7 @@
     <header class="top">
       <div>
         <h1 id="chapterTitle">The Language of Generative and Agentic AI</h1>
+        <div class="header-progress" id="headerProgress"></div>
       </div>
       <div class="mode-toggle">
         <button id="btnSlides" class="active" onclick="showMode('slides')">Lesson</button>
@@ -1991,7 +2018,7 @@ const ch2_quiz = [
 },
 {
   type:'multi',
-  q:"Which five categories are named as where enterprise AI value is actually landing?",
+  q:"Which of the following are named as categories where enterprise AI value is actually landing?",
   options:[
     "Internal knowledge and support",
     "Document processing and extraction",
@@ -3150,7 +3177,7 @@ const ch4_quiz = [
 },
 {
   type:'multi',
-  q:"Which of the following correctly describe the four layers, in order?",
+  q:"Which of the following correctly describe the layers of the framework, in order?",
   options:[
     "Layer 1 is the user and their pain, defined with a named role, actual task, and measurable pain",
     "Layer 2 is the outcome, and it should be written before the system itself",
@@ -3198,7 +3225,7 @@ const ch4_quiz = [
 },
 {
   type:'multi',
-  q:"Which of these are named among the six design traps?",
+  q:"Which of these are named among the recurring design traps?",
   options:[
     "Over-scoping",
     "Solutioning in the problem statement",
@@ -3246,7 +3273,7 @@ const ch4_quiz = [
 },
 {
   type:'multi',
-  q:"Which of these are among the six questions in the scoping template?",
+  q:"Which of these are among the questions in the scoping template?",
   options:[
     "Who is the user?",
     "What is the single AI capability at the core?",
@@ -3769,7 +3796,7 @@ const ch5_quiz = [
 },
 {
   type:'multi',
-  q:"Which of the following are named among the six parts of a working prompt?",
+  q:"Which of the following are named among the parts of a working prompt?",
   options:[
     "Role",
     "Constraints",
@@ -4201,7 +4228,7 @@ const ch6_quiz = [
 },
 {
   type:'multi',
-  q:"Which of these are named among the four things a good eval harness buys you?",
+  q:"Which of these are named among the things a good eval harness buys you?",
   options:[
     "It tells you if a change made the system better",
     "It surfaces what is broken",
@@ -4970,7 +4997,7 @@ const ch8_quiz = [
 },
 {
   type:'multi',
-  q:"Which five components appear in every LLM judge, using the brand voice example?",
+  q:"Which of the following components appear in every LLM judge, using the brand voice example?",
   options:[
     "A clear task definition",
     "An explicit rubric with labels and criteria",
@@ -5066,7 +5093,7 @@ const ch8_quiz = [
 },
 {
   type:'multi',
-  q:"Which of the following are named among the five ways LLM judges fail?",
+  q:"Which of the following are named among the ways LLM judges fail?",
   options:[
     "Position bias, preferring the first output when comparing two side by side",
     "Length bias, preferring longer responses even when a shorter one is better",
@@ -5994,6 +6021,9 @@ function renderSlide(){
   document.getElementById('nextBtn').disabled = idx===slides.length-1;
   document.getElementById('nextBtn').innerText = idx===slides.length-1 ? 'Done' : 'Next →';
   document.getElementById('focusPosition').innerText = (idx+1) + ' / ' + slides.length;
+  const hp = document.getElementById('headerProgress');
+  hp.innerText = 'Slide ' + (idx+1) + ' of ' + slides.length;
+  hp.classList.add('visible');
   renderDots();
   syncFocusIcon();
   window.scrollTo({top:0, behavior:'smooth'});
@@ -6077,6 +6107,7 @@ function showMode(mode){
   document.getElementById('btnQuiz').classList.toggle('active', mode==='quiz');
   document.getElementById('btnGlossary').classList.toggle('active', mode==='glossary');
   document.getElementById('btnNotes').classList.toggle('active', mode==='notes');
+  document.getElementById('headerProgress').classList.toggle('visible', mode==='slides');
   if(mode==='glossary') renderGlossary();
   if(mode==='notes') renderNotes();
   window.scrollTo({top:0, behavior:'smooth'});
@@ -6143,7 +6174,10 @@ function renderNotes(){
   if(notesIdx < 0) notesIdx = 0;
   const page = pages[notesIdx];
 
-  let html = `<div class="notes-page-wrap">
+  let html = `<div class="notes-toolbar">
+    <div class="notes-page-number">Page ${notesIdx+1} of ${pages.length}</div>
+  </div>
+  <div class="notes-page-wrap">
     <div class="notes-sheet">
       <button class="focus-toggle-btn notes-focus-btn" onclick="toggleFocusMode()" aria-label="Toggle focus mode" id="focusToggleBtnNotes">${focusIconSVG(focusMode)}</button>
       ${page}
@@ -6213,6 +6247,8 @@ function answer(qi, oi){
     if(o===item.correct) btn.classList.add('correct');
     else if(o===oi) btn.classList.add('incorrect');
   }
+  const correctText = item.options[item.correct];
+  document.getElementById(`exp${qi}`).innerHTML = '<strong>Correct answer: ' + correctText + '</strong><br><br>' + item.explain;
   document.getElementById(`exp${qi}`).style.display = 'block';
 }
 
@@ -6232,6 +6268,8 @@ function submitMulti(qi){
   });
   document.getElementById(`submitBtn${qi}`).disabled = true;
   document.getElementById(`submitBtn${qi}`).style.opacity = '0.4';
+  const correctTexts = item.correctSet.map(i => item.options[i]).join(', ');
+  document.getElementById(`exp${qi}`).innerHTML = '<strong>Correct options: ' + correctTexts + '</strong><br><br>' + item.explain;
   document.getElementById(`exp${qi}`).style.display = 'block';
 }
 
