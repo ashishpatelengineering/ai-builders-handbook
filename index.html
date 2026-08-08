@@ -8092,6 +8092,1276 @@ const ch15_quiz = [
 ];
 
 /* ============================================================
+   CHAPTER 16
+   ============================================================ */
+
+const ch16_notes = [
+`<div class="n-chapter">Ch. 16: Observability and Tracing</div>
+<p>a system you cannot see is a system you cannot fix, observability is how you see AI systems in production, the foundation of everything that turns a shipped system into one that keeps improving</p>
+<div class="n-section">What Observability Looks Like for AI Systems</div>
+<p>same as traditional software (logs, metrics, traces) plus AI-specific additions: prompts used, model output, tools called with arguments, tokens spent, evals that fired</p>
+<p>a complete trace includes: user input, retrieved context, full prompt, model's raw response, tool calls and results, guardrail decisions, eval scores, latency per step, token counts and cost, final response</p>
+<p>Arize Phoenix and LangSmith are the two widely adopted options, both free to start</p>`,
+
+`<div class="n-section">Why Traces Matter</div>
+<p>a trace is the full record of a single request, structured as a tree, root span for the overall request, child spans per step, grandchild spans for nested work</p>
+<p>AI debugging is fundamentally different from traditional debugging, no line of code broke, was it the retrieval, the prompt, or the tool, without a trace you cannot answer this</p>
+<p>traces are the foundation of production evaluation, find a failure, capture the trace, add it as a regression test, ensure the same bug never returns</p>`,
+
+`<div class="n-section">What to Log (and What Not To)</div>
+<ul>
+  <li><b>Always log:</b> system prompt (or a hash), retrieved context identifiers, model name and version, tool calls and results, latency and cost per step, final output, any guardrail decision that fired</li>
+  <li><b>Sometimes log</b> (depending on privacy posture): full user input, full retrieved context text, full model response</li>
+  <li><b>Never log:</b> credentials, API keys, authentication tokens, sensitive user data without protection, raw payloads with unredacted PII</li>
+</ul>
+<p>too little logging means you cannot debug, too much is a privacy problem, make the decision explicitly, document it, revisit as policies evolve</p>`,
+
+`<div class="n-section">The Metrics That Matter</div>
+<ul>
+  <li><b>Latency distribution:</b> P50, P90, P99, P99 catches tail cases P50 hides</li>
+  <li><b>Cost per request:</b> total token cost by model, tracks drift toward higher cost</li>
+  <li><b>Error rate:</b> tool failures, model errors, guardrail blocks, a change is an early warning</li>
+  <li><b>Eval scores:</b> if running in production on a sample, track over time, how you catch quality drift</li>
+  <li><b>Tool call distribution:</b> a sudden change signals something has shifted</li>
+  <li><b>Token usage per request:</b> rising over time signals context bloat</li>
+</ul>
+<p>the ones that matter for your product go on a dashboard everyone can see</p>`,
+
+`<div class="n-section">From Traces to Evals and Improvements</div>
+<p>the loop that matters most</p>
+<ul>
+  <li>observe production traffic in traces</li>
+  <li>spot failures or weak spots</li>
+  <li>capture problem cases as new eval dataset entries</li>
+  <li>fix the system</li>
+  <li>run evals to confirm the fix works and nothing else broke</li>
+  <li>deploy, repeat</li>
+</ul>
+<p>this is the CC/CD framework in practice, Continuous Calibration captures new eval cases from production, Continuous Development ships improvements against them, teams doing this well ship small changes frequently and quality trends up over months</p>`,
+
+`<div class="n-section">The Minimum Observability Setup</div>
+<p>before launch, at minimum</p>
+<ul>
+  <li>a tracing tool capturing every production request</li>
+  <li>a dashboard showing latency, cost, error rate</li>
+  <li>a mechanism for pulling traces into the eval dataset</li>
+  <li>a weekly review cadence for looking at failures</li>
+</ul>
+<p>can be set up in a day with free tools, the cost of not setting it up is months of flying blind</p>
+<div class="n-term">The Part Nobody Talks About: Culture</div>
+<p>observability tools work when the team actually looks at them, a dashboard nobody opens does not exist</p>
+<p>a 30-minute review every Monday, looking at the week's worst traces, discussing what went wrong, deciding what to add to the eval dataset, no presentations, no deliverables</p>
+<p>sounds simple, it is the single operational habit that most separates good production AI teams from average ones</p>`
+];
+
+const ch16_slides = [
+{
+  eyebrow:"Chapter 16",
+  title:"Observability and Tracing",
+  body:`
+    <div class="callout">A system you cannot see is a system you cannot fix. Observability is how you see AI systems in production.</div>
+    <ul class="plain">
+      <li>This is the foundation of everything that turns a shipped system into a system that keeps improving: actually watching what your system is doing, with enough detail to catch problems, answer questions, and feed your evaluation loop</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"What Observability Looks Like for AI Systems",
+  title:"What Observability Looks Like for AI Systems",
+  body:`
+    <ul class="plain">
+      <li>Observability in traditional software is logs, metrics, and traces of what your code did. Observability for AI systems is the same, with a few additions: what prompts were used, what the model returned, what tools were called with what arguments, how many tokens were spent, what evaluations fired on the output</li>
+    </ul>
+    <p>A complete trace usually includes:</p>
+    <ul class="plain">
+      <li>The user input and any system metadata, the retrieved context, the full prompt sent to the model, the model's raw response</li>
+      <li>Any tool calls and their results, guardrail decisions, eval scores, latency for each step, token counts and cost, the final user-facing response</li>
+    </ul>
+    <div class="callout">Arize Phoenix and LangSmith are the two widely adopted observability options in 2026. Both are free to start.</div>
+  `
+},
+{
+  eyebrow:"Why Traces Matter",
+  title:"Why Traces Matter",
+  body:`
+    <ul class="plain">
+      <li>A trace is the full record of a single request. The structure is a tree: a root span for the overall request, child spans for each step (retrieval, prompt, tool call, guardrail, model response), grandchild spans for nested work</li>
+    </ul>
+    <div class="callout">Traces matter because AI debugging is fundamentally different from traditional debugging. When a traditional system fails, the stack trace points at the line of code that broke. When an AI system underperforms, there is no line of code that broke. Was the retrieval wrong? Was the prompt ambiguous? Did the tool return unexpected data? Without the trace, you cannot answer these questions.</div>
+    <p>Traces are also the foundation of production evaluation. You find a failure, capture the trace, add it as a regression test in your eval suite, and ensure the same bug never comes back.</p>
+  `
+},
+{
+  eyebrow:"What to Log (and What Not To)",
+  title:"What to Log (and What Not To)",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Always log</h3><p>The system prompt (or a hash, full version stored separately), retrieved context identifiers, model name and version, tool calls and structured results, latency and cost per step, final output, any guardrail decision that fired.</p></div>
+      <div class="card"><h3>Sometimes log</h3><p>Depending on privacy posture: the full user input, the full retrieved context text, the full model response.</p></div>
+    </div>
+    <div class="callout">Never log: credentials, API keys, or authentication tokens, sensitive user data unless explicitly required and protected, raw payloads that might contain PII without redaction. The balance between too little logging (you cannot debug) and too much logging (a privacy problem) is a real decision. Make it explicitly, document it, revisit as your data policies evolve.</div>
+  `
+},
+{
+  eyebrow:"The Metrics That Matter",
+  title:"The Metrics That Matter",
+  body:`
+    <ul class="plain">
+      <li><b>Latency distribution.</b> P50, P90, P99 end-to-end latency. P99 catches tail cases that P50 hides.</li>
+      <li><b>Cost per request.</b> Total token cost, broken down by model. Tracks whether your system is drifting toward being more expensive over time.</li>
+      <li><b>Error rate.</b> Tool failures, model errors, guardrail blocks. A change in error rate is an early warning signal.</li>
+      <li><b>Eval scores.</b> If evals run in production on a sample, track them over time. This is how you catch quality drift.</li>
+      <li><b>Tool call distribution.</b> How often each tool is called. A sudden change is a signal something has shifted.</li>
+      <li><b>Token usage per request.</b> Prompts getting longer over time signals context bloat.</li>
+    </ul>
+    <div class="callout">The metrics that matter for your product go on the dashboard everyone on the team can see.</div>
+  `
+},
+{
+  eyebrow:"From Traces to Evals and Improvements",
+  title:"From Traces to Evals and Improvements",
+  body:`
+    <p>The workflow that turns observability into improvement is the loop that matters most:</p>
+    <ul class="plain">
+      <li>Observe production traffic in traces</li>
+      <li>Spot failures or weak spots (wrong answer, missed retrieval, failed tool)</li>
+      <li>Capture the problem cases as new entries in your eval dataset</li>
+      <li>Fix the system (adjust the prompt, fix the retrieval, change the guardrail)</li>
+      <li>Run the evals to confirm the fix works and nothing else broke</li>
+      <li>Deploy the change, repeat</li>
+    </ul>
+    <div class="callout">This is the CC/CD framework in practice. Continuous Calibration is capturing new eval cases from production. Continuous Development is shipping improvements against them. Teams that do this well ship small changes frequently and their quality trends up over months.</div>
+  `
+},
+{
+  eyebrow:"The Minimum Observability Setup",
+  title:"The Minimum Observability Setup",
+  body:`
+    <p>If you are shipping an AI system with no observability yet, the minimum you need before launch:</p>
+    <ul class="plain">
+      <li>A tracing tool capturing every production request (Phoenix, LangSmith, or equivalent)</li>
+      <li>A dashboard showing latency, cost, and error rate</li>
+      <li>A mechanism for pulling traces into your eval dataset</li>
+      <li>A weekly review cadence for looking at failures in production</li>
+    </ul>
+    <div class="callout">This can be set up in a day with free tools. The cost of not setting it up is months of flying blind.</div>
+  `
+},
+{
+  eyebrow:"The Part Nobody Talks About: Culture",
+  title:"The Part Nobody Talks About: Culture",
+  body:`
+    <ul class="plain">
+      <li>Observability tools work when the team actually looks at them. The dashboard that nobody opens is a dashboard that does not exist</li>
+    </ul>
+    <div class="callout">The teams that get the most value from observability build it into their weekly rhythm: a 30-minute review every Monday where the team looks at the week's worst traces, discusses what went wrong, and decides what to add to the eval dataset. No presentations, no deliverables, just looking at real user traffic together.</div>
+    <p>Sounds simple. It is the single operational habit that most separates good production AI teams from average ones.</p>
+  `
+}
+];
+
+const ch16_quiz = [
+{
+  type:'mc',
+  q:"What does the claim \"a system you cannot see is a system you cannot fix\" refer to in AI systems?",
+  options:[
+    "Observability, which is how you see AI systems in production",
+    "The context window of a model",
+    "A guardrail's block rate",
+    "The model's parameter count"
+  ],
+  correct:0,
+  explain:"A system you cannot see is a system you cannot fix. Observability is how you see AI systems in production, the foundation of everything that turns a shipped system into one that keeps improving."
+},
+{
+  type:'mc',
+  q:"How does observability for AI systems differ from observability in traditional software?",
+  options:[
+    "It is the same idea, logs, metrics, and traces, with a few additions specific to AI: what prompts were used, what tools were called, how many tokens were spent, and what evaluations fired",
+    "AI observability has nothing in common with traditional software observability",
+    "AI systems never need any observability at all",
+    "Observability for AI systems only tracks cost and nothing else"
+  ],
+  correct:0,
+  explain:"Observability in traditional software is logs, metrics, and traces. Observability for AI systems is the same, with a few additions: prompts used, tools called with arguments, tokens spent, and evaluations that fired."
+},
+{
+  type:'multi',
+  q:"Which of the following are named as part of a complete trace?",
+  options:[
+    "The retrieved context and the full prompt sent to the model",
+    "Any tool calls and their results, and guardrail decisions",
+    "Latency for each step, token counts, and cost",
+    "The exact physical server location where the request was processed"
+  ],
+  correctSet:[0,1,2],
+  explain:"A complete trace includes user input, retrieved context, the full prompt, the model's raw response, tool calls and results, guardrail decisions, eval scores, latency, token counts and cost, and the final response. Physical server location is not one of the named trace components."
+},
+{
+  type:'mc',
+  q:"What is the structure of a trace?",
+  options:[
+    "A tree: a root span for the overall request, child spans for each step, grandchild spans for nested work",
+    "A single flat list with no hierarchy",
+    "A trace has no defined structure at all",
+    "A trace is always exactly three items long"
+  ],
+  correct:0,
+  explain:"A trace is the full record of a single request, structured as a tree: a root span for the overall request, child spans for each step (retrieval, prompt, tool call, guardrail, model response), and grandchild spans for nested work."
+},
+{
+  type:'scenario',
+  q:"A traditional software system fails and the stack trace points directly at the line of code that broke. An AI system underperforms instead. What is fundamentally different about debugging the second case?",
+  options:[
+    "There is no line of code that broke; the model gave a bad answer, but the cause could be the retrieval, the prompt, or the tool, and without a trace you cannot answer which",
+    "AI systems never fail, so this scenario cannot happen",
+    "AI system debugging is identical to traditional software debugging in every way",
+    "The stack trace always points to the exact same place regardless of the system type"
+  ],
+  correct:0,
+  explain:"When an AI system underperforms, there is no line of code that broke. Was the retrieval wrong? Was the prompt ambiguous? Did the tool return unexpected data? Without the trace, you cannot answer these questions."
+},
+{
+  type:'mc',
+  q:"How do traces become the foundation of production evaluation?",
+  options:[
+    "You find a failure, capture the trace, add it as a regression test in your eval suite, and ensure the same bug never comes back",
+    "Traces are only useful for debugging and have no connection to evaluation",
+    "Traces replace the need for any eval suite entirely",
+    "Traces are deleted immediately after each request and cannot be reused"
+  ],
+  correct:0,
+  explain:"Traces are the foundation of production evaluation: you find a failure, capture the trace, add it as a regression test in your eval suite, and ensure the same bug never comes back."
+},
+{
+  type:'multi',
+  q:"Which of the following should always be logged?",
+  options:[
+    "The system prompt, or a hash of it with the full version stored separately",
+    "The model name and version",
+    "Tool calls and structured results",
+    "Credentials, API keys, and authentication tokens"
+  ],
+  correctSet:[0,1,2],
+  explain:"Always log the system prompt, retrieved context identifiers, model name and version, tool calls and results, latency and cost per step, final output, and any guardrail decision that fired. Credentials and API keys should never be logged."
+},
+{
+  type:'scenario',
+  q:"A team logs raw payloads containing unredacted PII, reasoning that more logging always helps debugging. What is wrong with this approach?",
+  options:[
+    "Raw payloads that might contain PII without redaction are named among things to never log, since the balance between too little and too much logging is a real privacy decision",
+    "There is nothing wrong with this approach, since more logging is always better",
+    "This is only a problem if the team is a large enterprise",
+    "PII logging concerns only apply to guardrail systems, not observability"
+  ],
+  correct:0,
+  explain:"Never log credentials, sensitive user data without protection, or raw payloads that might contain PII without redaction. The balance between too little logging (cannot debug) and too much (privacy problem) is a real decision that should be made explicitly."
+},
+{
+  type:'mc',
+  q:"What falls into the \"sometimes log\" category, depending on an organization's privacy posture?",
+  options:[
+    "The full user input, the full retrieved context text, and the full model response",
+    "Credentials and API keys, which should always be logged",
+    "The system prompt, which should never be logged under any circumstances",
+    "Nothing ever falls into a sometimes-log category, only always or never"
+  ],
+  correct:0,
+  explain:"Sometimes log, depending on privacy posture: the full user input, the full retrieved context text, and the full model response. This sits between the always-log and never-log categories."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the metrics that matter for AI observability?",
+  options:[
+    "Latency distribution, including P50, P90, and P99",
+    "Cost per request, broken down by model",
+    "Tool call distribution, how often each tool is called",
+    "The total number of employees on the engineering team"
+  ],
+  correctSet:[0,1,2],
+  explain:"The named metrics are latency distribution, cost per request, error rate, eval scores, tool call distribution, and token usage per request. Team headcount is not one of the named metrics."
+},
+{
+  type:'scenario',
+  q:"A team only tracks P50 (median) latency and misses that a small but growing fraction of requests are taking far longer than expected. What metric should they have been watching?",
+  options:[
+    "P99 latency, since it catches tail cases that P50 hides",
+    "Cost per request, which has nothing to do with latency",
+    "Tool call distribution, which has nothing to do with latency",
+    "There is no way to catch this kind of issue"
+  ],
+  correct:0,
+  explain:"P99 end-to-end latency catches tail cases that P50 hides, exactly the kind of growing-but-still-small-fraction latency problem this scenario describes."
+},
+{
+  type:'scenario',
+  q:"A team notices that one of their tools is suddenly being called twice as often as before, with no corresponding change in user behavior. What should this signal?",
+  options:[
+    "Something has changed in the system, since a sudden shift in tool call distribution is named as a signal worth investigating",
+    "This is always harmless and requires no investigation",
+    "This means the tool itself is broken and should be immediately removed",
+    "Tool call distribution is not a metric worth tracking"
+  ],
+  correct:0,
+  explain:"Tool call distribution tracks how often each tool is called. A tool that suddenly starts being called twice as often, or stops being called, is a signal something has changed."
+},
+{
+  type:'mc',
+  q:"What does rising token usage per request over time often signal?",
+  options:[
+    "Context bloat, worth monitoring as prompts get longer over time",
+    "That the model has been permanently upgraded to a better version",
+    "That the system's cost is decreasing",
+    "Nothing meaningful, token usage is not worth tracking"
+  ],
+  correct:0,
+  explain:"Token usage per request rising over time is a sign of context bloat, and it is worth monitoring."
+},
+{
+  type:'multi',
+  q:"Which steps are part of the loop that turns observability into improvement?",
+  options:[
+    "Observe production traffic in traces",
+    "Capture problem cases as new entries in the eval dataset",
+    "Run the evals to confirm a fix works and nothing else broke",
+    "Delete all traces immediately after each request to save storage"
+  ],
+  correctSet:[0,1,2],
+  explain:"The loop is: observe traces, spot failures, capture problem cases into the eval dataset, fix the system, run evals to confirm, deploy, and repeat. Deleting traces immediately would break this loop, since traces feed the eval dataset."
+},
+{
+  type:'mc',
+  q:"How does this observability-to-improvement loop relate to the CC/CD framework?",
+  options:[
+    "It is the CC/CD framework in practice: Continuous Calibration captures new eval cases from production, Continuous Development ships improvements against them",
+    "The loop and CC/CD are unrelated concepts",
+    "CC/CD only applies to code-based evals, never to the observability loop",
+    "The loop replaces the need for CC/CD entirely"
+  ],
+  correct:0,
+  explain:"This is the CC/CD framework in practice. Continuous Calibration is capturing new eval cases from production. Continuous Development is shipping improvements against them."
+},
+{
+  type:'multi',
+  q:"Which of the following are part of the minimum observability setup recommended before launch?",
+  options:[
+    "A tracing tool capturing every production request",
+    "A dashboard showing latency, cost, and error rate",
+    "A weekly review cadence for looking at failures in production",
+    "A dedicated team of at least ten engineers before any launch"
+  ],
+  correctSet:[0,1,2],
+  explain:"The minimum setup is a tracing tool, a dashboard for latency/cost/error rate, a mechanism for pulling traces into the eval dataset, and a weekly review cadence. A dedicated team of ten engineers is not part of the minimum requirement."
+},
+{
+  type:'mc',
+  q:"How long does the minimum observability setup take to build, and what is the cost of skipping it?",
+  options:[
+    "It can be set up in a day with free tools, and the cost of not setting it up is months of flying blind",
+    "It requires at least six months of dedicated engineering work",
+    "There is no meaningful cost to skipping observability setup",
+    "It cannot be done with free tools under any circumstances"
+  ],
+  correct:0,
+  explain:"This can be set up in a day with free tools. The cost of not setting it up is months of flying blind."
+},
+{
+  type:'mc',
+  q:"What is described as the condition for observability tools to actually provide value?",
+  options:[
+    "The team has to actually look at them; a dashboard that nobody opens is a dashboard that does not exist",
+    "Observability tools provide value automatically, regardless of whether anyone looks at them",
+    "Observability only works if it is fully automated with no human review",
+    "Dashboards provide value only if they are shown to executives quarterly"
+  ],
+  correct:0,
+  explain:"Observability tools work when the team actually looks at them. The dashboard that nobody opens is a dashboard that does not exist."
+},
+{
+  type:'scenario',
+  q:"A team holds a 30-minute review every Monday where they look at the week's worst traces, discuss what went wrong, and decide what to add to the eval dataset, with no presentations or deliverables. What is this practice, and how significant is it?",
+  options:[
+    "This is described as the single operational habit that most separates good production AI teams from average ones",
+    "This is an unnecessary use of time that adds no value",
+    "This practice only matters for very large enterprise teams",
+    "This is a minor nice-to-have with negligible impact"
+  ],
+  correct:0,
+  explain:"This weekly review practice is described as the single operational habit that most separates good production AI teams from average ones, despite sounding simple."
+}
+];
+
+/* ============================================================
+   CHAPTER 17
+   ============================================================ */
+
+const ch17_notes = [
+`<div class="n-chapter">Ch. 17: Protocols and Extensibility</div>
+<p>2023 was a tower of Babel, every provider and framework spoke a different dialect, 2026 looks different, standards emerged, protocols stabilized, moving from bespoke integrations to shared plumbing</p>
+<div class="n-section">Why Protocols Matter for Enterprise</div>
+<p>a five-engineer startup can tightly couple to one provider, annoying but tractable to switch later, a fifty-system enterprise cannot, switching costs are massive, every new vendor needs a custom integration for every system</p>
+<p>a protocol is a shared way for components to talk, when provider, tool, and data source all speak it, integrations become swappable, switching models becomes a config change, this is why enterprises care more than startups</p>`,
+
+`<div class="n-section">Model Context Protocol (MCP)</div>
+<p>the most important protocol to know in 2026, Anthropic released it late 2024, rapid adoption in 2025, effectively the standard by 2026 for connecting models to tools, data, systems</p>
+<p>defines a standard way for a model to discover, call, and receive results from tools, before MCP every provider and framework had its own format, one MCP server now works with any MCP-compatible model or framework</p>
+<div class="n-term">Enterprise Implications</div>
+<ul>
+  <li>cleaner data governance, one server, consistent auth and logging</li>
+  <li>cheap vendor switching, swap Claude for GPT without rewriting tool integrations</li>
+  <li>new AI systems plug into existing data sources with no new engineering</li>
+</ul>
+<p>widely adopted in developer tools too, Claude Code, Cursor, GitHub Copilot, most serious IDEs and agent frameworks</p>`,
+
+`<div class="n-section">Agent Protocols (A2A and Similar)</div>
+<p>a newer class handling agent-to-agent communication, needed when multiple agents coordinate across systems or organizations</p>
+<p>Google announced A2A in 2025, defines how agents discover each other, negotiate tasks, exchange structured updates, broad industry participation</p>
+<p>less mature than MCP, earlier adoption curve, worth knowing, not worth betting near-term plans on, most relevant when agents live in different systems, if everything is inside your own walls, any internal protocol works</p>
+<div class="n-term">OpenAI Agents SDK</div>
+<p>adjacent to protocols, the most widely adopted framework for building agent applications in 2026, handles agent loop, tool calls, handoffs, tracing, supports OpenAI and third-party models</p>
+<p>its handoff pattern is becoming a quasi-protocol for how agents transfer control, useful even without using the SDK directly</p>`,
+
+`<div class="n-section">What to Do With All This</div>
+<ul>
+  <li><b>Building new today:</b> support MCP as your primary integration path, write clients to consume tools, servers to be consumed</li>
+  <li><b>Existing system:</b> assess where protocol adoption reduces work, tool integrations first, MCP-ifying internal tools is a bounded project with clear ROI</li>
+  <li><b>PM or designer:</b> protocols unbundle the roadmap decision from the vendor decision, commit to a capability independent of model or framework</li>
+  <li><b>Thinking multi-agent:</b> watch A2A, do not bet architecture on it yet, it will mature, production cannot wait for it to</li>
+</ul>`,
+
+`<div class="n-section">Making Your Own System Extensible</div>
+<p>protocols are one kind of extensibility, the other is internal, designing your system so new capabilities can be added without rewriting the core</p>
+<ul>
+  <li><b>Tool contracts are frozen:</b> once defined, do not change input or output shape, add new tools instead</li>
+  <li><b>Agent roles are named and isolated:</b> clearly documented role and boundary, adding a new agent is clean, changing an existing one is rare</li>
+  <li><b>Prompts are versioned:</b> treated like code, git history, change logs, rollback</li>
+  <li><b>Evals cover the seams:</b> agent handoffs, tool boundaries, retrieval edges, catches failures at component boundaries</li>
+  <li><b>Configuration is external:</b> model choice, prompt versions, retrieval params, guardrail thresholds all in config, not hard-coded</li>
+</ul>
+<p>these are internal discipline, not protocol standards, done well they make a system feel extensible even without protocols, done poorly, no protocol adoption saves you</p>`,
+
+`<div class="n-section">The Horizon for Protocols</div>
+<p>the 2026 state is a snapshot, things are still moving, MCP is settled for tool connection, A2A and friends are converging for agent communication</p>
+<p>new protocols proposed for persistent memory sharing, cross-system evaluation, safety attestation, some will stabilize, most will not</p>
+<p>the useful posture: follow the space lightly, adopt standards once proven, do not over-commit to anything less than a year old, enterprise is the patient customer, a strategic advantage here</p>`
+];
+
+const ch17_slides = [
+{
+  eyebrow:"Chapter 17",
+  title:"Protocols and Extensibility",
+  body:`
+    <ul class="plain">
+      <li>The AI world of 2023 was a tower of Babel. Every model provider had its own API shape, every agent framework had its own tool definitions, every orchestration library spoke a different dialect of function calling</li>
+      <li>2026 looks different. Standards have emerged, protocols have stabilized, the field is moving from bespoke integrations to shared plumbing</li>
+    </ul>
+    <div class="callout">This chapter covers the protocols worth knowing about, why they matter for enterprise systems, and how to make your own system extensible.</div>
+  `
+},
+{
+  eyebrow:"Why Protocols Matter for Enterprise",
+  title:"Why Protocols Matter for Enterprise",
+  body:`
+    <ul class="plain">
+      <li>In a startup with five engineers, you can afford to couple your system tightly to whatever model provider you picked. If you ever need to switch, you rewrite the integration. Annoying, but tractable</li>
+      <li>In an enterprise with fifty AI systems across departments, that approach is a liability. Each system's integration is different, switching costs are massive, and any new vendor has to build a custom integration for every system they touch</li>
+    </ul>
+    <div class="callout">A protocol is a shared way of describing how components talk to each other. When your model provider, tool provider, and data source all speak the same protocol, the integrations become swappable. Switching models becomes a config change. This is exactly why enterprises care about protocols more than startups do.</div>
+  `
+},
+{
+  eyebrow:"Model Context Protocol (MCP)",
+  title:"Model Context Protocol (MCP)",
+  body:`
+    <ul class="plain">
+      <li>MCP is the most important protocol you should know about in 2026. Anthropic released it in late 2024, it gained rapid industry adoption in 2025, and by 2026 it is effectively the standard for connecting language models to external tools, data sources, and systems</li>
+      <li>MCP defines a standard way for a model to discover tools, call tools, and receive results. Before MCP, every provider had its own tool-call format, every agent framework had its own, and a new data source meant a custom connector for each</li>
+    </ul>
+    <p>With MCP, you write one MCP server for your data source or tool. Any MCP-compatible model or framework can now use it.</p>
+  `
+},
+{
+  eyebrow:"Model Context Protocol (MCP)",
+  title:"The Enterprise Implications of MCP",
+  body:`
+    <ul class="plain">
+      <li>Data governance becomes cleaner. One MCP server, consistent auth and logging, regardless of which AI system calls it</li>
+      <li>Vendor switching becomes cheap. Swap Claude for GPT without rewriting your tool integrations</li>
+      <li>New AI systems plug into existing data sources without new engineering work</li>
+    </ul>
+    <div class="callout">MCP is also widely adopted in developer tools. Claude Code, Cursor, GitHub Copilot, and most serious IDEs and agent frameworks support MCP as a first-class way of extending their capabilities. For document and compliance platforms, exposing data via MCP servers means any AI system, internal or third-party, can access it with a consistent interface.</div>
+  `
+},
+{
+  eyebrow:"Agent Protocols (A2A and Similar)",
+  title:"Agent Protocols (A2A and Similar)",
+  body:`
+    <ul class="plain">
+      <li>A newer class of protocols handles agent-to-agent communication. When multiple agents need to coordinate across systems or organizations, you need a shared way for them to exchange goals, updates, and results</li>
+      <li>Google announced A2A (Agent-to-Agent) in 2025, with broad industry participation. The protocol defines how agents discover each other, negotiate tasks, and exchange structured updates</li>
+    </ul>
+    <div class="callout">A2A is less mature than MCP, and the adoption curve is earlier. Worth knowing about, probably not worth building your near-term plans around. It is most relevant when you expect to connect agents that live in different systems. If every agent lives inside your walls, you can standardize on any internal protocol you like.</div>
+  `
+},
+{
+  eyebrow:"OpenAI Agents SDK",
+  title:"OpenAI Agents SDK",
+  body:`
+    <ul class="plain">
+      <li>Adjacent to protocols: the Agents SDK from OpenAI is the most widely adopted framework for building agent applications in 2026. It handles the orchestration plumbing (agent loop, tool calls, handoffs, tracing) and includes first-class support for both OpenAI and third-party models</li>
+      <li>The SDK's handoff pattern is becoming a quasi-protocol for how agents transfer control to each other. You design each agent with a role, specify which other agents it can hand off to, and the SDK manages the transitions</li>
+    </ul>
+    <div class="callout">This is a useful model even if you do not use the SDK directly. It generalizes well to any multi-agent system.</div>
+  `
+},
+{
+  eyebrow:"What to Do With All This",
+  title:"What to Do With All This",
+  body:`
+    <ul class="plain">
+      <li><b>Building a new system today:</b> support MCP as your primary way of integrating tools and data sources. Write MCP clients to consume external tools, write MCP servers to be consumed by other AI tools.</li>
+      <li><b>Have an existing system:</b> assess where protocol adoption reduces integration work. Tool integrations are usually the first place. MCP-ifying your internal tools is a bounded project with clear ROI.</li>
+      <li><b>PM or designer planning a roadmap:</b> protocols let you unbundle the roadmap decision from the vendor decision, committing to a capability independently of which model or framework you use.</li>
+      <li><b>Thinking about multi-agent work:</b> watch A2A and related protocols, but do not bet your architecture on them yet. They will mature; your production systems cannot wait for them to.</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Making Your Own System Extensible",
+  title:"Making Your Own System Extensible",
+  body:`
+    <p>Protocols are one kind of extensibility. The other kind is internal: designing your own system so new capabilities can be added without rewriting the core. Five principles that show up in systems that age well.</p>
+    <ul class="plain">
+      <li><b>Tool contracts are frozen.</b> Once a tool's interface is defined, you do not change its input or output shape. Add new tools rather than changing existing ones.</li>
+      <li><b>Agent roles are named and isolated.</b> Each agent has a clearly documented role and boundary. Adding a new agent is a clean operation.</li>
+      <li><b>Prompts are versioned.</b> System prompts get treated like code: git history, change logs, rollback capability.</li>
+      <li><b>Evals cover the seams.</b> When new capabilities are added, the eval suite tests the seams (agent handoffs, tool boundaries, retrieval edges), catching the failures that happen at component boundaries.</li>
+      <li><b>Configuration is external.</b> Model choice, prompt versions, retrieval parameters, guardrail thresholds all live in config, not hard-coded, so they can change independently.</li>
+    </ul>
+    <div class="callout">These are not protocol standards, they are internal discipline. Done well, they make your system feel extensible even without external protocols. Done poorly, no amount of protocol adoption will save you.</div>
+  `
+},
+{
+  eyebrow:"The Horizon for Protocols",
+  title:"The Horizon for Protocols",
+  body:`
+    <ul class="plain">
+      <li>The 2026 state of protocols is a snapshot. Things are still moving. MCP is settled for tool connection, A2A and friends are converging for agent communication</li>
+      <li>New protocols are being proposed for persistent memory sharing, cross-system evaluation, and safety attestation. Some will stabilize and get adopted. Most will not</li>
+    </ul>
+    <div class="callout">The useful posture is to follow the space lightly, adopt standards once they are proven, and not over-commit to any protocol that is less than a year old. Enterprise is the patient customer. That is a strategic advantage here.</div>
+  `
+}
+];
+
+const ch17_quiz = [
+{
+  type:'mc',
+  q:"How is the AI world of 2023 described, and how does 2026 compare?",
+  options:[
+    "2023 was a tower of Babel with every provider and framework speaking a different dialect; 2026 has stabilized standards moving from bespoke integrations to shared plumbing",
+    "2023 and 2026 are described as functionally identical with no meaningful change",
+    "2023 already had fully standardized protocols across every provider",
+    "2026 is described as having fewer standards than 2023"
+  ],
+  correct:0,
+  explain:"The AI world of 2023 was a tower of Babel: every model provider, agent framework, and orchestration library spoke a different dialect. By 2026, standards have emerged and the field has moved from bespoke integrations to shared plumbing."
+},
+{
+  type:'scenario',
+  q:"A startup with five engineers tightly couples its system to one model provider, planning to rewrite the integration if they ever need to switch. Is this a reasonable approach?",
+  options:[
+    "Yes, this is described as annoying but tractable for a startup, unlike the liability it becomes at enterprise scale with fifty AI systems",
+    "No, this approach is never acceptable regardless of company size",
+    "Yes, and this approach scales identically well at any company size",
+    "This scenario is not addressed at all"
+  ],
+  correct:0,
+  explain:"In a startup with five engineers, tight coupling to one provider is annoying but tractable if you ever need to switch. In an enterprise with fifty AI systems, that same approach becomes a liability with massive switching costs."
+},
+{
+  type:'mc',
+  q:"What is a protocol, in the context of AI systems?",
+  options:[
+    "A shared way of describing how components talk to each other, so integrations become swappable and switching models becomes a config change",
+    "A single company's proprietary internal API with no external standardization",
+    "A type of foundation model, distinct from a large language model",
+    "A synonym for a guardrail"
+  ],
+  correct:0,
+  explain:"A protocol is a shared way of describing how components talk to each other. When your model provider, tool provider, and data source all speak the same protocol, integrations become swappable and switching models becomes a config change."
+},
+{
+  type:'mc',
+  q:"What is MCP, and how significant is it described as being in 2026?",
+  options:[
+    "Model Context Protocol, released by Anthropic in late 2024, described as the most important protocol to know about and effectively the standard for connecting models to external tools and data by 2026",
+    "A protocol released by Google exclusively for agent-to-agent communication",
+    "A minor, rarely adopted standard with little industry traction",
+    "A framework for training foundation models from scratch"
+  ],
+  correct:0,
+  explain:"MCP is the most important protocol to know about in 2026. Anthropic released it in late 2024, it gained rapid adoption in 2025, and by 2026 it is effectively the standard for connecting language models to external tools, data sources, and systems."
+},
+{
+  type:'mc',
+  q:"What problem did MCP solve that existed before it?",
+  options:[
+    "Every model provider had its own tool-call format, and every agent framework had its own, meaning a new data source needed a custom connector for each one",
+    "MCP was the first protocol to ever allow a model to call any tool at all",
+    "MCP eliminated the need for any tool definitions whatsoever",
+    "There was no problem before MCP, adoption was purely about branding"
+  ],
+  correct:0,
+  explain:"Before MCP, every provider had its own tool-call format, every agent framework had its own, and integrating a new data source meant writing a custom connector for each. MCP defines a standard way for a model to discover, call, and receive results from tools."
+},
+{
+  type:'multi',
+  q:"Which of the following are named as enterprise implications of MCP?",
+  options:[
+    "Data governance becomes cleaner, with one MCP server offering consistent auth and logging",
+    "Vendor switching becomes cheap, since you can swap models without rewriting tool integrations",
+    "New AI systems can plug into existing data sources without new engineering work",
+    "MCP eliminates the need for any data governance policy at all"
+  ],
+  correctSet:[0,1,2],
+  explain:"The named enterprise implications are cleaner data governance, cheap vendor switching, and new AI systems plugging into existing data sources without new engineering work. MCP does not eliminate the need for governance policy, it makes governance more consistent."
+},
+{
+  type:'scenario',
+  q:"A document and compliance platform exposes its data through MCP servers instead of building a custom integration for every AI tool that wants to use it. What does this enable?",
+  options:[
+    "Any AI system, internal or third-party, can access the data with a consistent interface, which is the shape enterprise AI integration is heading toward",
+    "Only Anthropic's own products can ever access data exposed via MCP",
+    "This approach actually makes the data harder to access than custom integrations",
+    "MCP servers can only be used for read-only data with no other access patterns"
+  ],
+  correct:0,
+  explain:"If a platform exposes its document and compliance data via MCP servers, any AI system, internal or third-party, can access it with a consistent interface. This is the shape enterprise AI integration is heading toward."
+},
+{
+  type:'mc',
+  q:"What is A2A, and who announced it?",
+  options:[
+    "Agent-to-Agent, a protocol Google announced in 2025 for how agents discover each other, negotiate tasks, and exchange structured updates",
+    "A protocol released by Anthropic for connecting models to tools",
+    "A framework exclusively for training reasoning models",
+    "A deprecated protocol no longer in active development"
+  ],
+  correct:0,
+  explain:"Google announced A2A (Agent-to-Agent) in 2025, with broad industry participation. The protocol defines how agents discover each other, negotiate tasks, and exchange structured updates."
+},
+{
+  type:'scenario',
+  q:"A team's multi-agent system has all its agents living inside their own company's infrastructure, with no need to coordinate with agents from partner organizations. How relevant is A2A to them right now?",
+  options:[
+    "Less relevant, since A2A is most relevant when connecting agents across different systems or organizations, and if every agent lives inside your own walls you can standardize on any internal protocol you like",
+    "Extremely relevant and required for any multi-agent system regardless of scope",
+    "A2A is mandatory for all agent communication as of 2026",
+    "This scenario has no bearing on protocol relevance"
+  ],
+  correct:0,
+  explain:"A2A is most relevant when you expect to connect agents that live in different systems or organizations. If every agent lives inside your own walls, you can standardize on any internal protocol you like."
+},
+{
+  type:'mc',
+  q:"Why is A2A described as something to know about but not build near-term plans around?",
+  options:[
+    "A2A is less mature than MCP, with an earlier adoption curve",
+    "A2A has been officially discontinued by Google",
+    "A2A is fully mature and more stable than MCP",
+    "A2A does not actually exist and was never announced"
+  ],
+  correct:0,
+  explain:"A2A is less mature than MCP, and the adoption curve is earlier. Worth knowing about, probably not worth building near-term plans around."
+},
+{
+  type:'mc',
+  q:"What does the OpenAI Agents SDK handle, and why does its handoff pattern generalize beyond just that SDK?",
+  options:[
+    "It handles orchestration plumbing like the agent loop, tool calls, and tracing, and its handoff pattern is becoming a quasi-protocol for how agents transfer control to each other",
+    "It is a tool exclusively for training new foundation models",
+    "It only works with OpenAI models and has no support for third-party models",
+    "It replaces the need for MCP entirely"
+  ],
+  correct:0,
+  explain:"The Agents SDK handles orchestration plumbing (agent loop, tool calls, handoffs, tracing) with support for both OpenAI and third-party models. Its handoff pattern is becoming a quasi-protocol for how agents transfer control to each other, useful even without using the SDK directly."
+},
+{
+  type:'scenario',
+  q:"A team is building a brand-new AI system today and wants to know how to approach tool and data integration. What is the recommended approach?",
+  options:[
+    "Support MCP as the primary way of integrating tools and data sources, writing MCP clients to consume external tools and MCP servers to be consumed by others",
+    "Avoid all protocols entirely and build fully custom integrations for every tool",
+    "Wait until A2A matures before building any integrations at all",
+    "There is no recommended approach for new systems"
+  ],
+  correct:0,
+  explain:"If building a new system today, support MCP as your primary way of integrating tools and data sources. Write MCP clients when you want your system to consume external tools, and MCP servers when you want your system to be consumed by other AI tools."
+},
+{
+  type:'mc',
+  q:"For a team with an existing system, where is protocol adoption usually the first place to reduce integration work?",
+  options:[
+    "Tool integrations, since MCP-ifying internal tools is described as a bounded project with clear ROI",
+    "Replacing the entire system architecture from scratch",
+    "Switching to a completely different programming language",
+    "There is no recommended starting point"
+  ],
+  correct:0,
+  explain:"For an existing system, tool integrations are usually the first place protocol adoption reduces work, since MCP-ifying your internal tools is a bounded project with clear ROI."
+},
+{
+  type:'mc',
+  q:"How do protocols help a PM or designer thinking about a product roadmap?",
+  options:[
+    "They let you unbundle the roadmap decision from the vendor decision, committing to a capability independently of which model or framework you use",
+    "Protocols have no relevance to product roadmap planning",
+    "Protocols require committing to a single vendor permanently",
+    "Protocols only matter for engineering teams, never for PMs or designers"
+  ],
+  correct:0,
+  explain:"Protocols let a PM or designer unbundle the roadmap decision from the vendor decision. You can commit to a capability, like integrating with a compliance database, independently of which model or framework you will use."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the five principles for making your own system extensible?",
+  options:[
+    "Tool contracts are frozen, adding new tools rather than changing existing ones",
+    "Agent roles are named and isolated, with clear documented boundaries",
+    "Prompts are versioned, treated like code with git history and rollback capability",
+    "Configuration is hard-coded directly into the application for consistency"
+  ],
+  correctSet:[0,1,2],
+  explain:"The five principles are frozen tool contracts, named and isolated agent roles, versioned prompts, evals covering the seams, and external configuration. Configuration should be external, not hard-coded, so it can change independently."
+},
+{
+  type:'scenario',
+  q:"A team changes the input shape of an existing tool rather than creating a new tool, breaking several downstream integrations that depended on the old shape. Which extensibility principle did they violate?",
+  options:[
+    "Tool contracts are frozen: once a tool's interface is defined, you should not change its input or output shape, and should add new tools instead",
+    "Agent roles are named and isolated",
+    "Prompts are versioned",
+    "Evals cover the seams"
+  ],
+  correct:0,
+  explain:"Tool contracts are frozen: once a tool's interface is defined, you do not change its input or output shape. Add new tools rather than changing existing ones, which is exactly what this team failed to do."
+},
+{
+  type:'mc',
+  q:"Why should evals specifically cover the \"seams\" of a system, like agent handoffs and tool boundaries?",
+  options:[
+    "This catches the failures that happen at component boundaries, which are exactly where new capabilities are added",
+    "Seams are the only part of a system that ever needs evaluation",
+    "Testing seams eliminates the need to test individual components",
+    "Seams are unrelated to where failures typically occur"
+  ],
+  correct:0,
+  explain:"When new capabilities are added, the eval suite should test the seams (agent handoffs, tool boundaries, retrieval edges), catching the failures that happen at component boundaries."
+},
+{
+  type:'mc',
+  q:"What happens to a system's extensibility if the five internal discipline principles are done poorly, even with protocol adoption?",
+  options:[
+    "No amount of protocol adoption will save you, since these principles are internal discipline, not protocol standards",
+    "Protocol adoption alone always compensates for poor internal discipline",
+    "This has no meaningful effect on the system's extensibility",
+    "Protocols and internal discipline are unrelated to extensibility entirely"
+  ],
+  correct:0,
+  explain:"These principles are not protocol standards, they are internal discipline. Done well, they make a system feel extensible even without external protocols. Done poorly, no amount of protocol adoption will save you."
+},
+{
+  type:'mc',
+  q:"What is described as the useful posture toward new and emerging protocols?",
+  options:[
+    "Follow the space lightly, adopt standards once they are proven, and do not over-commit to any protocol that is less than a year old",
+    "Adopt every new protocol immediately upon announcement",
+    "Ignore all protocol developments entirely going forward",
+    "Wait indefinitely and never adopt any protocol regardless of maturity"
+  ],
+  correct:0,
+  explain:"The useful posture is to follow the space lightly, adopt standards once they are proven, and not over-commit to any protocol that is less than a year old. Enterprise is the patient customer, which is a strategic advantage here."
+}
+];
+
+/* ============================================================
+   CHAPTER 18
+   ============================================================ */
+
+const ch18_notes = [
+`<div class="n-chapter">Ch. 18: Production Readiness Checklist</div>
+<p>most AI systems are ready long before the team believes they are, a few ship too early, the difference is rarely instinct, it is whether the team ran through a checklist, honestly</p>
+<p>run through it before shipping, and again quarterly on any system you operate</p>
+<div class="n-section">The Core Principle</div>
+<p>a system is not ready when the happy path works, it is ready when the unhappy paths are handled gracefully, the question to hold throughout: when the thing goes wrong, what happens</p>`,
+
+`<div class="n-section">Pre-Launch: Problem/Scope, Evals, Guardrails</div>
+<div class="n-term">Problem and Scope</div>
+<ul>
+  <li>named user and measurable outcome</li>
+  <li>scope narrow enough for a single eval suite</li>
+  <li>a human baseline exists</li>
+  <li>launch success criteria are explicit and written down</li>
+</ul>
+<div class="n-term">Evals</div>
+<ul>
+  <li>code-based suite covers main patterns, at least 30 cases</li>
+  <li>LLM-as-judge in place for subjective quality</li>
+  <li>judge calibrated against human labels, agreement above 80%</li>
+  <li>eval scores above the launch bar</li>
+  <li>eval suite runs on every code change</li>
+</ul>
+<div class="n-term">Guardrails</div>
+<ul>
+  <li>input sanitization in place</li>
+  <li>PII redaction on input if sensitive data is seen</li>
+  <li>prompt injection detection active for external users</li>
+  <li>output groundedness check for retrieval-based systems</li>
+  <li>action boundary enforcement for action-taking tools</li>
+  <li>a graceful fallback path when guardrails fire</li>
+</ul>`,
+
+`<div class="n-section">Pre-Launch: Observability, Safety, UX, Documentation</div>
+<div class="n-term">Observability</div>
+<ul>
+  <li>every request traced end to end</li>
+  <li>latency, cost, error rate visible on a dashboard checked weekly</li>
+  <li>a mechanism for promoting failures into the eval dataset</li>
+  <li>alerts on cost spikes, error rate increases, latency tail cases</li>
+</ul>
+<div class="n-term">Safety</div>
+<ul>
+  <li>a tested rollback path</li>
+  <li>incident response ownership assigned to a specific person and rotation</li>
+  <li>rate limits against runaway cost from bugs or abuse</li>
+  <li>human review available as a fallback</li>
+</ul>
+<div class="n-term">User Experience</div>
+<ul>
+  <li>gracefully handles its own failures (model error, tool timeout, empty retrieval)</li>
+  <li>loading, error, empty states designed</li>
+  <li>a clear escalation path when the AI is wrong</li>
+  <li>confidence or uncertainty communicated where relevant</li>
+</ul>
+<div class="n-term">Documentation</div>
+<ul>
+  <li>scope documented, what it does and does not do</li>
+  <li>prompt, model, retrieval strategy versioned and documented</li>
+  <li>eval suite documented with the rubric for each eval</li>
+  <li>an operational runbook for common incidents</li>
+</ul>
+<p>every item checked means ready to launch, unchecked items are a live to-do list, or acknowledged known risks if proceeding anyway</p>`,
+
+`<div class="n-section">Post-Launch: Weekly and Monthly</div>
+<p>readiness is not just launch day, it is the operational practice that keeps a system healthy over months</p>
+<div class="n-term">Weekly</div>
+<ul>
+  <li>review the week's traces, pick the 10 worst cases, understand what went wrong</li>
+  <li>check the dashboard, any metric changed more than 20% warrants investigation</li>
+  <li>promote real failures into the eval dataset as regression tests</li>
+</ul>
+<div class="n-term">Monthly</div>
+<ul>
+  <li>run the full eval suite from scratch, compare to last month, investigate drops</li>
+  <li>review guardrail logs, firing on expected cases, new kinds of bad input appearing</li>
+  <li>survey or interview three to five real users</li>
+</ul>`,
+
+`<div class="n-section">Post-Launch: Quarterly and Annually</div>
+<div class="n-term">Quarterly</div>
+<ul>
+  <li>recalibrate LLM judges against human labels, drift and edits erode calibration over time</li>
+  <li>review the eval dataset, still representative of real traffic, add/retire cases</li>
+  <li>consider a model upgrade to lift quality</li>
+  <li>review cost per request, could cheaper models handle some components</li>
+</ul>
+<div class="n-term">Annually</div>
+<ul>
+  <li>revisit the problem statement, still the right problem, has the workflow evolved</li>
+  <li>audit the full guardrail and observability stack for new gaps</li>
+  <li>a full incident retrospective, what happened, what systemic changes prevent it</li>
+</ul>
+<p>teams that run these cadences consistently get better over time, teams that do not drift quietly</p>`,
+
+`<div class="n-section">The Signals You Are Drifting, and Shipping Imperfect Systems</div>
+<div class="n-term">Drift Signals</div>
+<ul>
+  <li>eval scores not looked at weekly</li>
+  <li>eval dataset not updated in two months or more</li>
+  <li>the team disagrees on whether a recent output was good</li>
+  <li>cost per request creeping up without explanation</li>
+  <li>complaints handled individually rather than traced to systemic issues</li>
+  <li>new features added faster than new evals</li>
+  <li>guardrail logs not being reviewed</li>
+</ul>
+<p>three or more true means you are drifting, recoverable, but worth a deliberate re-investment</p>
+<div class="n-term">Shipping Imperfect Systems</div>
+<p>the checklist is a bar to clear when you can, a deliberate tradeoff when you cannot, real systems sometimes ship with items unchecked because the business reason outweighs the risk</p>
+<p>the right move: acknowledge the risk explicitly, put a deadline on closing the gap, make the gap visible, a system that ships with known risks and a plan is safer than one that ships pretending everything is handled</p>
+<p>the teams to worry about are not the ones with known gaps, they are the ones who never ran through a checklist at all</p>`
+];
+
+const ch18_slides = [
+{
+  eyebrow:"Chapter 18",
+  title:"Production Readiness Checklist",
+  body:`
+    <ul class="plain">
+      <li>Most AI systems are ready for production long before the team believes they are. A few are shipped long before they should be. The difference between the two is rarely instinct. It is whether the team has run through a checklist, honestly</li>
+    </ul>
+    <div class="callout">This is the checklist used at LevelUp Labs to advise on launch decisions, and to triage systems that are in production and underperforming. More often than you would expect, the answer traces to a checklist item that was quietly skipped. Keep this chapter handy: run through it before any AI system you ship, and again quarterly on any system you operate.</div>
+  `
+},
+{
+  eyebrow:"The Core Principle",
+  title:"The Core Principle",
+  body:`
+    <div class="callout">A production AI system is not ready when the happy path works. It is ready when the unhappy paths are handled gracefully.</div>
+    <p>Every other item on this checklist is an instance of that principle. The question to hold in your head through the rest of this chapter: when the thing goes wrong, what happens?</p>
+  `
+},
+{
+  eyebrow:"Pre-Launch Checklist",
+  title:"Pre-Launch: Problem and Scope, Evals",
+  body:`
+    <p>Items worth confirming before the first real user sees the system.</p>
+    <div class="grid2">
+      <div class="card"><h3>Problem and Scope</h3><p>The problem statement has a named user and measurable outcome. The scope is narrow enough that a single eval suite can cover it. A human baseline exists for the task. Success criteria for launch are explicit and written down.</p></div>
+      <div class="card"><h3>Evals</h3><p>A code-based eval suite covers the main patterns with at least 30 cases. An LLM-as-judge eval is in place for subjective quality. The judge has been calibrated against human labels, with agreement above 80%. Eval scores are above the launch bar. The eval suite runs on every code change.</p></div>
+    </div>
+  `
+},
+{
+  eyebrow:"Pre-Launch Checklist",
+  title:"Pre-Launch: Guardrails, Observability",
+  body:`
+    <div class="grid2">
+      <div class="card"><h3>Guardrails</h3><p>Input sanitization is in place. PII redaction runs on input if the system sees sensitive data. Prompt injection detection is active if external users can send input. Output groundedness check runs for any retrieval-based system. Action boundary enforcement runs for any system with action-taking tools. A graceful fallback path exists for when guardrails fire.</p></div>
+      <div class="card"><h3>Observability</h3><p>Every production request is traced end to end. Latency, cost, and error rate are visible on a dashboard the team checks weekly. A mechanism exists for promoting production failures into the eval dataset. Alerts fire on cost spikes, error rate increases, or latency tail cases.</p></div>
+    </div>
+  `
+},
+{
+  eyebrow:"Pre-Launch Checklist",
+  title:"Pre-Launch: Safety, User Experience, Documentation",
+  body:`
+    <ul class="plain">
+      <li><b>Safety.</b> A rollback path is tested and ready. Incident response ownership is assigned to a specific person and pager rotation. Rate limits prevent runaway cost from a bug or abuse. Human review is available as a fallback for cases the system refuses or is uncertain about.</li>
+      <li><b>User Experience.</b> The system gracefully handles its own failures (model error, tool timeout, retrieval empty). Loading, error, and empty states are designed. Users have a clear path to escalate when the AI is wrong. Confidence or uncertainty is communicated where relevant.</li>
+      <li><b>Documentation.</b> The system's scope is documented. The prompt, model, and retrieval strategy are versioned and documented. The eval suite is documented with the rubric for each eval. An operational runbook exists for common incidents.</li>
+    </ul>
+    <div class="callout">If every item is checked, you are ready to launch. If not, the unchecked items are a live list of things to handle before launch, or to acknowledge as known risks if you proceed anyway.</div>
+  `
+},
+{
+  eyebrow:"Post-Launch Checklist",
+  title:"Post-Launch: Weekly and Monthly",
+  body:`
+    <p>Production readiness is not just about launch day. It is about the operational practice that keeps the system healthy over months.</p>
+    <ul class="plain">
+      <li><b>Weekly.</b> Review the week's production traces, picking the 10 worst cases and understanding what went wrong. Check the dashboard: any metric that changed by more than 20% warrants investigation. Promote real failures found in production into the eval dataset as regression tests.</li>
+      <li><b>Monthly.</b> Run the full eval suite from scratch, compare scores to last month, investigate any drops. Review guardrail logs: are guardrails firing on expected cases, are new kinds of bad input appearing? Survey or interview three to five real users about where the system works and where it falls short.</li>
+    </ul>
+  `
+},
+{
+  eyebrow:"Post-Launch Checklist",
+  title:"Post-Launch: Quarterly and Annually",
+  body:`
+    <ul class="plain">
+      <li><b>Quarterly.</b> Recalibrate the LLM judges against human labels, since model drift and prompt edits both erode calibration over time. Review the eval dataset itself: are the cases still representative of real traffic? Consider whether a model upgrade would lift quality. Review cost per request: could cheaper models handle some components?</li>
+      <li><b>Annually.</b> Revisit the problem statement: is the system still solving the right problem, has the user's workflow evolved? Audit the full guardrail and observability stack for gaps that did not exist at launch. Do a full incident retrospective: which incidents happened this year, what systemic changes prevent them?</li>
+    </ul>
+    <div class="callout">Teams that run these cadences consistently are the ones whose AI systems get better over time. Teams that do not, drift quietly.</div>
+  `
+},
+{
+  eyebrow:"The Signals You Are Drifting",
+  title:"The Signals You Are Drifting",
+  body:`
+    <p>A few early-warning signs that an AI system is drifting from its production readiness state.</p>
+    <ul class="plain">
+      <li>Eval scores are not being looked at weekly</li>
+      <li>The eval dataset has not been updated in two months or more</li>
+      <li>The team disagrees on whether a recent output was good</li>
+      <li>Cost per request is creeping up without an explanation</li>
+      <li>User complaints are being responded to individually rather than traced to systemic issues</li>
+      <li>New features are being added faster than new evals</li>
+      <li>Guardrail logs are not being reviewed</li>
+    </ul>
+    <div class="callout">If three or more of these are true, you are drifting. Recoverable, but worth a deliberate re-investment in the production practice.</div>
+  `
+},
+{
+  eyebrow:"A Word on Shipping Imperfect Systems",
+  title:"A Word on Shipping Imperfect Systems",
+  body:`
+    <ul class="plain">
+      <li>The checklist is a bar to clear when you can, and a deliberate tradeoff when you cannot. Real systems sometimes ship with items unchecked because the business reason outweighs the risk</li>
+    </ul>
+    <div class="callout">When that happens, the right move is to acknowledge the risk explicitly, put a deadline on closing the gap, and make the gap visible. A system that ships with known risks and a plan is safer than a system that ships pretending everything is handled.</div>
+    <p>The teams to worry about are not the ones that ship with known gaps. They are the ones that ship thinking they are ready when they have never run through a checklist. The checklist is the defense against that.</p>
+  `
+}
+];
+
+const ch18_quiz = [
+{
+  type:'mc',
+  q:"What is the actual difference between AI systems that get shipped too early and ones that get shipped appropriately?",
+  options:[
+    "It is rarely instinct, it is whether the team has run through a checklist, honestly",
+    "It is purely a matter of how much funding the team has",
+    "It depends entirely on which foundation model was chosen",
+    "There is no meaningful difference between the two cases"
+  ],
+  correct:0,
+  explain:"Most AI systems are ready for production long before the team believes they are, and a few are shipped too early. The difference between the two is rarely instinct, it is whether the team has run through a checklist, honestly."
+},
+{
+  type:'mc',
+  q:"How often should a production readiness checklist be run on an AI system that is already operating?",
+  options:[
+    "Quarterly, in addition to being run before any system is shipped",
+    "Only once, before the very first launch, and never again",
+    "Daily, without exception",
+    "Only when a major incident has already occurred"
+  ],
+  correct:0,
+  explain:"Run through the checklist before any AI system you ship, and run through it again quarterly on any AI system you operate."
+},
+{
+  type:'mc',
+  q:"What is the core principle underlying the entire production readiness checklist?",
+  options:[
+    "A system is not ready when the happy path works, it is ready when the unhappy paths are handled gracefully",
+    "A system is ready as soon as it passes a single demo",
+    "A system is ready once the model has been chosen and the prompt has been written",
+    "There is no single unifying principle behind the checklist"
+  ],
+  correct:0,
+  explain:"A production AI system is not ready when the happy path works. It is ready when the unhappy paths are handled gracefully. Every other item on the checklist is an instance of that principle."
+},
+{
+  type:'multi',
+  q:"Which of the following are named as part of the Problem and Scope pre-launch checklist?",
+  options:[
+    "The problem statement has a named user and a measurable outcome",
+    "A human baseline exists for the task",
+    "The success criteria for launch are explicit and written down",
+    "The system has been tested with at least one thousand concurrent users"
+  ],
+  correctSet:[0,1,2],
+  explain:"The Problem and Scope checklist includes a named user and measurable outcome, a scope narrow enough for a single eval suite, a human baseline, and explicit written success criteria. Load testing at a specific concurrency is not part of this checklist."
+},
+{
+  type:'scenario',
+  q:"A team's LLM-as-judge eval has been calibrated against human labels, but agreement is only 65%. Does this satisfy the pre-launch evals checklist?",
+  options:[
+    "No, the checklist calls for agreement above 80% before launch",
+    "Yes, any calibration attempt satisfies the checklist regardless of the agreement percentage",
+    "Yes, since calibration is optional for launch readiness",
+    "This checklist item does not specify any particular threshold"
+  ],
+  correct:0,
+  explain:"The evals checklist specifies that the LLM judge has been calibrated against human labels, with agreement above 80%. 65% agreement does not clear that bar."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the pre-launch evals checklist items?",
+  options:[
+    "A code-based eval suite covers the main patterns with at least 30 cases",
+    "Eval scores are above the launch bar",
+    "The eval suite runs on every code change",
+    "The eval suite has never once been updated since the project began"
+  ],
+  correctSet:[0,1,2],
+  explain:"The evals checklist includes a code-based suite with at least 30 cases, an LLM-as-judge eval for subjective quality, calibration above 80% agreement, scores above the launch bar, and the suite running on every code change. An eval suite that has never been updated is not a checklist item, it would actually be a warning sign."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the pre-launch guardrails checklist items?",
+  options:[
+    "Input sanitization is in place",
+    "PII redaction runs on input if the system sees sensitive data",
+    "A graceful fallback path exists for when guardrails fire",
+    "Guardrails are disabled by default to reduce false positives"
+  ],
+  correctSet:[0,1,2],
+  explain:"The guardrails checklist includes input sanitization, PII redaction, prompt injection detection, output groundedness checks, action boundary enforcement, and a graceful fallback path. Disabling guardrails by default contradicts the entire purpose of this checklist category."
+},
+{
+  type:'scenario',
+  q:"A team's system uses tools that can take real actions, like sending refunds, but has no check in place to catch the model claiming it took an action it did not actually take. What checklist item is missing?",
+  options:[
+    "Action boundary enforcement, which should run for any system with action-taking tools",
+    "PII redaction",
+    "Input sanitization",
+    "This is not covered by any item on the checklist"
+  ],
+  correct:0,
+  explain:"Action boundary enforcement runs for any system with action-taking tools, precisely to catch a model claiming an action it did not actually take."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the pre-launch observability checklist items?",
+  options:[
+    "Every production request is traced end to end",
+    "A mechanism exists for promoting production failures into the eval dataset",
+    "Alerts fire on cost spikes, error rate increases, or latency tail cases",
+    "Traces are deleted immediately after each request to save on storage costs"
+  ],
+  correctSet:[0,1,2],
+  explain:"The observability checklist includes end-to-end tracing, a dashboard for latency/cost/error rate, a mechanism for promoting failures into the eval dataset, and alerts on cost spikes and tail latency. Immediately deleting traces would break the mechanism for promoting failures into the eval dataset."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the pre-launch safety checklist items?",
+  options:[
+    "A rollback path is tested and ready",
+    "Incident response ownership is assigned to a specific person and pager rotation",
+    "Rate limits are in place to prevent runaway cost from a bug or abuse",
+    "The system should never allow any form of human review as a fallback"
+  ],
+  correctSet:[0,1,2],
+  explain:"The safety checklist includes a tested rollback path, assigned incident response ownership, rate limits, and human review available as a fallback for cases the system refuses or is uncertain about. Human review being available is explicitly part of the checklist, not something to avoid."
+},
+{
+  type:'scenario',
+  q:"A team ships a system where the AI silently fails when a tool times out, showing users a blank screen with no explanation. Which pre-launch checklist category does this violate?",
+  options:[
+    "User Experience, since the system should gracefully handle its own failures and have designed error states",
+    "Documentation",
+    "Evals",
+    "Observability"
+  ],
+  correct:0,
+  explain:"The User Experience checklist requires the system to gracefully handle its own failures (model error, tool timeout, retrieval empty) with designed loading, error, and empty states, exactly what this blank-screen failure violates."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the pre-launch documentation checklist items?",
+  options:[
+    "The system's scope is documented, including what it does and does not do",
+    "The prompt, model, and retrieval strategy are versioned and documented",
+    "An operational runbook exists for common incidents",
+    "Documentation is optional as long as the code itself is well organized"
+  ],
+  correctSet:[0,1,2],
+  explain:"The documentation checklist includes documented scope, versioned and documented prompt/model/retrieval strategy, a documented eval suite with rubrics, and an operational runbook. Documentation is explicitly part of the checklist, not optional."
+},
+{
+  type:'mc',
+  q:"What should a team do if some pre-launch checklist items remain unchecked?",
+  options:[
+    "Treat the unchecked items as a live list of things to handle before launch, or acknowledge them as known risks if proceeding anyway",
+    "Ignore the unchecked items entirely and launch regardless",
+    "Delay the launch indefinitely with no other option",
+    "Unchecked items have no bearing on the launch decision"
+  ],
+  correct:0,
+  explain:"If not every item is checked, the unchecked items are a live list of things to handle before launch, or to acknowledge as known risks if you proceed anyway."
+},
+{
+  type:'scenario',
+  q:"A team reviews their week's production traces, picks the 10 worst cases, checks their dashboard for metrics that changed by more than 20%, and promotes real failures into their eval dataset. What cadence does this match?",
+  options:[
+    "Weekly",
+    "Monthly",
+    "Quarterly",
+    "Annually"
+  ],
+  correct:0,
+  explain:"This matches the weekly cadence: review the week's traces, pick the 10 worst cases, check the dashboard for changes over 20%, and promote real failures into the eval dataset as regression tests."
+},
+{
+  type:'multi',
+  q:"Which of the following are named as part of the monthly post-launch cadence?",
+  options:[
+    "Run the full eval suite from scratch and compare scores to last month",
+    "Review the guardrail logs to see if guardrails are firing on expected cases",
+    "Survey or interview three to five real users",
+    "Recalibrate the LLM judges against human labels"
+  ],
+  correctSet:[0,1,2],
+  explain:"The monthly cadence includes running the full eval suite, reviewing guardrail logs, and surveying real users. Recalibrating LLM judges is part of the quarterly cadence, not monthly."
+},
+{
+  type:'scenario',
+  q:"A team recalibrates their LLM judges against human labels every three months, reasoning that model drift and prompt edits erode calibration over time. What cadence are they following?",
+  options:[
+    "Quarterly",
+    "Weekly",
+    "Monthly",
+    "Annually"
+  ],
+  correct:0,
+  explain:"Recalibrating LLM judges against human labels, since model drift and prompt edits both erode calibration over time, is part of the quarterly cadence."
+},
+{
+  type:'multi',
+  q:"Which of the following are named as part of the annual post-launch cadence?",
+  options:[
+    "Revisit the problem statement to check if the system is still solving the right problem",
+    "Audit the full guardrail and observability stack for gaps",
+    "Do a full incident retrospective for the year",
+    "Run the full eval suite for the very first time"
+  ],
+  correctSet:[0,1,2],
+  explain:"The annual cadence includes revisiting the problem statement, auditing the guardrail and observability stack, and a full incident retrospective. Running the eval suite for the first time would only happen at launch, not as an annual recurring item."
+},
+{
+  type:'multi',
+  q:"Which of the following are named among the early-warning signals that an AI system is drifting?",
+  options:[
+    "Eval scores are not being looked at weekly",
+    "The eval dataset has not been updated in two months or more",
+    "New features are being added faster than new evals",
+    "The team runs the full eval suite every single month without fail"
+  ],
+  correctSet:[0,1,2],
+  explain:"The named drift signals include evals not reviewed weekly, a stale eval dataset, disagreement on output quality, creeping cost, individually-handled complaints, features outpacing evals, and unreviewed guardrail logs. Consistently running the full eval suite monthly is a sign of healthy practice, not drift."
+},
+{
+  type:'scenario',
+  q:"A team notices that eval scores have not been reviewed in weeks, the eval dataset has not changed in three months, and cost per request has been creeping up without explanation. How many drift signals does this represent, and what does the guidance suggest?",
+  options:[
+    "Three signals, and since three or more being true means the system is drifting, this is worth a deliberate re-investment in production practice",
+    "Zero signals, since none of these individually matter",
+    "One signal, which is not enough to indicate drift",
+    "This combination has no defined meaning in the guidance"
+  ],
+  correct:0,
+  explain:"If three or more of the named drift signals are true, the system is drifting. This scenario names three: evals not reviewed weekly, a stale eval dataset, and creeping cost. This is recoverable but worth a deliberate re-investment in the production practice."
+},
+{
+  type:'mc',
+  q:"What is the right move when a real system ships with some checklist items unchecked because the business reason outweighs the risk?",
+  options:[
+    "Acknowledge the risk explicitly, put a deadline on closing the gap, and make the gap visible",
+    "Ship silently and hope nobody notices the gap",
+    "Never ship any system with unchecked items under any circumstances",
+    "Unchecked items should simply be removed from the checklist going forward"
+  ],
+  correct:0,
+  explain:"When the business reason outweighs the risk, the right move is to acknowledge the risk explicitly, put a deadline on closing the gap, and make the gap visible. A system that ships with known risks and a plan is safer than one that ships pretending everything is handled."
+},
+{
+  type:'mc',
+  q:"Which teams are described as the ones actually worth worrying about?",
+  options:[
+    "The ones that ship thinking they are ready when they have never run through a checklist, not the ones that ship with acknowledged, known gaps",
+    "Any team that ships with even a single unchecked item, regardless of whether it was acknowledged",
+    "Teams that run the checklist too frequently",
+    "There is no meaningful distinction between teams in this context"
+  ],
+  correct:0,
+  explain:"The teams to worry about are not the ones that ship with known gaps. They are the ones that ship thinking they are ready when they have never run through a checklist. The checklist is the defense against that."
+}
+];
+
+/* ============================================================
    GLOSSARY
    Grows across the whole book. Add new terms here as each chapter
    is built. chapter refers to the chapter number the term was
@@ -8211,7 +9481,15 @@ const glossary = [
 { term:"Multi-Agent Topology", chapter:15, def:"The overall shape of how multiple AI agents are organized and connected to each other, like orchestrator-and-workers, peer-to-peer, or hierarchical." },
   { term:"Non-Local Failure", chapter:15, def:"A bug where the actual cause and its visible symptom are far apart in a system, like a mistake in one agent's instructions showing up as strange behavior several agents later, making it hard to trace back to the source." },
   { term:"Trajectory (multi-agent)", chapter:15, def:"The full sequence of steps and decisions a multi-agent system took to handle a request, including which agents were involved, in what order, and how they interacted." },
-  { term:"Step Budget", chapter:15, def:"A hard limit on how many steps or exchanges an AI system is allowed before it's forced to stop, used to prevent it from looping indefinitely." }
+  { term:"Step Budget", chapter:15, def:"A hard limit on how many steps or exchanges an AI system is allowed before it's forced to stop, used to prevent it from looping indefinitely." },
+{ term:"Trace", chapter:16, def:"The complete recorded history of a single request to an AI system, showing every step it went through, from the initial input to the final response." },
+  { term:"Span", chapter:16, def:"One individual step within a trace, like a single tool call or a single model response, that can be nested inside other steps to show the full sequence of what happened." },
+  { term:"P50, P90, P99 (Latency Percentiles)", chapter:16, def:"Ways of measuring response time across many requests. P50 is the typical (median) response time. P99 shows how slow the worst 1% of requests are, which is often where real problems hide." },
+{ term:"Protocol", chapter:17, def:"A shared, standardized way for different software components to communicate with each other, so a tool built to one protocol can work with any system that speaks the same protocol, instead of needing a custom connection for each pairing." },
+  { term:"A2A (Agent-to-Agent)", chapter:17, def:"A protocol Google introduced for how AI agents in different systems can find each other, negotiate what needs to get done, and exchange updates, useful when agents need to work across organizational boundaries." },
+{ term:"Launch Bar", chapter:18, def:"The minimum eval score or quality threshold a system has to reach before it's considered ready to ship to real users." },
+  { term:"Runbook", chapter:18, def:"A written, step-by-step guide for how to handle a specific type of incident or problem, so anyone on the team can respond consistently, not just whoever built the system." },
+  { term:"Incident Retrospective", chapter:18, def:"A structured review held after something goes wrong, looking at what happened and why, with the goal of making changes that prevent the same problem from happening again." }
 ];
 
 const ch1_notes = [
@@ -8548,14 +9826,38 @@ const chapters = [
     slides:ch15_slides,
     quiz:ch15_quiz,
     notes:ch15_notes
-  }
-  /* Add one object per chapter here, e.g.:
+  },
   {
     id:16,
     part:"Part 5: Production and the Long Arc",
-    title:"...",
+    title:"Observability and Tracing",
     slides:ch16_slides,
-    quiz:ch16_quiz
+    quiz:ch16_quiz,
+    notes:ch16_notes
+  },
+  {
+    id:17,
+    part:"Part 5: Production and the Long Arc",
+    title:"Protocols and Extensibility",
+    slides:ch17_slides,
+    quiz:ch17_quiz,
+    notes:ch17_notes
+  },
+  {
+    id:18,
+    part:"Part 5: Production and the Long Arc",
+    title:"Production Readiness Checklist",
+    slides:ch18_slides,
+    quiz:ch18_quiz,
+    notes:ch18_notes
+  }
+  /* Add one object per chapter here, e.g.:
+  {
+    id:19,
+    part:"Part 6: Where This Goes Next",
+    title:"...",
+    slides:ch19_slides,
+    quiz:ch19_quiz
   },
   */
 ];
